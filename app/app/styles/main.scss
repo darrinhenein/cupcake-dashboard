@@ -1,0 +1,81 @@
+@import "compass/css3/images";
+
+$iconSpritePath: "../images/glyphicons-halflings.png";
+$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
+
+
+$bodyBackground: #FEFEFE;
+$linkColor: #6B18B0;
+
+
+@import "bootstrap-sass/lib/bootstrap";
+
+
+
+/* Put your CSS here */
+html, body {
+  margin: 20px;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+.hero-unit {
+    margin: 50px auto 0 auto;
+    width: 300px;
+    font-size: 18px;
+    font-weight: 200;
+    line-height: 30px;
+    background-color: #eee;
+    border-radius: 6px;
+    padding: 60px;
+}
+
+.hero-unit h1 {
+    font-size: 60px;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+// custom style
+
+a{cursor:pointer;}
+.badge, .label{text-shadow: none;}
+
+.progress .bar{
+    transition: width 1s ease;
+    @include background(linear-gradient($linkColor, darken($linkColor, 10%)));
+}
+.chevrons {
+    padding: 0;
+    margin: 0 0 20px 0;
+    background: #EEE;
+    border-radius: 3px;
+    padding: 10px;
+}
+.chevrons li {
+    display: inline;
+    color: #AAA;
+    list-style-type: none;
+    padding: 0 0 10px 0;
+    font-weight: bold;
+    &:after{
+        position: relative;
+        top: 1px;
+        padding-right: 10px;
+        padding-left: 10px;
+        color: #CCC;
+        content: '\3009';
+    }
+    &:last-child:after{
+        content: ' ';
+    }
+    &.completed {
+        color: #333;
+    }
+    &.active {
+        color: $linkColor;
+    }
+}

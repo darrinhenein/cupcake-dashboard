@@ -1,0 +1,19 @@
+<div class="row">
+<h1>Cupcakes <small>Dashboard</small></h1><br/>
+  <ul class="nav nav-tabs">
+  <li ng-class="{ active: activePhase=='all'}">
+    <a ng-href="#/">All <span class="badge">{{ projectsTotal }}</span></a>
+  </li>
+  <li ng-repeat="phase in phases" ng-class="{ active: phase.phase==activePhase }">
+    <a ng-href="#/phase/{{ phase.phase }}" ng-class="{ muted: !phase.count }"><strong>{{ phase.title }}</strong> <span class="badge">{{ phase.count || 0 }}</span></a>
+  </li>
+</ul>
+
+<h3>{{ project.title }} <small>{{ project.created_at | date }}</small></h3>
+<ul class="chevrons">
+  <li ng-class="{ completed: phase.phase <= project.phase, active: phase.phase == project.phase }" ng-repeat="phase in phases">
+    {{ phase.title }}
+  </li>
+</ul>
+
+<p>{{ project.description }}</p>
