@@ -18,6 +18,10 @@ angular.module('nodeTestApp', ['ngResource'])
         templateUrl: 'views/project.html',
         controller: 'ProjectCtrl'
       })
+      .when('/project/:id/:phase', {
+        templateUrl: 'views/project.html',
+        controller: 'ProjectCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });

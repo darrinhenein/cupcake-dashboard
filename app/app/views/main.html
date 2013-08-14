@@ -1,13 +1,6 @@
 <div class="row">
-  <h1>Cupcakes <small>Dashboard</small></h1><br/>
-    <ul class="nav nav-tabs">
-    <li ng-class="{ active: activePhase=='all'}">
-      <a ng-href="#/">All <span class="badge">{{ projectsTotal }}</span></a>
-    </li>
-    <li ng-repeat="phase in phases" ng-class="{ active: phase.phase==activePhase }">
-      <a ng-href="#/phase/{{ phase.phase }}" ng-class="{ muted: !phase.count }"><strong>{{ phase.title }}</strong> <span class="badge">{{ phase.count || 0 }}</span></a>
-    </li>
-  </ul>
+    <div ng-include="'views/nav.html'"></div>
+
   <table ng-show="projects.length" class="table table-hover">
     <tr>
     <th>Title</th>
@@ -19,13 +12,13 @@
     <tr ng-repeat="project in projects" >
       <td><a ng-href="#/project/{{ project._id }}"><strong>{{ project.title }}</strong></a></td>
       <td>{{ project.created_at | date }}</td>
-      <td><span class="label">{{ phases[project.phase].title }}</span></td>
+      <td><span class="label {{ phases[project.phase].title | lowercase }}">{{ phases[project.phase].title }}</span></td>
       <td>
         <div class="progress">
           <div class="bar" style="width: {{ project.progress }}%;"></div>
         </div>
       </td>
-      <td><small>{{ project.description }}</small></td>
+      <td><small class="description">{{ project.description }}</small></td>
     </tr>
  </table>
  <div ng-show="!projects.length" class="well">No projects.</div>

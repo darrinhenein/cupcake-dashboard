@@ -1,19 +1,22 @@
 <div class="row">
-<h1>Cupcakes <small>Dashboard</small></h1><br/>
-  <ul class="nav nav-tabs">
-  <li ng-class="{ active: activePhase=='all'}">
-    <a ng-href="#/">All <span class="badge">{{ projectsTotal }}</span></a>
-  </li>
-  <li ng-repeat="phase in phases" ng-class="{ active: phase.phase==activePhase }">
-    <a ng-href="#/phase/{{ phase.phase }}" ng-class="{ muted: !phase.count }"><strong>{{ phase.title }}</strong> <span class="badge">{{ phase.count || 0 }}</span></a>
+<div ng-include="'views/nav.html'"></div>
+
+<h3 >{{ project.title }} <small>{{ project.created_at | date }}</small></h3>
+<p class="lead">{{ project.description }}</p>
+
+<ul class="chevrons" ng-init="count=0">
+  <li ng-class="{ completed: phase.phase <= project.phase, active: phase.phase == activePhase, hasBody: project.phases[phase.phase].body.length}" ng-repeat="phase in phases">
+    <a href="{{ '#/project/' + project._id + '/' + phase.phase }}">{{ phase.title }}</a>
   </li>
 </ul>
+  <p ng-repeat="(key, phase) in project.phases" ng-show="activePhase==key" ng-class="{active: activePhase==phase.phase}">
+    {{ phase.body }}
+    <small>{{ phase.created_at | date }}</small>
+  </p>
+  <p ng-show="project.phases[activePhase]==undefined" class="muted"><i>No details.</i></p>
 
-<h3>{{ project.title }} <small>{{ project.created_at | date }}</small></h3>
-<ul class="chevrons">
-  <li ng-class="{ completed: phase.phase <= project.phase, active: phase.phase == project.phase }" ng-repeat="phase in phases">
-    {{ phase.title }}
-  </li>
+<hr/>
+
+<ul class="pager">
+  <li class="previous"><a href="#">&larr; Back</a></li>
 </ul>
-
-<p>{{ project.description }}</p>

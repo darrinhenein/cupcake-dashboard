@@ -53,6 +53,7 @@ Project = app.resource = restful.model("project", mongoose.Schema(
     default: Date.now
   }
   is_finished: "boolean"
+  phases: {}
 ))
 
 Project.methods [

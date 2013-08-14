@@ -1,0 +1,10 @@
+<h1>Cupcakes <small>Dashboard</small></h1><br/>
+
+<ul class="nav nav-tabs" ng-controller="NavCtrl">
+  <li ng-class="{ active: navPhase=='all'}">
+    <a ng-href="#/">All <span class="badge">{{ projectsTotal }}</span></a>
+  </li>
+  <li ng-repeat="phase in phases" ng-class="{ active: phase.phase==navPhase }">
+    <a ng-href="#/phase/{{ phase.phase }}" ng-class="{ muted: !phase.count }"><strong>{{ phase.title }}</strong> <span class="badge">{{ phase.count || 0 }}</span></a>
+  </li>
+</ul>

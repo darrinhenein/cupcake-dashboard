@@ -6,7 +6,7 @@ $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
 $bodyBackground: #FEFEFE;
 $linkColor: #6B18B0;
-
+$sansFontFamily: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 @import "bootstrap-sass/lib/bootstrap";
 
@@ -18,7 +18,6 @@ html, body {
 }
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #333;
 }
 
@@ -57,7 +56,9 @@ a{cursor:pointer;}
 }
 .chevrons li {
     display: inline;
-    color: #AAA;
+    a{
+        color: #AAA;
+    }
     list-style-type: none;
     padding: 0 0 10px 0;
     font-weight: bold;
@@ -72,10 +73,25 @@ a{cursor:pointer;}
     &:last-child:after{
         content: ' ';
     }
-    &.completed {
+    &.completed a{
         color: #333;
     }
-    &.active {
+    &.active a{
         color: $linkColor;
     }
+    /*&.hasBody a:before {
+        content: '\2022';
+        color: #666;
+        font-size: 20px;
+        position: relative;
+        top: 2px;
+        padding-right: 3px;
+    }*/
+}
+small.description {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    display: inline-block;
 }
