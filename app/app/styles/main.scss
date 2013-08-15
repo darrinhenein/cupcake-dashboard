@@ -58,6 +58,7 @@ a{cursor:pointer;}
     display: inline;
     a{
         color: #AAA;
+        font-weight: normal;
     }
     list-style-type: none;
     padding: 0 0 10px 0;
@@ -79,14 +80,9 @@ a{cursor:pointer;}
     &.active a{
         color: $linkColor;
     }
-    /*&.hasBody a:before {
-        content: '\2022';
-        color: #666;
-        font-size: 20px;
-        position: relative;
-        top: 2px;
-        padding-right: 3px;
-    }*/
+    &.hasBody a{
+        font-weight: bold;
+    }
 }
 small.description {
     white-space: nowrap;

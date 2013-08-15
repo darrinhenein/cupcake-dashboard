@@ -2,6 +2,8 @@ express = require("express")
 restful = require("node-restful")
 cors = require("cors")
 mongoose = restful.mongoose
+Phases = require("./models/phases")
+EventSchema = require("./models/event")
 
 app = express()
 
@@ -10,30 +12,6 @@ app.use express.bodyParser()
 app.use express.query()
 
 mongoose.connect "mongodb://localhost/projects"
-
-Phases = [
-      {
-        title: "Proposal",
-        phase: 0
-      },
-      {
-        title: "Ideation",
-        phase: 1
-      },
-      {
-        title: "Prototype",
-        phase: 2
-      },
-      {
-        title: "Evaluation",
-        phase: 3
-      },
-      {
-        title: "Shipped",
-        phase: 4
-      }
-    ]
-
 
 Project = app.resource = restful.model("project", mongoose.Schema(
   title: "string"
@@ -45,7 +23,7 @@ Project = app.resource = restful.model("project", mongoose.Schema(
   }
   phase: {
     type: "number"
-    default: 1
+    default: 0
     required: true
   }
   created_at: {
@@ -54,9 +32,7 @@ Project = app.resource = restful.model("project", mongoose.Schema(
   }
   is_finished: "boolean"
   phases: {}
-))
-
-Project.methods [
+)).methods [
   "get"
   "post"
   "put"
