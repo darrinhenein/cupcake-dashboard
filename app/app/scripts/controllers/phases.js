@@ -1,4 +1,4 @@
-angular.module('nodeTestApp')
+angular.module('cupcakeDashboard')
   .controller('PhaseCtrl', function ($scope, $rootScope, $http, $stateParams, PhaseService) {
 
     $rootScope.navPhase = $stateParams.id;

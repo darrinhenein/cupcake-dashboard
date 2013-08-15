@@ -3,7 +3,7 @@
 describe('Controller: ProjectPhasesCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('nodeTestApp'));
+  beforeEach(module('cupcakeDashboard'));
 
   var ProjectPhasesCtrl,
     scope;

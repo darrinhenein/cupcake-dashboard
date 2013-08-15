@@ -1,4 +1,4 @@
-angular.module('nodeTestApp')
+angular.module('cupcakeDashboard')
   .controller('ProjectPhasesCtrl', function ($scope, $resource, $stateParams, $location, PhaseService) {
     if($stateParams.phase){
       $scope.activePhase = $stateParams.phase;

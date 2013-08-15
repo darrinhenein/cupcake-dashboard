@@ -1,4 +1,4 @@
-angular.module('nodeTestApp')
+angular.module('cupcakeDashboard')
   .service('PhaseService', function Phases($http) {
 
         self = this;

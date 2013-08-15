@@ -1,4 +1,4 @@
-angular.module('nodeTestApp')
+angular.module('cupcakeDashboard')
   .controller('ProjectCtrl', function ($scope, $resource, $stateParams, $location, PhaseService) {
     var projectId = $stateParams.id;
 

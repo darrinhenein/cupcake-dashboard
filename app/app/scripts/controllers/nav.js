@@ -1,4 +1,4 @@
-angular.module('nodeTestApp')
+angular.module('cupcakeDashboard')
   .controller('NavCtrl', function ($scope, $rootScope, PhaseService) {
 
     $rootScope.$watch('navPhase', function(){

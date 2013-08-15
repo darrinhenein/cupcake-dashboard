@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
 </head>
-  <body ng-app="nodeTestApp">
+  <body ng-app="cupcakeDashboard">
     <!--[if lt IE 7]>
       <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
     <![endif]-->
@@ -40,6 +40,7 @@
       s.parentNode.insertBefore(g,s)}(document,'script'));
     </script>
 
+    <script src="https://login.persona.org/include.js" type="text/javascript"></script>
     <script src="bower_components/jquery/jquery.js"></script>
 
         <!-- build:js scripts/plugins.js -->
@@ -71,7 +72,8 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/phases.js"></script>
-        <script src="scripts/services/phaseService.js"></script>
+        <script src="scripts/services/phase-service.js"></script>
+        <script src="scripts/services/angular.persona.js"></script>
         <script src="scripts/controllers/project.js"></script>
         <script src="scripts/controllers/nav.js"></script>
         <script src="scripts/controllers/project.phases.js"></script>

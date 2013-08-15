@@ -3,7 +3,7 @@
 describe('Service: Phases', function () {
 
   // load the service's module
-  beforeEach(module('nodeTestApp'));
+  beforeEach(module('cupcakeDashboard'));
 
   // instantiate service
   var Phases;

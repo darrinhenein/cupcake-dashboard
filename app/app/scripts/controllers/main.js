@@ -1,4 +1,4 @@
-angular.module('nodeTestApp')
+angular.module('cupcakeDashboard')
   .controller('MainCtrl', function ($scope, $rootScope, $resource, PhaseService) {
 
     $rootScope.navPhase = 'all'
