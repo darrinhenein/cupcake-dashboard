@@ -1,8 +1,9 @@
 angular.module('nodeTestApp')
-  .controller('PhaseCtrl', function ($scope, $http, $routeParams, PhaseService) {
-    $scope.navPhase = $routeParams.id;
+  .controller('PhaseCtrl', function ($scope, $rootScope, $http, $stateParams, PhaseService) {
 
-    $http.get('http://localhost:3000/phase/' + $routeParams.id, { cache: true }).success(function(data){
+    $rootScope.navPhase = $stateParams.id;
+
+    $http.get('http://localhost:3000/phase/' + $stateParams.id, { cache: true }).success(function(data){
       $scope.projects = data;
     })
 

@@ -1,7 +1,7 @@
 angular.module('nodeTestApp')
-  .controller('MainCtrl', function ($scope, $resource, PhaseService) {
+  .controller('MainCtrl', function ($scope, $rootScope, $resource, PhaseService) {
 
-    $scope.navPhase = 'all'
+    $rootScope.navPhase = 'all'
 
     var Project = $resource('http://localhost\\:3000/projects/:id', { cache: true });
     $scope.projects = Project.query();

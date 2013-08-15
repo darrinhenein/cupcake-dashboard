@@ -26,12 +26,11 @@
       <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!-- Add your site or application content here -->
-
-    <div class="container" ng-view="">
-
+    <div class="container">
+        <!-- Add your site or application content here -->
+        <div ng-include="'views/nav.html'"></div>
+        <div ui-view></div>
     </div>
-
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
       var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
@@ -64,6 +63,7 @@
         <script src="lib/angular-resource.js"></script>
         <script src="lib/angular-cookies.js"></script>
         <script src="lib/angular-sanitize.js"></script>
+        <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -73,6 +73,7 @@
         <script src="scripts/services/phaseService.js"></script>
         <script src="scripts/controllers/project.js"></script>
         <script src="scripts/controllers/nav.js"></script>
+        <script src="scripts/controllers/project.phases.js"></script>
         <!-- endbuild -->
 
 
