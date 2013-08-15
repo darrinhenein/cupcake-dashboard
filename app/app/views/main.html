@@ -7,7 +7,7 @@
     <th>Description</th>
     </tr>
     <tr ng-repeat="project in projects">
-      <td><a ng-href="#/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
+      <td><a ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
       <td>{{ project.created_at | date }}</td>
       <td><span class="label {{ phases[project.phase].title | lowercase }}">{{ phases[project.phase].title }}</span></td>
       <td>

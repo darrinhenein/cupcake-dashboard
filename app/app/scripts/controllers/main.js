@@ -3,7 +3,7 @@ angular.module('nodeTestApp')
 
     $rootScope.navPhase = 'all'
 
-    var Project = $resource('http://localhost\\:3000/projects/:id', { cache: true });
+    var Project = $resource('http://localhost\\:3000/api/projects/:id', { cache: true });
     $scope.projects = Project.query();
 
     PhaseService.phases().then(function(data){

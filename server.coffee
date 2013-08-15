@@ -1,4 +1,5 @@
 express = require("express")
+ejs = require("ejs")
 restful = require("node-restful")
 cors = require("cors")
 mongoose = restful.mongoose
@@ -10,6 +11,10 @@ app = express()
 app.use cors()
 app.use express.bodyParser()
 app.use express.query()
+
+app.set('views', __dirname + '/app/dist');
+app.engine('html', ejs.renderFile);
+app.use(express.static(__dirname + '/app/dist'));
 
 mongoose.connect "mongodb://localhost/projects"
 
@@ -43,13 +48,13 @@ Project.route "total.get", (req, res) ->
   Project.find {}, (err, docs) ->
     res.send {total: docs.length}
 
-Project.register app, "/projects"
+Project.register app, "/api/projects"
 
-app.get "/phase/:id", (req, res) ->
+app.get "/api/phase/:id", (req, res) ->
   Project.find {phase: req.params.id},  (err, docs) ->
     res.send docs
 
-app.get "/phases", (req, res) ->
+app.get "/api/phases", (req, res) ->
     Project.aggregate
       $group:
         _id: "$phase"
@@ -59,6 +64,13 @@ app.get "/phases", (req, res) ->
         for doc in docs
           Phases[doc._id].count = doc.count
         res.send Phases
+
+index = (req, res) -> res.render 'index.html'
+
+app.get "/", index
+app.get "/project/:projectId", index
+app.get "/project/:projectId/:phaseId", index
+app.get "/phase/:phaseId", index
 
 console.log 'Listening on post 3000...'
 app.listen 3000

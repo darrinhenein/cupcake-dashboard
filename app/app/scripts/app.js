@@ -1,11 +1,8 @@
 angular.module('nodeTestApp', ['ngResource', 'ui.state'])
-  .config(function ($routeProvider, $httpProvider, $locationProvider, $stateProvider, $urlRouterProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
-    //$locationProvider.html5Mode(true);
-    $httpProvider.defaults.useXDomain = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-    $urlRouterProvider.otherwise("/");
+    $locationProvider.html5Mode(true);
+    $urlRouterProvider.otherwise('/');
 
     $stateProvider
       .state('base', {
@@ -28,25 +25,4 @@ angular.module('nodeTestApp', ['ngResource', 'ui.state'])
         templateUrl: 'views/main.html',
         controller: 'PhaseCtrl'
       })
-
-    // $routeProvider
-    //   .when('/', {
-    //     templateUrl: 'views/main.html',
-    //     controller: 'MainCtrl'
-    //   })
-    //   .when('/phase/:id', {
-    //     templateUrl: 'views/main.html',
-    //     controller: 'PhaseCtrl'
-    //   })
-    //   .when('/project/:id', {
-    //     templateUrl: 'views/project.html',
-    //     controller: 'ProjectCtrl'
-    //   })
-    //   .when('/project/:id/:phase', {
-    //     templateUrl: 'views/project.html',
-    //     controller: 'ProjectCtrl'
-    //   })
-    //   .otherwise({
-    //     redirectTo: '/'
-    //   });
   });

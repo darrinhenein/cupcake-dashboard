@@ -6,7 +6,8 @@
   "dependencies": {
     "express": "~3.3.5",
     "node-restful": "~0.1.12",
-    "cors": "~1.0.1"
+    "cors": "~1.0.1",
+    "ejs": "~0.8.4"
   },
   "devDependencies": {},
   "scripts": {

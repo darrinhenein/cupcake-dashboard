@@ -7,7 +7,7 @@ angular.module('nodeTestApp')
         self._total = null;
 
         this.phases = function(){
-          var promise = $http.get('http://localhost:3000/phases', { cache: true }).then(function(res){
+          var promise = $http.get('http://localhost:3000/api/phases', { cache: true }).then(function(res){
             self._phases = res.data;
             return res.data;
           })
@@ -15,7 +15,7 @@ angular.module('nodeTestApp')
         }
 
         this.total = function(){
-          var promise = $http.get('http://localhost:3000/projects/total', { cache: true }).then(function(res){
+          var promise = $http.get('http://localhost:3000/api/projects/total', { cache: true }).then(function(res){
             return res.data.total;
           })
           return promise;
