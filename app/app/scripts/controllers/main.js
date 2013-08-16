@@ -1,9 +1,9 @@
 angular.module('cupcakeDashboard')
   .controller('MainCtrl', function ($scope, $rootScope, $resource, PhaseService) {
 
-    $rootScope.navPhase = 'all'
+    $rootScope.navPhase = 'all';
 
-    var Project = $resource('http://localhost\\:3000/api/projects/:id', { cache: true });
+    var Project = $resource('/api/projects/:id', { cache: false });
     $scope.projects = Project.query();
 
     PhaseService.phases().then(function(data){

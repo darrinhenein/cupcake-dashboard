@@ -13,7 +13,7 @@ logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
 
 app = express()
 
-app.use cors()
+# app.use cors()
 app.use express.bodyParser()
 app.use express.cookieParser()
 app.use express.session
@@ -31,10 +31,8 @@ app.use (req, res, next) ->
     method: req.method
     url: url.parse(req.originalUrl).pathname
 
-
   # Proxy the real end function
   res.end = (chunk, encoding) ->
-
     # Do the work expected
     res.end = rEnd
     res.end chunk, encoding
@@ -61,17 +59,17 @@ PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000
 HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1'
 
 # Must match your browser's address bar
-audience = 'http://' + HOST + ':9000'
+audience = 'http://' + HOST + ':3000'
 
 require('express-persona') app,
   audience: audience
-
 
 mongoose.connect "mongodb://localhost/projects"
 
 Project = app.resource = restful.model("project", mongoose.Schema(
   title: "string"
   description: "string"
+  owner_email: "string"
   progress: {
     type: "number"
     default: 0
@@ -94,6 +92,17 @@ Project = app.resource = restful.model("project", mongoose.Schema(
   "put"
   "delete"
 ]
+
+auth = (req, res, next) ->
+  if req.session.email
+    res.logged_in_email = req.session.email
+    next()
+  else
+    res.send 'Not Authenticated'
+    next()
+
+# server side auth on projects
+# Project.before('post', auth).before('put', auth).before('get', auth)
 
 Project.route "total.get", (req, res) ->
   Project.find {}, (err, docs) ->
@@ -124,6 +133,10 @@ app.get "/project/:projectId", index
 app.get "/project/:projectId/:phaseId", index
 app.get "/phase/:phaseId", index
 
+# auth
+app.get "/getUser", (req, res) ->
+  res.send {logged_in_email: req.session.email}
 
-console.log 'Listening on post 3000...'
-app.listen 3000
+
+console.log "Listening at #{HOST}:#{PORT}..."
+app.listen 3000, HOST

@@ -1,4 +1,12 @@
-<h3 >{{ project.title }} <small>{{ project.created_at | date }}</small></h3>
+<h3 >{{ project.title }} <small>{{ project.created_at | date }}</small>
+  <span class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+    <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
+    <i>{{ project.owner_email }}</i>
+  </span>
+</h3>
+
+<hr/>
+
 <p class="lead">{{ project.description }}</p>
 
 <div ui-view></div>

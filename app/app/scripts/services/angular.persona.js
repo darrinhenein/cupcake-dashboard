@@ -13,7 +13,7 @@
 /* Directives */
 
 angular.module('angular-tools.persona', [])
-  .directive('user', function ($http) {
+  .directive('user', function ($http, $rootScope) {
     var personaOptions = {
       headers: {'Content-Type': 'application/json'},
       transformRequest: function (data) {
@@ -34,11 +34,16 @@ angular.module('angular-tools.persona', [])
     var directiveDefinitionObject = {
       restrict: 'E',
       template: '<div id="user">' +
-                '  <button ng-hide="email" class="button btn btn-primary login" title="Click to sign in.">Sign In</button>' +
-                '  <p ng-show="email" class="email">{{email}}    <button class="btn btn-primary" title="Click to sign out.">Sign Out</button></p>' +
+                '  <a ng-hide="loggedInUser.email" class="button login" title="Click to sign in.">Sign In</a>' +
+                '  <p ng-show="loggedInUser.email">{{ loggedInUser.email }}  |  <a class="email" title="Click to sign out.">Sign Out</a></p>' +
                 '</div>',
 
       link: function userPostLink(scope, iElement, iAttrs) {
+
+        var removeUser = function(){
+          $rootScope.loggedInUser = null;
+        }
+
         // Log in when we click the login button.
         iElement.find('.button.login').on('click', function () {
           navigator.id.get(function (assertion) {
@@ -46,18 +51,16 @@ angular.module('angular-tools.persona', [])
               return;
             }
             scope.$apply(function(e){
-              $http.post('http://127.0.0.1:3000/persona/verify', {assertion: assertion}, personaOptions).success(function (data, status, headers, config) {
-                console.log("IN");
+              $http.post('/persona/verify', {assertion: assertion}, personaOptions).success(function (data, status, headers, config) {
                   if (data.status === 'okay') {
-                    console.log(data.email);
-                    scope.email = data.email;
+                    $rootScope.loggedInUser = {email: data.email};
                   } else {
                     console.log('Login failed because ' + data.reason);
-                    scope.email = null;
+                    removeUser();
                   }
                 }).error(function (data, status, headers, config) {
                   console.log('Login failed (' + status + ') with data ' + data);
-                  scope.email = null;
+                  removeUser();
                 });
             });
           });
@@ -65,19 +68,21 @@ angular.module('angular-tools.persona', [])
 
         // Log out when we click the email address.
         iElement.find('.email').on('click', function () {
-          $http.post('/persona/logout', {}, personaOptions)
-            .success(function (data, status, headers, config) {
-              if (data.status === 'okay') {
-                console.log('Logout succeeded.');
-                scope.email = null;
-              } else {
-                console.log('Login failed because ' + data.reason);
-                scope.email = null;
-              }
-            }).error(function (data, status, headers, config) {
-              console.log('Logout failed (' + status + ') with data ' + JSON.stringify(data));
-              scope.email = null;
-            });
+          scope.$apply(function(e){
+            $http.post('/persona/logout', {}, personaOptions)
+              .success(function (data, status, headers, config) {
+                if (data.status === 'okay') {
+                  console.log('Logout succeeded.');
+                  removeUser();
+                } else {
+                  console.log('Login failed because ' + data.reason);
+                  removeUser();
+                }
+              }).error(function (data, status, headers, config) {
+                console.log('Logout failed (' + status + ') with data ' + JSON.stringify(data));
+                  removeUser();
+              });
+          });
         });
 
       }

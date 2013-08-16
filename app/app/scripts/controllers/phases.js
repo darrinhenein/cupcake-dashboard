@@ -3,7 +3,7 @@ angular.module('cupcakeDashboard')
 
     $rootScope.navPhase = $stateParams.id;
 
-    $http.get('http://localhost:3000/api/phase/' + $stateParams.id, { cache: true }).success(function(data){
+    $http.get('/api/phase/' + $stateParams.id, { cache: false }).success(function(data){
       $scope.projects = data;
     })
 

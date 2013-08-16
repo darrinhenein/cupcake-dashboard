@@ -25,4 +25,10 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
         templateUrl: 'views/main.html',
         controller: 'PhaseCtrl'
       })
+  })
+  .run(function ($rootScope, $http){
+    // get session user
+    $http.get('/getUser').then(function(res){
+      $rootScope.loggedInUser = {email: res.data.logged_in_email};
+    });
   });

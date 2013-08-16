@@ -40,6 +40,19 @@ body {
 
 // custom style
 
+tr .projectTitle {
+    position: relative;
+}
+tr.owned .projectTitle:after{
+    display: inline;
+    content: '\2022';
+    color: #A9E627;
+    position: absolute;
+    right: -15px;
+    top: 1px;
+    font-size: 24px;
+}
+
 a{cursor:pointer;}
 .badge, .label{text-shadow: none;}
 
@@ -90,4 +103,11 @@ small.description {
     text-overflow: ellipsis;
     max-width: 250px;
     display: inline-block;
+}
+.profile img{
+    border-radius: 50%;
+    border: 3px solid #EEE;
+}
+.profile.owned img{
+    border-color: #A9E627;
 }
