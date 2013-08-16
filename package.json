@@ -10,7 +10,9 @@
     "ejs": "~0.8.4",
     "express-persona": "0.0.9"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "coffee-script": "~1.6.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
