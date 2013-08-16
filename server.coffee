@@ -59,7 +59,7 @@ PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000
 HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1'
 
 # Must match your browser's address bar
-audience = 'http://' + HOST + ':3000'
+audience = 'http://' + HOST + ':' + PORT
 
 require('express-persona') app,
   audience: audience
@@ -139,4 +139,4 @@ app.get "/getUser", (req, res) ->
 
 
 console.log "Listening at #{HOST}:#{PORT}..."
-app.listen 3000, HOST
+app.listen PORT, HOST
