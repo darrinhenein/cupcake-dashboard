@@ -4,14 +4,18 @@ restful = require("node-restful")
 url = require("url")
 cors = require("cors")
 mongoose = restful.mongoose
+Project = require("./models/project")
 Phases = require("./models/phases")
 EventSchema = require("./models/event")
+AdminRoutes = require("./routes/admin")
 
 # logging template
 logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                           '<%= status %> <%= method %> <%= url %>');
 
 app = express()
+
+app.resource = Project
 
 # app.use cors()
 app.use express.bodyParser()
@@ -66,33 +70,6 @@ require('express-persona') app,
 
 mongoose.connect "mongodb://localhost/projects"
 
-Project = app.resource = restful.model("project", mongoose.Schema(
-  title: "string"
-  description: "string"
-  owner_email: "string"
-  progress: {
-    type: "number"
-    default: 0
-    required: true
-  }
-  phase: {
-    type: "number"
-    default: 0
-    required: true
-  }
-  created_at: {
-    type: "date"
-    default: Date.now
-  }
-  is_finished: "boolean"
-  phases: {}
-)).methods [
-  "get"
-  "post"
-  "put"
-  "delete"
-]
-
 auth = (req, res, next) ->
   if req.session.email
     res.logged_in_email = req.session.email
@@ -103,6 +80,11 @@ auth = (req, res, next) ->
 
 # server side auth on projects
 # Project.before('post', auth).before('put', auth).before('get', auth)
+
+Project.before 'put', (req, res, next) ->
+  console.log req.route
+  console.log req.body
+  next()
 
 Project.route "total.get", (req, res) ->
   Project.find {}, (err, docs) ->
@@ -130,8 +112,13 @@ index = (req, res) -> res.render 'index.html'
 # Angular Soutes
 app.get "/", index
 app.get "/project/:projectId", index
+app.get "/project/:projectId/edit", index
 app.get "/project/:projectId/:phaseId", index
 app.get "/phase/:phaseId", index
+
+# admin
+app.get "/admin/dump", AdminRoutes.dump
+app.post "/admin/load", AdminRoutes.load
 
 # auth
 app.get "/getUser", (req, res) ->
