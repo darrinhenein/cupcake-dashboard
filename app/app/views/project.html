@@ -1,13 +1,16 @@
 <h3 >{{ project.title }} <small>{{ project.created_at | date }}</small>
-  <span class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+  <span class="pull-right profile" ng-show="project.owner_email" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
     <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
     <i>{{ project.owner_email }}</i>
   </span>
 </h3>
 
+<a ng-href="project/{{ project._id }}/edit"><button ng-show="(loggedInUser.email!= null && project.owner_email==loggedInUser.email)" class="btn btn-primary">Edit</button></a>
 <hr/>
 
 <p class="lead">{{ project.description }}</p>
+
+
 
 <div ui-view></div>
 

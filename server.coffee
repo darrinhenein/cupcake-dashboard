@@ -79,11 +79,12 @@ auth = (req, res, next) ->
     next()
 
 # server side auth on projects
-# Project.before('post', auth).before('put', auth).before('get', auth)
+# Project.before('post', auth).before('put', auth)
 
 Project.before 'put', (req, res, next) ->
-  console.log req.route
-  console.log req.body
+  # Remove Angular properties, and immutable _id (BUG, PR on github.com -> node-restful)
+  delete req.body._id
+  delete req.body.$resolved
   next()
 
 Project.route "total.get", (req, res) ->
@@ -109,7 +110,7 @@ app.get "/api/phases", (req, res) ->
 
 index = (req, res) -> res.render 'index.html'
 
-# Angular Soutes
+# Angular Routes
 app.get "/", index
 app.get "/project/:projectId", index
 app.get "/project/:projectId/edit", index

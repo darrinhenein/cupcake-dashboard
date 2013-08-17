@@ -1,0 +1,29 @@
+<h3><input ng-model="project.title"/>
+  <span class="pull-right profile" ng-show="project.owner_email" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+    <img src="http://avatars.io/email/{{ project.owner_email }}" width="36" height="36">
+    <i>{{ project.owner_email }}</i>
+  </span>
+</h3>
+
+<hr/>
+
+<h5>Description</h5>
+<textarea class="input-block-level" ng-model="project.description"></textarea>
+
+<hr/>
+
+<div ng-repeat="phase in phases" >
+  <div ng-if="phase.phase <= project.phase">
+    <h5>{{ phase.title }}</h5>
+    <textarea class="input-block-level" rows="8" ng-if="project.phases[phase.phase]" ng-model="project.phases[phase.phase].body"></textarea>
+    <textarea class="input-block-level" rows="8" ng-if="!project.phases[phase.phase]" ng-model="tempPhases[phase.phase]['body']"></textarea>
+  </div>
+</div>
+
+<button class="btn btn-success" ng-click="save()">Save</button>
+
+<hr>
+
+<ul class="pager">
+  <li class="previous"><a href="/project/{{ project._id }}/{{ project.phase }}">&larr; Back</a></li>
+</ul>
