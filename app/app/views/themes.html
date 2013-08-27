@@ -1,0 +1,13 @@
+ <table ng-show="themes.length" class="table table-hover">
+   <tr>
+   <th>Title</th>
+   <th>Owner</th>
+   <th>Created</th>
+   </tr>
+   <tr ng-repeat="theme in themes" ng-class="{owned: (loggedInUser.email!= null && theme.owner_email==loggedInUser.email)}">
+     <td><a class="projectTitle" ng-href="/theme/{{ theme._id }}"><strong>{{ theme.title }}</strong> <span class="badge">{{ theme.count }}</span></a></td>
+     <td>{{ theme.owner_email }}</td>
+     <td>{{ theme.created_at | date }}</td>
+   </tr>
+</table>
+<div ng-show="!themes.length" class="well">No themes.</div>

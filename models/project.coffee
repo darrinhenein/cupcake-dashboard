@@ -1,7 +1,8 @@
 restful = require "node-restful"
 mongoose = restful.mongoose
+ObjectId = mongoose.Schema.Types.ObjectId
 
-module.exports = restful.model("project", mongoose.Schema(
+module.exports = ProjectSchema = restful.model("project", mongoose.Schema(
   title: "string"
   description: "string"
   owner_email: "string"
@@ -21,6 +22,10 @@ module.exports = restful.model("project", mongoose.Schema(
   }
   is_finished: "boolean"
   phases: {}
+  themes: [{
+    type: ObjectId
+    ref: 'theme'
+    }]
 )).methods [
   "get"
   "post"

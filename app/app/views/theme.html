@@ -1,0 +1,23 @@
+<h2>{{ theme.theme.title }}</h2>
+<p class="lead">{{ theme.theme.description }}</p>
+<hr/>
+
+  <table ng-show="theme.projects.length" class="table table-hover">
+    <tr>
+    <th>Title</th>
+    <th>Owner</th>
+    <th>Date Started</th>
+    <th>Phase</th>
+    <th>Progress</th>
+    </tr>
+    <tr ng-repeat="project in theme.projects" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+      <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
+      <td>{{ project.owner_email }}</td>
+      <td>{{ project.created_at | date }}</td>
+      <td><span class="label {{ phases[project.phase].title | lowercase }}">{{ phases[project.phase].title }}</span></td>
+      <td>
+        <progress-bar progress="{{project.progress}}" />
+      </td>
+    </tr>
+ </table>
+ <div ng-show="!theme.projects.length" class="well">No projects.</div>

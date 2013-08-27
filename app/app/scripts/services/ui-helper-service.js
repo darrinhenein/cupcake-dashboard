@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .service('PhaseService', function Phases($http) {
+  .service('UIHelperService', function Phases($http) {
 
         self = this;
 

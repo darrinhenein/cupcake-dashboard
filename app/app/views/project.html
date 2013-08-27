@@ -1,8 +1,12 @@
+<!-- <div ng-include="'views/projects-nav.html'"></div> -->
+
 <h3 >{{ project.title }} <small>{{ project.created_at | date }}</small>
-  <span class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+  <span ng-show="project.owner_email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
     <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
     <i>{{ project.owner_email }}</i>
   </span>
+  <br/>
+  <a href="/theme/{{ theme._id }}" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
 </h3>
 
 <hr/>

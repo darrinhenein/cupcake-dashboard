@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('PhaseCtrl', function ($scope, $rootScope, $http, $stateParams, PhaseService) {
+  .controller('PhaseCtrl', function ($scope, $rootScope, $http, $stateParams, UIHelperService) {
 
     $rootScope.navPhase = $stateParams.id;
 
@@ -7,10 +7,10 @@ angular.module('cupcakeDashboard')
       $scope.projects = data;
     })
 
-    PhaseService.phases().then(function(data){
+    UIHelperService.phases().then(function(data){
       $scope.phases = data;
     });
-    PhaseService.total().then(function(data){
+    UIHelperService.total().then(function(data){
       $scope.projectsTotal = data;
     });
 

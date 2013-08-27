@@ -1,12 +1,13 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectPhasesCtrl', function ($scope, $resource, $stateParams, $location, PhaseService) {
+  .controller('ProjectPhasesCtrl', function ($scope, $resource, $stateParams, UIHelperService) {
+
     if($stateParams.phase){
       $scope.activePhase = $stateParams.phase;
     } else {
       $scope.activePhase = project.phase;
     }
 
-    PhaseService.phases().then(function(data){
+    UIHelperService.phases().then(function(data){
       $scope.phases = data;
     });
   });

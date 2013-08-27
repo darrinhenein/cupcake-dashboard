@@ -7,9 +7,19 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
     $stateProvider
       .state('base', {
         url: '/',
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
+        templateUrl: 'views/themes.html',
+        controller: 'ThemesCtrl'
       })
+        .state('theme', {
+          url: '/theme/:id',
+          templateUrl: 'views/theme.html',
+          controller: 'ThemeCtrl'
+        })
+        .state('projects', {
+          url: '/projects',
+          templateUrl: 'views/projects.html',
+          controller: 'ProjectsCtrl'
+        })
         .state('project', {
           url: '/project/:id',
           templateUrl: 'views/project.html',
@@ -22,7 +32,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
           })
       .state('phase', {
         url: '/phase/:id',
-        templateUrl: 'views/main.html',
+        templateUrl: 'views/projects.html',
         controller: 'PhaseCtrl'
       })
   })

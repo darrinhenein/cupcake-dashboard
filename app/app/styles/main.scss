@@ -57,9 +57,10 @@ a{cursor:pointer;}
 .badge, .label{text-shadow: none;}
 
 .progress .bar{
-    transition: width 1s ease;
     @include background(linear-gradient($linkColor, darken($linkColor, 10%)));
+    transition: all 1s ease-in-out;
 }
+
 .chevrons {
     padding: 0;
     margin: 0 0 20px 0;
@@ -110,4 +111,10 @@ small.description {
 }
 .profile.owned img{
     border-color: #A9E627;
+}
+h3 span.badge {
+    margin-right: 3px;
+    &:hover {
+        background-color: #6B18B0;
+    }
 }

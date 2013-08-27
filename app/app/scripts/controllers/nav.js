@@ -1,14 +1,14 @@
 angular.module('cupcakeDashboard')
-  .controller('NavCtrl', function ($scope, $rootScope, PhaseService) {
+  .controller('NavCtrl', function ($scope, $rootScope, UIHelperService) {
 
     $rootScope.$watch('navPhase', function(){
       $scope.navPhase = $rootScope.navPhase;
     });
 
-    PhaseService.phases().then(function(data){
+    UIHelperService.phases().then(function(data){
       $scope.phases = data;
     });
-    PhaseService.total().then(function(data){
+    UIHelperService.total().then(function(data){
       $scope.projectsTotal = data;
     });
 
