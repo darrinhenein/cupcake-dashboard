@@ -2,9 +2,10 @@
   <li ng-class="{ active: navPhase=='all'}">
     <a ng-href="/projects">All <span class="badge">{{ projectsTotal }}</span></a>
   </li>
-  <li ng-repeat="phase in phases" ng-class="{ active: phase.phase==navPhase }">
-    <a ng-href="/phase/{{ phase.phase }}" ng-class="{ muted: !phase.count }">
+  <li ng-repeat="phase in phases" ng-class="{ active: phase.phase==navPhase, muted: !phase.count  }">
+    <a ng-href="/phase/{{ phase.phase }}">
       <strong>{{ phase.title }}</strong> <span class="badge">{{ phase.count || 0 }}</span>
     </a>
   </li>
 </ul>
+<br/>

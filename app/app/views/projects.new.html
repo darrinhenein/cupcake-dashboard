@@ -1,22 +1,9 @@
-<h3>
-  <span editable="project.title"/>
-   <small>{{ project.created_at | date }}</small>
-  <span ng-show="project.owner_email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
-    <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
-    <i>{{ project.owner_email }}</i>
-  </span>
-  <br/>
-  <a href="/theme/{{ theme._id }}" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
-</h3>
+<h3>New Project</h3>
 
-<hr/>
+<label>Title</label>
+<input class="form-control" type="text" ng-model="project.title" placeholder="Title…">
 
-<p editable="project.description" class="lead"></p>
-
-<div ui-view></div>
-
-<hr/>
-
-<ul class="pager">
-  <li class="previous"><a href="#">&larr; Back</a></li>
-</ul>
+<label>Description</label>
+<textarea class="form-control" type="text" ng-model="project.description" placeholder="Description..."></textarea>
+<br/>
+<a ng-click="save()" class="btn btn-success">Save</a>

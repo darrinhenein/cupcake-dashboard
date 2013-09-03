@@ -1,5 +1,5 @@
 <h3>
-  <span editable="project.title" callback="update(data)"></span>
+  <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
    <small>{{ project.created_at | date }}</small>
   <span ng-show="project.owner_email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
     <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
@@ -11,12 +11,10 @@
 
 <hr/>
 
-<p editable="project.description" callback="update(data)" class="lead"></p>
+<p editable="project.description" auth="projectPermissions.edit" callback="update(data)" class="lead"></p>
 
 <div ui-view></div>
 
 <hr/>
 
-<ul class="pager">
-  <li class="previous"><a href="#">&larr; Back</a></li>
-</ul>
+<button ng-show="projectPermissions.remove" ng-click="remove()" class="btn btn-danger">Delete Project</button>

@@ -4,21 +4,36 @@ $iconSpritePath: "../images/glyphicons-halflings.png";
 $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
 
-$bodyBackground: #FEFEFE;
-$linkColor: #6B18B0;
-$sansFontFamily: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$body-background: #FEFEFE;
+$link-color: #6B18B0;
+$font-family-sans-serif: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
 
 @import "bootstrap-sass/lib/bootstrap";
-
 
 
 /* Put your CSS here */
 html, body {
   margin: 20px;
+  // font-family: $font-family-sans-serif;
+  // background: $body-background;
 }
 
+// a {
+//     color: $link-color;
+// }
+
 body {
+    // padding-top: 70px;
     color: #333;
+}
+
+.navbar-nav{
+    margin: 0 auto;
+}
+.form-inline .form-control {
+    width: auto;
+    margin-right: 5px;
 }
 
 .hero-unit {
@@ -40,25 +55,25 @@ body {
 
 // custom style
 
-tr .projectTitle {
-    position: relative;
-}
-tr.owned .projectTitle:after{
-    display: inline;
-    content: '\2022';
-    color: #A9E627;
-    position: absolute;
-    right: -15px;
-    top: 1px;
-    font-size: 24px;
-}
+// tr .projectTitle {
+//     position: relative;
+// }
+// tr.owned .projectTitle:after{
+//     display: inline;
+//     content: '\2022';
+//     color: #A9E627;
+//     position: absolute;
+//     right: -15px;
+//     top: 1px;
+//     font-size: 24px;
+// }
 
 a{cursor:pointer;}
-.badge, .label{text-shadow: none;}
 
 .progress .bar{
-    @include background(linear-gradient($linkColor, darken($linkColor, 10%)));
+    @include background(linear-gradient($link-color, darken($link-color, 10%)));
     transition: all 1s ease-in-out;
+    height: 100%;
 }
 
 .chevrons {
@@ -92,7 +107,7 @@ a{cursor:pointer;}
         color: #333;
     }
     &.active a{
-        color: $linkColor;
+        color: $link-color;
     }
     &.hasBody a{
         font-weight: bold;
@@ -117,4 +132,21 @@ h3 span.badge {
     &:hover {
         background-color: #6B18B0;
     }
+}
+
+#user img{
+    border-radius: 50%;
+    margin-right: 5px;
+    border: 2px solid #FFF;
+}
+
+.muted a{
+    color: #666;
+}
+
+.text-label{
+    font-weight: bold;
+    font-size: 75%;
+    color: #121314;
+    padding: 0 3px;
 }

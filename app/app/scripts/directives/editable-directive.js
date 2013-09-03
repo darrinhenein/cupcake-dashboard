@@ -3,14 +3,13 @@ angular.module('cupcakeDashboard')
     var editorTemplate = '<div class="click-to-edit">' +
         '<div ng-hide="view.editorEnabled">' +
             '{{value}} ' +
-            '<a ng-click="enableEditor()">Edit</a>' +
+            '<a ng-show="auth" class="btn btn-primary btn-xs" ng-click="enableEditor()">Edit</a>' +
         '</div>' +
-        '<div ng-show="view.editorEnabled">' +
-            '<input ng-model="view.editableValue">' +
-            '<a ng-click="save()">Save</a>' +
-            ' or ' +
-            '<a ng-click="disableEditor()">cancel</a>.' +
-        '</div>' +
+        '<form ng-show="view.editorEnabled" class="form-inline">' +
+            '<input class="form-control col-lg-2" ng-model="view.editableValue">' +
+            '<a class="btn btn-primary btn-xs" ng-click="save()">Save</a>  ' +
+            '<a class="btn btn-primary btn-xs" ng-click="disableEditor()">Cancel</a>' +
+        '</form>' +
     '</div>';
 
     return {
@@ -20,7 +19,8 @@ angular.module('cupcakeDashboard')
         scope: {
             value: "=editable",
             callback: "&",
-            property: "@editable"
+            property: "@editable",
+            auth: "="
         },
         controller: function($scope) {
             $scope.view = {
@@ -31,6 +31,7 @@ angular.module('cupcakeDashboard')
             $scope.enableEditor = function() {
                 $scope.view.editorEnabled = true;
                 $scope.view.editableValue = $scope.value;
+                $scope.view.auth = $scope.auth;
             };
 
             $scope.disableEditor = function() {
@@ -42,7 +43,7 @@ angular.module('cupcakeDashboard')
                 $scope.disableEditor();
                 obj = {}
                 obj[$scope.property] = $scope.value
-                $scope.callback({data: obj});
+                $scope.callback({data: {path: $scope.property, value: $scope.value}});
             };
         }
     };

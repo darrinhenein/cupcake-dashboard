@@ -34,8 +34,9 @@ angular.module('angular-tools.persona', [])
     var directiveDefinitionObject = {
       restrict: 'E',
       template: '<div id="user">' +
-                '  <a ng-hide="loggedInUser.email" class="button login" title="Click to sign in.">Sign In</a>' +
-                '  <p ng-show="loggedInUser.email">{{ loggedInUser.email }}  |  <a class="email" title="Click to sign out.">Sign Out</a></p>' +
+                '  <a ng-hide="loggedInUser.email || progress" class="button login" title="Click to sign in.">Sign In</a>' +
+                '  <p ng-show="progress">Signing In...</p>' +
+                '  <p ng-show="loggedInUser.email"><img src="http://avatars.io/email/{{ loggedInUser.email }}" width=24 height=24 />{{ loggedInUser.email }} <small class="text-label">{{ permissions.userType }}</small> |  <a class="email" title="Click to sign out.">Sign Out</a></p>' +
                 '</div>',
 
       link: function userPostLink(scope, iElement, iAttrs) {
@@ -50,8 +51,10 @@ angular.module('angular-tools.persona', [])
             if (!assertion) {
               return;
             }
+            scope.progress = true;
             scope.$apply(function(e){
               $http.post('/persona/verify', {assertion: assertion}, personaOptions).success(function (data, status, headers, config) {
+                scope.progress = false;
                   if (data.status === 'okay') {
                     $rootScope.loggedInUser = {email: data.email};
                   } else {

@@ -72,7 +72,7 @@ require('express-persona') app,
 
 mongoose.connect "mongodb://localhost/projects"
 
-auth = (req, res, next) ->
+isLoggedIn = (req, res, next) ->
   if req.session.email
     res.logged_in_email = req.session.email
     next()
@@ -80,8 +80,22 @@ auth = (req, res, next) ->
     res.send 'Not Authenticated'
     next()
 
+authProject = (req, res, next) ->
+  isLoggedIn req, res, ->
+    project = Project.findOne({_id:req.params.id}).exec (err, doc) ->
+      if doc.owner_email is req.session.email or getAuthLevel(req.session.email) is 3
+        next()
+      else
+        res.send 'Not Authorized'
+
+isAdmin = (req, res, next) ->
+  isLoggedIn req, res, ->
+    next()
+
 # server side auth on projects
-# Project.before('post', auth).before('put', auth).before('get', auth)
+Project.before('post', isAdmin)
+Project.before('put', authProject)
+Project.before('delete', authProject);
 
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
@@ -141,15 +155,39 @@ app.get "/project/:projectId/:phaseId", index
 app.get "/phase/:phaseId", index
 app.get "/themes", index
 app.get "/theme/:themeId", index
+app.get "/401", index
 
 # admin
 app.get "/admin/dump", AdminRoutes.dump
 app.post "/admin/load", AdminRoutes.load
 
-# auth
-app.get "/getUser", (req, res) ->
-  res.send {logged_in_email: req.session.email}
+# Auth Levels
+# 0 : Public (no write/delete)
+# 1 : Not Used
+# 2 : Editor (can create/delete/edit own models)
+# 3 : Admin  (all access)
 
+# whitelist of admin emails
+adminWhitelist = ['darrin', 'dhenein']
+
+getAuthLevel = (email) ->
+  [username, domain] = email.split '@'
+  console.log username, domain
+  if domain = 'mozilla.org' or 'mozilla.com'
+    if _.contains adminWhitelist, username
+      return 3
+    else
+      return 2
+  return 0
+
+# auth user
+app.get "/getUser", (req, res) ->
+  if req.session.email
+    res.send
+      email: req.session.email
+      authLevel: getAuthLevel(req.session.email)
+  else
+    res.send {error: 'Not logged in'}
 
 console.log "Listening at #{HOST}:#{PORT}..."
 app.listen PORT, HOST

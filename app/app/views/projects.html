@@ -1,5 +1,6 @@
   <div ng-include="'views/projects-nav.html'"></div>
   <table ng-show="projects.length" class="table table-hover">
+  <thead>
     <tr>
     <th>Title</th>
     <th>Owner</th>
@@ -7,14 +8,20 @@
     <th>Phase</th>
     <th>Progress</th>
     </tr>
-    <tr ng-repeat="project in projects" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
-      <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
+    </thead>
+    <tbody>
+    <tr ng-repeat="project in projects">
+      <td>
+        <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a>
+        <span ng-show="loggedInUser != null && loggedInUser.email == project.owner_email">○</span>
+      </td>
       <td>{{ project.owner_email }}</td>
       <td>{{ project.created_at | date }}</td>
-      <td><span class="label {{ phases[project.phase].title | lowercase }}">{{ phases[project.phase].title }}</span></td>
+      <td>{{ phases[project.phase].title }}</td>
       <td>
         <progress-bar progress="{{project.progress}}" />
       </td>
     </tr>
+    </tbody>
  </table>
- <div ng-show="!projects.length" class="well">No projects.</div>
+ <div ng-show="!projects.length" class="well well-lg">No projects.</div>
