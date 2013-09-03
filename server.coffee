@@ -83,12 +83,6 @@ auth = (req, res, next) ->
 # server side auth on projects
 # Project.before('post', auth).before('put', auth).before('get', auth)
 
-
-Project.before 'put', (req, res, next) ->
-  console.log req.route
-  console.log req.body
-  next()
-
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
   id = req.route.params.id
@@ -123,6 +117,8 @@ app.get "/api/phase/:id", (req, res) ->
     res.send docs
 
 app.get "/api/phases", (req, res) ->
+    for phase in Phases
+      phase.count = 0
     Project.aggregate
       $group:
         _id: "$phase"
@@ -135,9 +131,10 @@ app.get "/api/phases", (req, res) ->
 
 index = (req, res) -> res.render 'index.html'
 
-# Angular Soutes
+# Angular Routes
 app.get "/", index
 app.get "/projects", index
+app.get "/projects/new", index
 app.get "/project/:projectId", index
 app.get "/project/:projectId/edit", index
 app.get "/project/:projectId/:phaseId", index

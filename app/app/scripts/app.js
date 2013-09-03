@@ -20,6 +20,11 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
           templateUrl: 'views/projects.html',
           controller: 'ProjectsCtrl'
         })
+        .state('projects.new', {
+          url: '/projects/new',
+          templateUrl: 'views/projects.new.html',
+          controller: 'ProjectsCtrl'
+        })
         .state('project', {
           url: '/project/:id',
           templateUrl: 'views/project.html',

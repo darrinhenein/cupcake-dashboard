@@ -5,7 +5,9 @@
    <th>Created</th>
    </tr>
    <tr ng-repeat="theme in themes" ng-class="{owned: (loggedInUser.email!= null && theme.owner_email==loggedInUser.email)}">
-     <td><a class="projectTitle" ng-href="/theme/{{ theme._id }}"><strong>{{ theme.title }}</strong> <span class="badge">{{ theme.count }}</span></a></td>
+     <td><a class="projectTitle" ng-href="/theme/{{ theme._id }}"><strong>{{ theme.title }}</strong> <span class="badge">{{ theme.count }}</span></a>
+     <p>{{ theme.description }}</p>
+     </td>
      <td>{{ theme.owner_email }}</td>
      <td>{{ theme.created_at | date }}</td>
    </tr>
