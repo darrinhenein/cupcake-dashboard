@@ -1,5 +1,5 @@
-<h2>{{ theme.theme.title }}</h2>
-<p class="lead">{{ theme.theme.description }}</p>
+<h2><span editable="theme.theme.title" auth="themePermissions.edit" callback="update(data)"></span></h2>
+<p class="lead"><span editable="theme.theme.description" auth="themePermissions.edit" callback="update(data)"></span></p>
 <hr/>
 
   <table ng-show="theme.projects.length" class="table table-hover">
@@ -14,10 +14,12 @@
       <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
       <td>{{ project.owner_email }}</td>
       <td>{{ project.created_at | date }}</td>
-      <td><span class="label {{ phases[project.phase].title | lowercase }}">{{ phases[project.phase].title }}</span></td>
+      <td>{{ phases[project.phase].title }}</td>
       <td>
         <progress-bar progress="{{project.progress}}" />
       </td>
     </tr>
  </table>
  <div ng-show="!theme.projects.length" class="well">No projects.</div>
+
+ <button ng-show="themePermissions.remove" ng-click="remove()" class="btn btn-danger">Delete Theme</button>

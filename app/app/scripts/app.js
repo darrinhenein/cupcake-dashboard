@@ -16,6 +16,12 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
           templateUrl: 'views/theme.html',
           controller: 'ThemeCtrl'
         })
+        .state('new-theme', {
+          url: '/themes/new',
+          templateUrl: 'views/themes.new.html',
+          controller: 'NewThemeCtrl',
+          auth: 3
+        })
         .state('projects', {
           url: '/projects',
           templateUrl: 'views/projects.html',
@@ -39,7 +45,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
           })
       .state('phase', {
         url: '/phase/:id',
-        templateUrl: 'views/projects.html',
+        templateurl: 'views/projects.html',
         controller: 'PhaseCtrl'
       })
       .state('notAuthorized', {

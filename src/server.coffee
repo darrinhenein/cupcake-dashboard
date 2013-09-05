@@ -87,6 +87,14 @@ authProject = (req, res, next) ->
       else
         res.send 'Not Authorized'
 
+authTheme = (req, res, next) ->
+  isLoggedIn req, res, ->
+    theme = Theme.findOne({_id:req.params.id}).exec (err, doc) ->
+      if doc.owner_email is req.session.email or getAuthLevel(req.session.email) is 3
+        next()
+      else
+        res.send 'Not Authorized'
+
 isAdmin = (req, res, next) ->
   isLoggedIn req, res, ->
     next()
@@ -95,6 +103,9 @@ isAdmin = (req, res, next) ->
 Project.before('post', isAdmin)
 Project.before('put', authProject)
 Project.before('delete', authProject);
+Theme.before('post', isAdmin);
+Theme.before('put', authTheme);
+Theme.before('delete', authTheme);
 
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
@@ -157,6 +168,7 @@ app.get "/project/:projectId/edit", index
 app.get "/project/:projectId/:phaseId", index
 app.get "/phase/:phaseId", index
 app.get "/themes", index
+app.get "/themes/new", index
 app.get "/theme/:themeId", index
 app.get "/401", index
 

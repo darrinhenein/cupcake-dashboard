@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, adminWhitelist, app, audience, authProject, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, url, _;
+  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, adminWhitelist, app, audience, authProject, authTheme, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, url, _;
 
   _ = require("underscore");
 
@@ -101,6 +101,21 @@
     });
   };
 
+  authTheme = function(req, res, next) {
+    return isLoggedIn(req, res, function() {
+      var theme;
+      return theme = Theme.findOne({
+        _id: req.params.id
+      }).exec(function(err, doc) {
+        if (doc.owner_email === req.session.email || getAuthLevel(req.session.email) === 3) {
+          return next();
+        } else {
+          return res.send('Not Authorized');
+        }
+      });
+    });
+  };
+
   isAdmin = function(req, res, next) {
     return isLoggedIn(req, res, function() {
       return next();
@@ -112,6 +127,12 @@
   Project.before('put', authProject);
 
   Project.before('delete', authProject);
+
+  Theme.before('post', isAdmin);
+
+  Theme.before('put', authTheme);
+
+  Theme.before('delete', authTheme);
 
   Project.before('get', function(req, res, next) {
     var id;
@@ -218,6 +239,8 @@
   app.get("/phase/:phaseId", index);
 
   app.get("/themes", index);
+
+  app.get("/themes/new", index);
 
   app.get("/theme/:themeId", index);
 

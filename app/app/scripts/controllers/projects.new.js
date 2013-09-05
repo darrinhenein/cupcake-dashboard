@@ -10,8 +10,4 @@ angular.module('cupcakeDashboard')
         $location.url("/projects");
       });
     }
-
-    UIHelperService.phases().then(function(data){
-      $scope.phases = data;
-    });
   });
