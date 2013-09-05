@@ -3,6 +3,7 @@ angular.module('cupcakeDashboard')
 
     var self = this;
     self.user = null;
+    self.contributorLevel = 2;
     self.adminLevel = 3;
     $rootScope.loggedInUser = null;
 
@@ -66,7 +67,7 @@ angular.module('cupcakeDashboard')
     }
 
     this.canAdd = function(){
-      return self.authLevel() >= self.adminLevel;
+      return self.authLevel() >= self.contributorLevel;
     }
 
     this.canEdit = function(model){

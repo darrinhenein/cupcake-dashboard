@@ -187,8 +187,7 @@ adminWhitelist = ['darrin', 'dhenein']
 
 getAuthLevel = (email) ->
   [username, domain] = email.split '@'
-  console.log username, domain
-  if domain = 'mozilla.org' or 'mozilla.com'
+  if domain = 'mozilla.org' or 'mozilla.com' or 'mozillafoundation.org'
     if _.contains adminWhitelist, username
       return 3
     else

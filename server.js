@@ -255,8 +255,7 @@
   getAuthLevel = function(email) {
     var domain, username, _ref;
     _ref = email.split('@'), username = _ref[0], domain = _ref[1];
-    console.log(username, domain);
-    if (domain = 'mozilla.org' || 'mozilla.com') {
+    if (domain = 'mozilla.org' || 'mozilla.com' || 'mozillafoundation.org') {
       if (_.contains(adminWhitelist, username)) {
         return 3;
       } else {
