@@ -1,0 +1,24 @@
+<h2>{{ email }}'s Projects</h2>
+<hr/>
+
+  <table ng-show="projects.length" class="table table-hover">
+    <tr>
+    <th>Title</th>
+    <th>Owner</th>
+    <th>Date Started</th>
+    <th>Phase</th>
+    <th>Progress</th>
+    </tr>
+    <tr ng-repeat="project in projects" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+      <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
+      <td>{{ project.owner_email }}</td>
+      <td>{{ project.created_at | date }}</td>
+      <td>{{ phases[project.phase].title }}</td>
+      <td>
+        <progress-bar progress="{{project.progress}}" />
+      </td>
+    </tr>
+ </table>
+ <div ng-show="!projects.length" class="well">No projects.</div>
+
+ <a class="btn btn-default" ng-show="permissions.add" ng-href="/projects/new">New Project</a>

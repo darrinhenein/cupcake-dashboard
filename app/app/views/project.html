@@ -17,12 +17,14 @@
   <div class="row">
     <div class="col-md-4">
       <small>THEMES</small><br/>
+      <small ng-show="project.themes.length == 0" class="muted">No themes.</small>
       <a href="/theme/{{ theme._id }}" ng-hide="projectPermissions.edit" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
       <a ng-show="projectPermissions.edit" ng-click="removeTheme(theme._id)" ng-repeat="theme in project.themes"><span class="badge remove">- {{ theme.title }}</span></a>
 
       <div ng-show="projectPermissions.edit">
-        <h5>All Themes</h5>
-        <span class="badge add" ng-click="addTheme(theme._id)" ng-hide="theme.hide" ng-repeat="theme in themes">+ {{ theme.title }}</span>
+        <br/>
+        <p class="text-label">All Themes</p>
+        <span class="badge add" ng-click="addTheme(theme._id)" ng-repeat="theme in themes | filter:notIn(project.themes)">+ {{ theme.title }}</span>
       </div>
     </div>
 

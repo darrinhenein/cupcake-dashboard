@@ -189,6 +189,22 @@
 
   Theme.register(app, "/api/themes");
 
+  app.get("/api/:email/projects", function(req, res) {
+    return Project.find({
+      owner_email: req.params.email
+    }).populate('themes').exec(function(err, docs) {
+      return res.send(docs);
+    });
+  });
+
+  app.get("/api/:email/themes", function(req, res) {
+    return Theme.find({
+      owner_email: req.params.email
+    }, function(err, docs) {
+      return res.send(docs);
+    });
+  });
+
   app.get("/api/phase/:id", function(req, res) {
     return Project.find({
       phase: req.params.id
@@ -229,6 +245,10 @@
   app.get("/projects", index);
 
   app.get("/projects/new", index);
+
+  app.get("/:email/projects", index);
+
+  app.get("/:email/themes", index);
 
   app.get("/project/:projectId", index);
 

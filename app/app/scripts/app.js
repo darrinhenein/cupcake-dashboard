@@ -16,6 +16,11 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
           templateUrl: 'views/theme.html',
           controller: 'ThemeCtrl'
         })
+        .state('user-themes', {
+          url: '/:email/themes',
+          templateUrl: 'views/user.themes.html',
+          controller: 'UserThemesCtrl'
+        })
         .state('new-theme', {
           url: '/themes/new',
           templateUrl: 'views/themes.new.html',
@@ -26,6 +31,11 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
           url: '/projects',
           templateUrl: 'views/projects.html',
           controller: 'ProjectsCtrl'
+        })
+        .state('user-projects', {
+          url: '/:email/projects',
+          templateUrl: 'views/user.projects.html',
+          controller: 'UserProjectsCtrl'
         })
         .state('new-project', {
           url: '/projects/new',
@@ -64,6 +74,9 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
     });
 
     $rootScope.$on('$stateChangeStart', function (ev, to, toParams, from, fromParams) {
+
+        $rootScope.currentPath = to.url;
+
         // if route requires auth and user is not logged in
         if(!to.auth) to.auth = 0;
         if (!AuthenticationService.canViewLevel(to.auth)) {

@@ -23,6 +23,10 @@ angular.module('cupcakeDashboard')
             auth: "="
         },
         controller: function($scope) {
+            if(!$scope.value)
+            {
+                $scope.value = 'Edit me...';
+            }
             $scope.view = {
                 editableValue: $scope.value,
                 editorEnabled: false

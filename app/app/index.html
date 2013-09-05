@@ -30,9 +30,15 @@
     <!-- Add your site or application content here -->
     <nav class="navbar navbar-default navbar-fixed-top"  role="navigation">
         <ul class="nav container navbar-nav navbar-fixed-top">
-            <li><a href="/">Themes</a></li>
-            <li><a href="/projects">Projects</a></li>
+            <li ng-class="{active: currentPath == '/'}"><a href="/">Themes</a></li>
+            <li ng-class="{active: currentPath == '/projects'}"><a href="/projects">Projects</a></li>
             <a class="btn btn-default navbar-btn" ng-show="permissions.add" ng-href="/projects/new">New Project</a>
+            <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/projects'}">
+                <a href="/{{ loggedInUser.email }}/projects"><small class="text-label">My Projects</small></a>
+            </li>
+            <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/themes'}">
+                <a href="/{{ loggedInUser.email }}/themes"><small class="text-label">My Themes</small></a>
+            </li>
             <li class="pull-right navbar-text">
                 <user></user>
             </li>
@@ -85,6 +91,7 @@
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/projects.js"></script>
+        <script src="scripts/controllers/user.projects.js"></script>
         <script src="scripts/controllers/project.phases.js"></script>
         <script src="scripts/controllers/projects.new.js"></script>
         <script src="scripts/controllers/phases.js"></script>
@@ -98,6 +105,7 @@
         <script src="scripts/controllers/nav.js"></script>
         <script src="scripts/controllers/theme.js"></script>
         <script src="scripts/controllers/themes.js"></script>
+        <script src="scripts/controllers/user.themes.js"></script>
         <script src="scripts/controllers/themes.new.js"></script>
         <!-- endbuild -->
 

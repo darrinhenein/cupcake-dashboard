@@ -146,15 +146,16 @@ h3 span.badge {
 
 .text-label{
     font-weight: bold;
-    font-size: 75%;
+    font-size: 10px;
     color: #121314;
     padding: 0 3px;
+    text-transform: uppercase;
 }
 .click-to-edit a.btn {
-    visibility: hidden;
+    opacity: 0.2;
 }
 .click-to-edit:hover a.btn {
-    visibility: visible;
+    opacity: 1;
 }
 .badge.add {
     cursor: pointer;

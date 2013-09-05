@@ -140,6 +140,14 @@ Project.register app, "/api/projects"
 Theme.register app, "/api/themes"
 
 
+app.get "/api/:email/projects", (req, res) ->
+  Project.find({owner_email: req.params.email}).populate('themes').exec (err, docs) ->
+    res.send docs
+
+app.get "/api/:email/themes", (req, res) ->
+  Theme.find {owner_email: req.params.email}, (err, docs) ->
+    res.send docs
+
 app.get "/api/phase/:id", (req, res) ->
   Project.find {phase: req.params.id},  (err, docs) ->
     res.send docs
@@ -163,6 +171,8 @@ index = (req, res) -> res.render 'index.html'
 app.get "/", index
 app.get "/projects", index
 app.get "/projects/new", index
+app.get "/:email/projects", index
+app.get "/:email/themes", index
 app.get "/project/:projectId", index
 app.get "/project/:projectId/edit", index
 app.get "/project/:projectId/:phaseId", index

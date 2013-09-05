@@ -80,4 +80,17 @@ angular.module('cupcakeDashboard')
           break;
       }
     }
+
+    $scope.notIn = function(group){
+      return function( item ) {
+          for(i in group)
+          {
+            if(group[i]._id == item._id)
+            {
+              return false;
+            }
+          }
+          return true;
+      };
+    }
   });

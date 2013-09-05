@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectsCtrl', function ($scope, $rootScope, $resource, UIHelperService, AuthenticationService) {
+  .controller('ProjectsCtrl', function ($scope, $rootScope, $resource, UIHelperService) {
 
     $rootScope.navPhase = 'all';
 
