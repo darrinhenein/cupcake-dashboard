@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectCtrl', function ($scope, $rootScope, $resource, $location, $stateParams, AuthenticationService) {
+  .controller('ProjectCtrl', function ($scope, $rootScope, $resource, $location, $stateParams, UIHelperService, AuthenticationService) {
     var projectId = $stateParams.id;
 
     var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
@@ -21,6 +21,14 @@ angular.module('cupcakeDashboard')
       $scope.project.$delete(function(){
         $location.path('/projects');
       });
+    }
+
+    UIHelperService.phases().then(function(data){
+      $scope.phases = data;
+    });
+
+    $scope.savePhase = function(){
+      Project.update({id: projectId}, {phase: $scope.project.phase});
     }
 
     $scope.update = function(data){

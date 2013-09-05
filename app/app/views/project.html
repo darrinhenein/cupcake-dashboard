@@ -1,12 +1,35 @@
 <h3>
-  <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
-   <small>{{ project.created_at | date }}</small>
-  <span ng-show="project.owner_email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
-    <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
-    <i>{{ project.owner_email }}</i>
-  </span>
-  <br/>
-  <a href="/theme/{{ theme._id }}" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
+  <div class="row">
+    <div class="col-md-6">
+      <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
+       <small>{{ project.created_at | date }}</small>
+     </div>
+    <div class="col-md-6">
+      <span ng-show="project.owner_email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+      <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
+      <i>{{ project.owner_email }}</i>
+      </span>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+    <div class="col-md-4">
+      <small>THEMES</small><br/>
+      <a href="/theme/{{ theme._id }}" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
+    </div>
+    <div class="col-md-4">
+      <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>
+    </div>
+    <div class="col-md-4">
+      <small>PHASE</small>
+      <p ng-hide="projectPermissions.edit" class="lead">{{ phases[project.phase].title }}</p>
+      <form ng-show="projectPermissions.edit" class="form-inline">
+        <select ng-model="project.phase" ng-options="p.phase as p.title for p in phases" ng-change="savePhase()" class="form-control col-lg-2"></select>
+      </form>
+    </div>
+  </div>
 </h3>
 
 <hr/>

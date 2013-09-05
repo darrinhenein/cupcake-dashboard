@@ -150,3 +150,9 @@ h3 span.badge {
     color: #121314;
     padding: 0 3px;
 }
+.click-to-edit a.btn {
+    visibility: hidden;
+}
+.click-to-edit:hover a.btn {
+    visibility: visible;
+}
