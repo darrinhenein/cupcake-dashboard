@@ -156,3 +156,11 @@ h3 span.badge {
 .click-to-edit:hover a.btn {
     visibility: visible;
 }
+.badge.add {
+    cursor: pointer;
+    background-color: #76CC26 !important;
+}
+.badge.remove {
+    cursor: pointer;
+    background-color: #C44917 !important;
+}

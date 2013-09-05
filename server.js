@@ -129,6 +129,14 @@
     }
   });
 
+  Project.after('put', function(req, res, next) {
+    return Project.findOne({
+      _id: res.locals.bundle._id
+    }).populate('themes').exec(function(err, doc) {
+      return res.send(doc);
+    });
+  });
+
   Theme.before('get', function(req, res, next) {
     if (req.params.id) {
       return Theme.findOne({

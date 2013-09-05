@@ -17,7 +17,12 @@
   <div class="row">
     <div class="col-md-4">
       <small>THEMES</small><br/>
-      <a href="/theme/{{ theme._id }}" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
+      <a href="/theme/{{ theme._id }}" ng-hide="projectPermissions.edit" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
+      <a ng-show="projectPermissions.edit" ng-click="removeTheme(theme._id)" ng-repeat="theme in project.themes"><span class="badge remove">- {{ theme.title }}</span></a>
+      <div ng-show="projectPermissions.edit">
+      <h6>All Themes</h6>
+      <span class="badge add" ng-click="addTheme(theme._id)" ng-hide="theme.hide" ng-repeat="theme in themes">+ {{ theme.title }}</span>
+      </div>
     </div>
     <div class="col-md-4">
       <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>

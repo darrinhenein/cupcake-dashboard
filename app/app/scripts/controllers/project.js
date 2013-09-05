@@ -8,6 +8,9 @@ angular.module('cupcakeDashboard')
       }
     });
 
+    var Themes = $resource('/api/themes/:id');
+
+    $scope.themes = Themes.query();
 
     $scope.project = Project.get({id: projectId}, function(){
       $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
@@ -16,6 +19,37 @@ angular.module('cupcakeDashboard')
     $scope.$watch('loggedInUser', function(){
       $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
     });
+
+    $scope.addTheme = function(themeId){
+      themes = [];
+      for (var i = $scope.project.themes.length - 1; i >= 0; i--) {
+        if($scope.project.themes[i]._id != themeId)
+        {
+          themes.push($scope.project.themes[i]._id);
+        }
+        else
+        {
+          return;
+        }
+      };
+      themes.push(themeId);
+      Project.update({id: projectId}, {themes: themes}, function(data){
+        $scope.project = data;
+      });
+    }
+
+    $scope.removeTheme = function(themeId){
+      themes = [];
+      for (var i = $scope.project.themes.length - 1; i >= 0; i--) {
+        if($scope.project.themes[i]._id != themeId)
+        {
+          themes.push($scope.project.themes[i]._id);
+        }
+      };
+      Project.update({id: projectId}, {themes: themes}, function(data){
+        $scope.project = data;
+      });
+    }
 
     $scope.remove = function(){
       $scope.project.$delete(function(){

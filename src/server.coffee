@@ -106,6 +106,10 @@ Project.before 'get', (req, res, next) ->
     Project.find().populate('themes').exec (err, docs) ->
       res.send docs
 
+Project.after 'put', (req, res, next) ->
+  Project.findOne({_id: res.locals.bundle._id}).populate('themes').exec (err, doc) ->
+    res.send doc
+
 Theme.before 'get', (req, res, next) ->
   # add related projects to theme response if querying one theme
   if req.params.id
