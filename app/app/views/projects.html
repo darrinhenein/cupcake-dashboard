@@ -10,7 +10,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="project in projects">
+    <tr ng-repeat="project in projects" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
       <td>
         <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a>
         <span ng-show="loggedInUser != null && loggedInUser.email == project.owner_email">○</span>

@@ -1,6 +1,7 @@
 <h2>{{ email }}'s Projects</h2>
 <hr/>
 
+  <h3>Projects</h3>
   <table ng-show="projects.length" class="table table-hover">
     <tr>
     <th>Title</th>
@@ -20,5 +21,26 @@
     </tr>
  </table>
  <div ng-show="!projects.length" class="well">No projects.</div>
+
+  <h3>Collaborations</h3>
+  <table ng-show="collaborations.length" class="table table-hover">
+    <tr>
+    <th>Title</th>
+    <th>Owner</th>
+    <th>Date Started</th>
+    <th>Phase</th>
+    <th>Progress</th>
+    </tr>
+    <tr ng-repeat="collaboration in collaborations" ng-class="{owned: (loggedInUser.email!= null && collaboration.owner_email==loggedInUser.email)}">
+      <td><a class="projectTitle" ng-href="/project/{{ collaboration._id }}/{{ collaboration.phase }}"><strong>{{ collaboration.title }}</strong></a></td>
+      <td>{{ collaboration.owner_email }}</td>
+      <td>{{ collaboration.created_at | date }}</td>
+      <td>{{ phases[collaboration.phase].title }}</td>
+      <td>
+        <progress-bar progress="{{collaboration.progress}}" />
+      </td>
+    </tr>
+ </table>
+ <div ng-show="!collaborations.length" class="well">No collaborations.</div>
 
  <a class="btn btn-default" ng-show="permissions.add" ng-href="/projects/new">New Project</a>

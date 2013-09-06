@@ -9,6 +9,10 @@ angular.module('cupcakeDashboard')
       $scope.projects = data;
     })
 
+    $http.get('/api/' + userEmail + '/collaborations', { cache: false }).success(function(data){
+      $scope.collaborations = data;
+    })
+
     UIHelperService.phases().then(function(data){
       $scope.phases = data;
     });

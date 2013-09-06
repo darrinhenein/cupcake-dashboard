@@ -141,8 +141,12 @@ Theme.register app, "/api/themes"
 
 
 app.get "/api/:email/projects", (req, res) ->
-  Project.find({owner_email: req.params.email}).populate('themes').exec (err, docs) ->
-    res.send docs
+  Project.find({owner_email: req.params.email}).populate('themes').exec (err, projects) ->
+    res.send projects
+
+app.get "/api/:email/collaborations", (req, res) ->
+  Project.where("collaborators.email", req.params.email).populate('themes').exec (err, collaborations) ->
+    res.send collaborations
 
 app.get "/api/:email/themes", (req, res) ->
   Theme.find {owner_email: req.params.email}, (err, docs) ->

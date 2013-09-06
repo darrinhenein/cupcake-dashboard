@@ -192,8 +192,14 @@
   app.get("/api/:email/projects", function(req, res) {
     return Project.find({
       owner_email: req.params.email
-    }).populate('themes').exec(function(err, docs) {
-      return res.send(docs);
+    }).populate('themes').exec(function(err, projects) {
+      return res.send(projects);
+    });
+  });
+
+  app.get("/api/:email/collaborations", function(req, res) {
+    return Project.where("collaborators.email", req.params.email).populate('themes').exec(function(err, collaborations) {
+      return res.send(collaborations);
     });
   });
 
