@@ -3,7 +3,7 @@ angular.module('cupcakeDashboard')
 
     var Theme = $resource('/api/themes/:id', { cache: false });
     $scope.theme = new Theme();
-    $scope.theme.owner_email = $rootScope.loggedInUser.email;
+    $scope.theme.owner = $rootScope.loggedInUser._id;
 
     $scope.save = function(){
       $scope.theme.$save(function(){

@@ -5,9 +5,9 @@
        <small>{{ project.created_at | date }}</small>
      </div>
     <div class="col-md-6">
-      <span ng-show="project.owner_email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
-      <img src="http://avatars.io/email/{{ project.owner_email }}" width=36 height=36 />
-      <i>{{ project.owner_email }}</i>
+      <span ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+      <img src="http://avatars.io/email/{{ project.owner.email }}" width=36 height=36 />
+      <i>{{ UI.displayName(project.owner) }}</i>
       </span>
     </div>
   </div>

@@ -1,5 +1,6 @@
 <h2><span editable="theme.theme.title" auth="themePermissions.edit" callback="update(data)"></span></h2>
 <p class="lead"><span editable="theme.theme.description" auth="themePermissions.edit" callback="update(data)"></span></p>
+<h4><i>{{ UI.displayName(theme.theme.owner) }}</i></h4>
 <hr/>
 
   <table ng-show="theme.projects.length" class="table table-hover">
@@ -10,9 +11,9 @@
     <th>Phase</th>
     <th>Progress</th>
     </tr>
-    <tr ng-repeat="project in theme.projects" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+    <tr ng-repeat="project in theme.projects" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
       <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
-      <td>{{ project.owner_email }}</td>
+      <td>{{ UI.displayName(project.owner) }}</td>
       <td>{{ project.created_at | date }}</td>
       <td>{{ phases[project.phase].title }}</td>
       <td>

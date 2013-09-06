@@ -71,10 +71,15 @@ angular.module('cupcakeDashboard')
     }
 
     this.canEdit = function(model){
-      if(self.user != null && model.owner_email == self.user.email){
+      console.log(model);
+      if(self.user != null && model.owner != null && model.owner.email == self.user.email){
         return true;
       }
       else if (self.authLevel() >= self.adminLevel)
+      {
+        return true;
+      }
+      else if (model.email != null && model.email == self.user.email)
       {
         return true;
       }

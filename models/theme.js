@@ -1,14 +1,19 @@
 (function() {
-  var ThemeSchema, mongoose, restful;
+  var ObjectId, ThemeSchema, mongoose, restful;
 
   restful = require("node-restful");
 
   mongoose = restful.mongoose;
 
+  ObjectId = mongoose.Schema.Types.ObjectId;
+
   module.exports = ThemeSchema = restful.model("theme", mongoose.Schema({
     title: "string",
     description: "string",
-    owner_email: "string",
+    owner: {
+      type: ObjectId,
+      ref: 'user'
+    },
     created_at: {
       type: "date",
       "default": Date.now

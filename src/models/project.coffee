@@ -5,7 +5,10 @@ ObjectId = mongoose.Schema.Types.ObjectId
 module.exports = ProjectSchema = restful.model("project", mongoose.Schema(
   title: "string"
   description: "string"
-  owner_email: "string"
+  owner: {
+    type: ObjectId
+    ref: 'user'
+  }
   progress: {
     type: "number"
     default: 0

@@ -1,0 +1,8 @@
+
+<h2>{{ UI.displayName(user) }}'s Profile</h2>
+
+<img  class="img-thumbnail" src="http://avatars.io/email/{{ user.email }}?size=large" width=100 height=100 />
+<h3><small class="text-label">First Name </small><span editable="user.first_name" auth="userPermissions.edit" callback="update(data)"></span></h3>
+<h3><small class="text-label">Last Name </small><span editable="user.last_name" auth="userPermissions.edit" callback="update(data)"></span></h3>
+<h5><small class="text-label">Email </small><br/>{{ user.email }}</h5>
+<h4><small class="text-label">Authentication Level </small><br/><span>{{ permissions.userType }}</span></h4>
