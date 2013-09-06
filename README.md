@@ -7,5 +7,6 @@ A dashboard for cupcakes.
 
 1. `npm install` to install coffee-script as a devDependency.
 1. Needs mongo running.
-1. `./node_modules/.bin/coffee server.coffee` to start the server.
+1. `grunt` in the main directory to build the server.
+1. `node server.js` to start the server.
 1. `grunt build` in /app to build the angular app.
