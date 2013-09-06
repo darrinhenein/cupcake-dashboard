@@ -1,6 +1,11 @@
 {
-  "name": "node-test",
+  "name": "cupcake-dashboard-client",
   "version": "0.0.0",
+  "description": "The client part of the cupcake-dashboard.",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/darrinhenein/cupcake-dashboard"
+  },
   "dependencies": {
     "karma-script-launcher": "~0.1.0",
     "karma-chrome-launcher": "~0.1.0",
