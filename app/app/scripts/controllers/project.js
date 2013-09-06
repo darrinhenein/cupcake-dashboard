@@ -81,6 +81,37 @@ angular.module('cupcakeDashboard')
       }
     }
 
+    $scope.addCollaborator = function(){
+      var collabs = $scope.project.collaborators;
+      for (var i = collabs.length - 1; i >= 0; i--) {
+        if(collabs[i].email == $scope.collaborator.email || $scope.collaborator.email == $scope.project.owner_email)
+        {
+          $scope.collaborator.email = '';
+          return;
+        }
+      };
+      collabs.push($scope.collaborator);
+      Project.update({id: projectId}, {collaborators: collabs}, function(data){
+        $scope.collaborator.email = '';
+        $scope.project = data;
+      });
+    }
+
+    $scope.removeCollaborator = function(collab){
+      var collabs = $scope.project.collaborators;
+      var newCollabs = [];
+      for (var i = collabs.length - 1; i >= 0; i--) {
+        if(collabs[i].email != collab.email)
+        {
+          newCollabs.push(collabs[i]);
+        }
+      };
+      Project.update({id: projectId}, {collaborators: newCollabs}, function(data){
+        $scope.project = data;
+      });
+
+    }
+
     $scope.notIn = function(group){
       return function( item ) {
           for(i in group)

@@ -25,6 +25,11 @@
       type: "date",
       "default": Date.now
     },
+    collaborators: [
+      {
+        email: "string"
+      }
+    ],
     is_finished: "boolean",
     phases: {},
     themes: [

@@ -20,6 +20,11 @@ module.exports = ProjectSchema = restful.model("project", mongoose.Schema(
     type: "date"
     default: Date.now
   }
+  collaborators: [
+    {
+      email: "string"
+    }
+  ]
   is_finished: "boolean"
   phases: {}
   themes: [{

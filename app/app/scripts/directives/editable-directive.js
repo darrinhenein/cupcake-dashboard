@@ -25,7 +25,7 @@ angular.module('cupcakeDashboard')
         controller: function($scope) {
             if(!$scope.value)
             {
-                $scope.value = 'Edit me...';
+                $scope.value = '';
             }
             $scope.view = {
                 editableValue: $scope.value,
