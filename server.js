@@ -235,7 +235,7 @@
     }).exec(function(err, doc) {
       return Theme.find({
         "owner": doc._id
-      }).exec(function(err, docs) {
+      }).populate('owner').exec(function(err, docs) {
         return res.send(docs);
       });
     });

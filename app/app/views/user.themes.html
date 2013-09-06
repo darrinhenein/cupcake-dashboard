@@ -11,7 +11,7 @@
      <td><a class="projectTitle" ng-href="/theme/{{ theme._id }}"><strong>{{ theme.title }}</strong> <span class="badge">{{ theme.count }}</span></a>
      <p>{{ theme.description }}</p>
      </td>
-     <td>{{ theme.owner.email }}</td>
+     <td>{{ UI.displayName(theme.owner) }}</td>
      <td>{{ theme.created_at | date }}</td>
    </tr>
 </table>

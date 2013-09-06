@@ -82,11 +82,13 @@ isLoggedIn = (req, res, next) ->
 
 authProject = (req, res, next) ->
   isLoggedIn req, res, ->
-    project = Project.findOne({_id:req.params.id}).populate('owner').exec (err, doc) ->
-      if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
-        next()
-      else
-        res.send 'Not Authorized'
+    project = Project.findOne({_id:req.params.id})
+                     .populate('owner')
+                     .exec (err, doc) ->
+                       if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
+                         next()
+                       else
+                         res.send 'Not Authorized'
 
 authTheme = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -121,24 +123,35 @@ Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
   id = req.route.params.id
   if id
-    Project.findOne({_id: id}).populate('themes').populate('owner').exec (err, docs) ->
-      res.send docs
+    Project.findOne({_id: id})
+           .populate('themes')
+           .populate('owner')
+           .exec (err, docs) ->
+             res.send docs
   else
     Project.find().populate('themes').populate('owner').exec (err, docs) ->
       res.send docs
 
 Project.after 'put', (req, res, next) ->
-  Project.findOne({_id: res.locals.bundle._id}).populate('themes').populate('owner').exec (err, doc) ->
-    res.send doc
+  Project.findOne({_id: res.locals.bundle._id})
+         .populate('themes')
+         .populate('owner')
+         .exec (err, doc) ->
+           res.send doc
 
 Theme.before 'get', (req, res, next) ->
   # add related projects to theme response if querying one theme
   if req.params.id
-    Theme.findOne({_id: req.params.id}).populate('owner').exec (err, doc) ->
-      Project.find({themes: doc._id}).populate('themes').populate('owner').exec (err, docs) ->
-        res.send
-          theme: doc
-          projects: docs
+    Theme.findOne({_id: req.params.id})
+         .populate('owner')
+         .exec (err, doc) ->
+           Project.find({themes: doc._id})
+                  .populate('themes')
+                  .populate('owner')
+                  .exec (err, docs) ->
+                    res.send
+                      theme: doc
+                      projects: docs
   else
     Theme.find().populate('owner').exec (err, docs) ->
       res.send docs
@@ -152,17 +165,21 @@ Theme.register app, "/api/themes"
 User.register app, "/api/users"
 
 app.get "/api/:email/projects", (req, res) ->
-  User.findOne({email: req.params.email}).exec (err, doc) ->
-    Project.find({"owner": doc._id}).populate('owner').populate('themes').exec (err, projects) ->
-      res.send projects
+  User.findOne({email: req.params.email})
+      .exec (err, doc) ->
+        Project.find({"owner": doc._id}).populate('owner').populate('themes').exec (err, projects) ->
+          res.send projects
 
 app.get "/api/:email/collaborations", (req, res) ->
-  Project.where("collaborators.email", req.params.email).populate('themes').populate('owner').exec (err, collaborations) ->
-    res.send collaborations
+  Project.where("collaborators.email", req.params.email)
+         .populate('themes')
+         .populate('owner')
+         .exec (err, collaborations) ->
+           res.send collaborations
 
 app.get "/api/:email/themes", (req, res) ->
   User.findOne({email: req.params.email}).exec (err, doc) ->
-    Theme.find({"owner": doc._id}).exec (err, docs) ->
+    Theme.find({"owner": doc._id}).populate('owner').exec (err, docs) ->
       res.send docs
 
 app.get "/api/phase/:id", (req, res) ->
