@@ -1,0 +1,16 @@
+name: cupcake-dashboard
+framework: node
+runtime: node08
+inherit: private.yml
+min_version:
+  client: 1.6.2
+  server: 2.6.7
+services:
+  ${name}-db: mongodb
+  # ${name}-cache: memcached # For later, perhaps…
+hooks:
+  post-staging:
+    - echo "It worked!"
+ignores:
+  - .git
+  - dev.db
