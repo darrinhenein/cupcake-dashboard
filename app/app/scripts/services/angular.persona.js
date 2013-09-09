@@ -13,7 +13,7 @@
 /* Directives */
 
 angular.module('angular-tools.persona', [])
-  .directive('user', function ($http, $rootScope) {
+  .directive('user', function ($http, $rootScope, $location) {
     var personaOptions = {
       headers: {'Content-Type': 'application/json'},
       transformRequest: function (data) {
@@ -36,7 +36,7 @@ angular.module('angular-tools.persona', [])
       template: '<div id="user">' +
                 '  <a ng-hide="loggedInUser.email || progress" class="button login" title="Click to sign in.">Sign In</a>' +
                 '  <p ng-show="progress">Signing In...</p>' +
-                '  <p ng-show="loggedInUser.email"><img src="http://avatars.io/email/{{ loggedInUser.email }}" width=24 height=24 />{{ loggedInUser.email }} <small class="text-label">{{ permissions.userType }}</small> |  <a class="email" title="Click to sign out.">Sign Out</a></p>' +
+                '  <p ng-show="loggedInUser.email"><img src="http://avatars.io/email/{{ loggedInUser.email }}" width=24 height=24 /><a ng-href="/profile">{{ UI.displayName(loggedInUser) }}</a> <small class="text-label">{{ permissions.userType }}</small> |  <a class="email" title="Click to sign out.">Sign Out</a></p>' +
                 '</div>',
 
       link: function userPostLink(scope, iElement, iAttrs) {
@@ -77,6 +77,7 @@ angular.module('angular-tools.persona', [])
                 if (data.status === 'okay') {
                   console.log('Logout succeeded.');
                   removeUser();
+                  $location.path("/");
                 } else {
                   console.log('Login failed because ' + data.reason);
                   removeUser();

@@ -84,7 +84,7 @@ angular.module('cupcakeDashboard')
     $scope.addCollaborator = function(){
       var collabs = $scope.project.collaborators;
       for (var i = collabs.length - 1; i >= 0; i--) {
-        if(collabs[i].email == $scope.collaborator.email || $scope.collaborator.email == $scope.project.owner_email)
+        if(collabs[i].email == $scope.collaborator.email || $scope.collaborator.email == $scope.project.owner.email)
         {
           $scope.collaborator.email = '';
           return;

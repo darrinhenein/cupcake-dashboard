@@ -20,4 +20,18 @@ angular.module('cupcakeDashboard')
           })
           return promise;
         }
+
+        this.displayName = function(user){
+
+          if(user.first_name || user.last_name)
+          {
+            return user.first_name + ' ' + user.last_name;
+          }
+          else
+          {
+            return user.email;
+          }
+
+
+        }
     });
