@@ -1,7 +1,7 @@
 name: cupcake-dashboard
 framework: node
 runtime: node08
-inherit: private.yml
+# inherit: private.yml
 min_version:
   client: 1.6.2
   server: 2.6.7
