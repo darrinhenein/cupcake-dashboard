@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, User, adminWhitelist, app, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, url, _;
+  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, User, adminWhitelist, app, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, url, _;
 
   _ = require("underscore");
 
@@ -76,7 +76,13 @@
     audience: audience
   });
 
-  mongoose.connect("mongodb://localhost/projects");
+  mongourl = "mongodb://localhost/projects";
+
+  if (process.env.MONGODB_URL) {
+    mongourl = process.env.MONGODB_URL;
+  }
+
+  mongoose.connect(mongourl);
 
   isLoggedIn = function(req, res, next) {
     if (req.session.email) {

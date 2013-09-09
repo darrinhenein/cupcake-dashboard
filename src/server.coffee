@@ -70,7 +70,10 @@ audience = 'http://' + HOST + ':' + PORT
 require('express-persona') app,
   audience: audience
 
-mongoose.connect "mongodb://localhost/projects"
+mongourl = "mongodb://localhost/projects"
+if process.env.MONGODB_URL
+  mongourl = process.env.MONGODB_URL
+mongoose.connect mongourl
 
 isLoggedIn = (req, res, next) ->
   if req.session.email
