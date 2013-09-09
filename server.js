@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, adminWhitelist, app, audience, authProject, authTheme, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, url, _;
+  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, adminWhitelist, app, audience, authProject, authTheme, dbcreds, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, services, url, _;
 
   _ = require("underscore");
 
@@ -74,7 +74,20 @@
     audience: audience
   });
 
-  mongoose.connect("mongodb://localhost/projects");
+  if (process.env.VCAP_SERVICES) {
+    services = JSON.parse(process.env.VCAP_SERVICES);
+    dbcreds = services["mongodb"][0].credentials;
+  }
+
+  if (dbcreds) {
+    console.log(dbcreds);
+    mongoose.connect(dbcreds.host, dbcreds.db, dbcreds.port, {
+      user: dbcreds.username,
+      pass: dbcreds.password
+    });
+  } else {
+    mongoose.connect("localhost", "projects", 27017);
+  }
 
   isLoggedIn = function(req, res, next) {
     if (req.session.email) {

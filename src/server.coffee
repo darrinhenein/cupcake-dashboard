@@ -69,7 +69,17 @@ audience = 'http://' + HOST + ':' + PORT
 require('express-persona') app,
   audience: audience
 
-mongoose.connect "mongodb://localhost/projects"
+if process.env.VCAP_SERVICES
+  services = JSON.parse(process.env.VCAP_SERVICES)
+  dbcreds = services["mongodb"][0].credentials
+
+if dbcreds
+  console.log dbcreds
+  mongoose.connect dbcreds.host, dbcreds.db, dbcreds.port,
+    user: dbcreds.username
+    pass: dbcreds.password
+else
+  mongoose.connect "localhost", "projects", 27017
 
 isLoggedIn = (req, res, next) ->
   if req.session.email
