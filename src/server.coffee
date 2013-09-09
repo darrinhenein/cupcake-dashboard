@@ -183,7 +183,7 @@ app.get "/api/:email/themes", (req, res) ->
       res.send docs
 
 app.get "/api/phase/:id", (req, res) ->
-  Project.find {phase: req.params.id},  (err, docs) ->
+  Project.find({phase: req.params.id}).populate('owner').exec (err, docs) ->
     res.send docs
 
 app.get "/api/phases", (req, res) ->

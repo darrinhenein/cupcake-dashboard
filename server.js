@@ -244,7 +244,7 @@
   app.get("/api/phase/:id", function(req, res) {
     return Project.find({
       phase: req.params.id
-    }, function(err, docs) {
+    }).populate('owner').exec(function(err, docs) {
       return res.send(docs);
     });
   });
