@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, adminWhitelist, app, audience, authProject, authTheme, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, url, _;
+  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, User, adminWhitelist, app, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, restful, url, _;
 
   _ = require("underscore");
 
@@ -16,6 +16,8 @@
   Project = require("./models/project");
 
   Theme = require("./models/theme");
+
+  User = require("./models/user");
 
   Phases = require("./models/phases");
 
@@ -91,8 +93,8 @@
       var project;
       return project = Project.findOne({
         _id: req.params.id
-      }).exec(function(err, doc) {
-        if (doc.owner_email === req.session.email || getAuthLevel(req.session.email) === 3) {
+      }).populate('owner').exec(function(err, doc) {
+        if (doc.owner.email === req.session.email || getAuthLevel(req.session.email) === 3) {
           return next();
         } else {
           return res.send('Not Authorized');
@@ -106,8 +108,22 @@
       var theme;
       return theme = Theme.findOne({
         _id: req.params.id
+      }).populate('owner').exec(function(err, doc) {
+        if (doc.owner.email === req.session.email || getAuthLevel(req.session.email) === 3) {
+          return next();
+        } else {
+          return res.send('Not Authorized');
+        }
+      });
+    });
+  };
+
+  authUser = function(req, res, next) {
+    return isLoggedIn(req, res, function() {
+      return User.findOne({
+        _id: req.params.id
       }).exec(function(err, doc) {
-        if (doc.owner_email === req.session.email || getAuthLevel(req.session.email) === 3) {
+        if (req.session.email === doc.email) {
           return next();
         } else {
           return res.send('Not Authorized');
@@ -134,17 +150,19 @@
 
   Theme.before('delete', authTheme);
 
+  User.before('put', authUser);
+
   Project.before('get', function(req, res, next) {
     var id;
     id = req.route.params.id;
     if (id) {
       return Project.findOne({
         _id: id
-      }).populate('themes').exec(function(err, docs) {
+      }).populate('themes').populate('owner').exec(function(err, docs) {
         return res.send(docs);
       });
     } else {
-      return Project.find().populate('themes').exec(function(err, docs) {
+      return Project.find().populate('themes').populate('owner').exec(function(err, docs) {
         return res.send(docs);
       });
     }
@@ -153,7 +171,7 @@
   Project.after('put', function(req, res, next) {
     return Project.findOne({
       _id: res.locals.bundle._id
-    }).populate('themes').exec(function(err, doc) {
+    }).populate('themes').populate('owner').exec(function(err, doc) {
       return res.send(doc);
     });
   });
@@ -162,10 +180,10 @@
     if (req.params.id) {
       return Theme.findOne({
         _id: req.params.id
-      }).exec(function(err, doc) {
+      }).populate('owner').exec(function(err, doc) {
         return Project.find({
           themes: doc._id
-        }).populate('themes').exec(function(err, docs) {
+        }).populate('themes').populate('owner').exec(function(err, docs) {
           return res.send({
             theme: doc,
             projects: docs
@@ -173,7 +191,9 @@
         });
       });
     } else {
-      return next();
+      return Theme.find().populate('owner').exec(function(err, docs) {
+        return res.send(docs);
+      });
     }
   });
 
@@ -189,32 +209,42 @@
 
   Theme.register(app, "/api/themes");
 
+  User.register(app, "/api/users");
+
   app.get("/api/:email/projects", function(req, res) {
-    return Project.find({
-      owner_email: req.params.email
-    }).populate('themes').exec(function(err, projects) {
-      return res.send(projects);
+    return User.findOne({
+      email: req.params.email
+    }).exec(function(err, doc) {
+      return Project.find({
+        "owner": doc._id
+      }).populate('owner').populate('themes').exec(function(err, projects) {
+        return res.send(projects);
+      });
     });
   });
 
   app.get("/api/:email/collaborations", function(req, res) {
-    return Project.where("collaborators.email", req.params.email).populate('themes').exec(function(err, collaborations) {
+    return Project.where("collaborators.email", req.params.email).populate('themes').populate('owner').exec(function(err, collaborations) {
       return res.send(collaborations);
     });
   });
 
   app.get("/api/:email/themes", function(req, res) {
-    return Theme.find({
-      owner_email: req.params.email
-    }, function(err, docs) {
-      return res.send(docs);
+    return User.findOne({
+      email: req.params.email
+    }).exec(function(err, doc) {
+      return Theme.find({
+        "owner": doc._id
+      }).populate('owner').exec(function(err, docs) {
+        return res.send(docs);
+      });
     });
   });
 
   app.get("/api/phase/:id", function(req, res) {
     return Project.find({
       phase: req.params.id
-    }, function(err, docs) {
+    }).populate('owner').exec(function(err, docs) {
       return res.send(docs);
     });
   });
@@ -247,6 +277,8 @@
   };
 
   app.get("/", index);
+
+  app.get("/profile", index);
 
   app.get("/projects", index);
 
@@ -293,9 +325,20 @@
 
   app.get("/getUser", function(req, res) {
     if (req.session.email) {
-      return res.send({
-        email: req.session.email,
-        authLevel: getAuthLevel(req.session.email)
+      return User.findOne({
+        email: req.session.email
+      }).exec(function(err, doc) {
+        if (doc) {
+          doc.authLevel = getAuthLevel(doc.email);
+          return res.send(doc);
+        } else {
+          return User.create({
+            email: req.session.email
+          }, function(err, user) {
+            user.authLevel = getAuthLevel(user.email);
+            return res.send(user);
+          });
+        }
       });
     } else {
       return res.send({

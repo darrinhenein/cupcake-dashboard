@@ -10,12 +10,12 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="project in projects" ng-class="{owned: (loggedInUser.email!= null && project.owner_email==loggedInUser.email)}">
+    <tr ng-repeat="project in projects" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
       <td>
         <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a>
-        <span ng-show="loggedInUser != null && loggedInUser.email == project.owner_email">○</span>
+        <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email">○</span>
       </td>
-      <td>{{ project.owner_email }}</td>
+      <td>{{ UI.displayName(project.owner) }}</td>
       <td>{{ project.created_at | date }}</td>
       <td>{{ phases[project.phase].title }}</td>
       <td>

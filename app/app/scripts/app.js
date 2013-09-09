@@ -11,6 +11,12 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
         templateUrl: 'views/themes.html',
         controller: 'ThemesCtrl'
       })
+        .state('profile', {
+          url: '/profile',
+          templateUrl: 'views/profile.html',
+          controller: 'ProfileCtrl',
+          auth: 1
+        })
         .state('theme', {
           url: '/theme/:id',
           templateUrl: 'views/theme.html',
@@ -63,7 +69,10 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
         templateUrl: 'views/401.html'
       })
   })
-  .run(function ($rootScope, $location, $http, AuthenticationService){
+  .run(function ($rootScope, $location, $http, AuthenticationService, UIHelperService){
+
+    $rootScope.UI = UIHelperService;
+
     // get session user
     AuthenticationService.authenticate();
 
@@ -79,6 +88,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.per
 
         // if route requires auth and user is not logged in
         if(!to.auth) to.auth = 0;
+
         if (!AuthenticationService.canViewLevel(to.auth)) {
           // redirect back to login
           $location.path('/401');
