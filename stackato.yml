@@ -14,7 +14,7 @@ ignores:
   - dev.db
   - src
   - node_modules
-  - app/.*
-  - app/app
+  - app/.sass-cache
+  - app/.tmp
   - app/node_modules
   - app/test
