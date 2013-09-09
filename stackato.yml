@@ -8,9 +8,13 @@ min_version:
 services:
   ${name}-db: mongodb
   # ${name}-cache: memcached # For later, perhaps…
-hooks:
-  post-staging:
-    - echo "It worked!"
+mem: 256M
 ignores:
   - .git
   - dev.db
+  - src
+  - node_modules
+  - app/.*
+  - app/app
+  - app/node_modules
+  - app/test
