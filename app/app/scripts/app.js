@@ -1,5 +1,4 @@
-angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.persona',
-                                    'angular-flash.service', 'angular-flash.flash-alert-directive'])
+angular.module('cupcakeDashboard', ['ngResource', 'ui.state', 'angular-tools.persona'])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
     $locationProvider.html5Mode(true);
