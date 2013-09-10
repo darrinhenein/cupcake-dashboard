@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, User, adminWhitelist, app, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, url, _;
+  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, url, vcap, _;
 
   _ = require("underscore");
 
@@ -8,6 +8,8 @@
   ejs = require("ejs");
 
   restful = require("node-restful");
+
+  async = require("async");
 
   url = require("url");
 
@@ -71,6 +73,11 @@
   HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
 
   audience = 'http://' + HOST + ':' + PORT;
+
+  if (process.env.VCAP_APPLICATION) {
+    vcap = JSON.parse(process.env.VCAP_APPLICATION);
+    audience = 'http://' + vcap.uris[0];
+  }
 
   require('express-persona')(app, {
     audience: audience
@@ -256,24 +263,23 @@
   });
 
   app.get("/api/phases", function(req, res) {
-    var phase, _i, _len;
+    var phase, queries, _fn, _i, _len;
+    queries = [];
+    _fn = function(phase) {
+      return queries.push(function(next) {
+        return Project.count({
+          phase: phase.phase
+        }, function(err, count) {
+          Phases[phase.phase].count = count;
+          return next();
+        });
+      });
+    };
     for (_i = 0, _len = Phases.length; _i < _len; _i++) {
       phase = Phases[_i];
-      phase.count = 0;
+      _fn(phase);
     }
-    return Project.aggregate({
-      $group: {
-        _id: "$phase",
-        count: {
-          $sum: 1
-        }
-      }
-    }, function(err, docs) {
-      var doc, _j, _len1;
-      for (_j = 0, _len1 = docs.length; _j < _len1; _j++) {
-        doc = docs[_j];
-        Phases[doc._id].count = doc.count;
-      }
+    return async.parallel(queries, function() {
       return res.send(Phases);
     });
   });
@@ -314,7 +320,7 @@
 
   app.post("/admin/load", AdminRoutes.load);
 
-  adminWhitelist = ['darrin', 'dhenein'];
+  adminWhitelist = ['dhenein', 'bwinton'];
 
   getAuthLevel = function(email) {
     var domain, username, _ref;

@@ -8,7 +8,8 @@
     "node-restful": "0.1.14",
     "ejs": "~0.8.4",
     "express-persona": "0.0.9",
-    "underscore": "~1.5.1"
+    "underscore": "~1.5.1",
+    "async": "~0.2.9"
   },
   "devDependencies": {
     "coffee-script": "~1.6.3",
@@ -19,10 +20,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Darrin Henein",
-  "contributors": ["Blake Winton <bwinton@mozilla.com>"],
+  "contributors": [
+    "Blake Winton <bwinton@mozilla.com>"
+  ],
   "license": "BSD",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/darrinhenein/cupcake-dashboard"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darrinhenein/cupcake-dashboard"
   }
 }

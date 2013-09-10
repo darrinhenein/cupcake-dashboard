@@ -2,6 +2,7 @@ _ = require("underscore")
 express = require("express")
 ejs = require("ejs")
 restful = require("node-restful")
+async = require("async")
 url = require("url")
 mongoose = restful.mongoose
 Project = require("./models/project")
@@ -66,6 +67,11 @@ HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1'
 
 # Must match your browser's address bar
 audience = 'http://' + HOST + ':' + PORT
+
+
+if process.env.VCAP_APPLICATION
+  vcap = JSON.parse process.env.VCAP_APPLICATION
+  audience = 'http://' + vcap.uris[0]
 
 require('express-persona') app,
   audience: audience
@@ -190,17 +196,17 @@ app.get "/api/phase/:id", (req, res) ->
     res.send docs
 
 app.get "/api/phases", (req, res) ->
+    queries = []
+
     for phase in Phases
-      phase.count = 0
-    Project.aggregate
-      $group:
-        _id: "$phase"
-        count:
-          $sum : 1
-      , (err, docs) ->
-        for doc in docs
-          Phases[doc._id].count = doc.count
-        res.send Phases
+      do (phase) ->
+        queries.push (next) ->
+          Project.count {phase: phase.phase}, (err, count) ->
+            Phases[phase.phase].count = count
+            next()
+
+    async.parallel queries, ->
+      res.send Phases
 
 index = (req, res) -> res.render 'index.html'
 
@@ -231,7 +237,7 @@ app.post "/admin/load", AdminRoutes.load
 # 3 : Admin  (all access)
 
 # whitelist of admin emails
-adminWhitelist = ['darrin', 'dhenein']
+adminWhitelist = ['dhenein', 'bwinton']
 
 getAuthLevel = (email) ->
   [username, domain] = email.split '@'
