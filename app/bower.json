@@ -1,6 +1,6 @@
 {
-  "name": "nodeTest",
-  "version": "0.0.0",
+  "name": "cupcake-dashboard",
+  "version": "0.0.1",
   "dependencies": {
     "json3": "~3.2.4",
     "jquery": "~1.9.1",

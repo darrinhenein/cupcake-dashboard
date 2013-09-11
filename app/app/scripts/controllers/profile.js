@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('ProfileCtrl', function ($scope, $rootScope, $location, $resource, AuthenticationService) {
+  .controller('ProfileCtrl', function ($scope, $rootScope, $location, $resource, $http, AuthenticationService) {
 
     var User = $resource('/api/users/:id', { cache: false, isArray: false, id: $rootScope.loggedInUser._id}, {
       'update': {
@@ -30,6 +30,12 @@ angular.module('cupcakeDashboard')
           User.update({id: $scope.user._id}, obj);
           break;
       }
+    }
+
+    $scope.downloadDB = function(){
+      $http.get('/admin/dump').then(function(res){
+        $scope.dbDump = angular.toJson(res.data, true);
+      });
     }
 
   });

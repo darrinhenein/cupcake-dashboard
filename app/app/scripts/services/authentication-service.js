@@ -71,7 +71,6 @@ angular.module('cupcakeDashboard')
     }
 
     this.canEdit = function(model){
-      console.log(model);
       if(self.user != null && model.owner != null && model.owner.email == self.user.email){
         return true;
       }

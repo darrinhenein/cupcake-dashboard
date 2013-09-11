@@ -1,28 +1,55 @@
 (function() {
-  var Project, mongoose;
+  var Phases, Project, Theme, User, async, mongoose, pkg;
 
   Project = require("../models/project");
 
+  Phases = require("../models/phases");
+
+  User = require("../models/user");
+
+  Theme = require("../models/theme");
+
   mongoose = require("node-restful").mongoose;
+
+  async = require("async");
+
+  pkg = require("../package.json");
 
   module.exports = {
     dump: function(req, res) {
-      return Project.find(function(err, docs) {
-        return res.json(docs);
+      var queue, response;
+      queue = [];
+      response = {
+        version: pkg.version
+      };
+      queue.push(function(next) {
+        return Project.find(function(err, docs) {
+          response.projects = docs;
+          return next();
+        });
+      });
+      queue.push(function(next) {
+        return Theme.find(function(err, docs) {
+          response.themes = docs;
+          return next();
+        });
+      });
+      queue.push(function(next) {
+        return User.find(function(err, docs) {
+          response.users = docs;
+          return next();
+        });
+      });
+      queue.push(function(next) {
+        response.phases = Phases;
+        return next();
+      });
+      return async.parallel(queue, function() {
+        return res.send(response);
       });
     },
     load: function(req, res) {
-      var doc, docs, _i, _len;
-      docs = req.body;
-      for (_i = 0, _len = docs.length; _i < _len; _i++) {
-        doc = docs[_i];
-        Project.create(doc, function(err) {
-          if (err) {
-            return console.log('Error: ' + err.message);
-          }
-        });
-      }
-      return res.send('Created ' + docs.length + ' records');
+      return res.send('Nope');
     }
   };
 

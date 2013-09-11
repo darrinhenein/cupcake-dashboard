@@ -227,8 +227,19 @@ app.get "/theme/:themeId", index
 app.get "/401", index
 
 # admin
-app.get "/admin/dump", AdminRoutes.dump
-app.post "/admin/load", AdminRoutes.load
+app.get "/admin/dump", (req, res) ->
+  isLoggedIn req, res, ->
+    if getAuthLevel(req.session.email) > 2
+      AdminRoutes.dump req, res
+    else
+      res.send 'Not Authorized to dump db.'
+
+app.post "/admin/load", (req, res) ->
+  isLoggedIn req, res, ->
+    if getAuthLevel(req.session.email) > 2
+      AdminRoutes.load req, res
+    else
+      res.send 'Not Authorized to load db.'
 
 # Auth Levels
 # 0 : Public (no write/delete)
@@ -240,12 +251,13 @@ app.post "/admin/load", AdminRoutes.load
 adminWhitelist = ['dhenein', 'bwinton']
 
 getAuthLevel = (email) ->
-  [username, domain] = email.split '@'
-  if domain = 'mozilla.org' or 'mozilla.com' or 'mozillafoundation.org'
-    if _.contains adminWhitelist, username
-      return 3
-    else
-      return 2
+  if email
+    [username, domain] = email.split '@'
+    if domain = 'mozilla.org' or 'mozilla.com' or 'mozillafoundation.org'
+      if _.contains adminWhitelist, username
+        return 3
+      else
+        return 2
   return 0
 
 # auth user

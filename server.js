@@ -316,20 +316,38 @@
 
   app.get("/401", index);
 
-  app.get("/admin/dump", AdminRoutes.dump);
+  app.get("/admin/dump", function(req, res) {
+    return isLoggedIn(req, res, function() {
+      if (getAuthLevel(req.session.email) > 2) {
+        return AdminRoutes.dump(req, res);
+      } else {
+        return res.send('Not Authorized to dump db.');
+      }
+    });
+  });
 
-  app.post("/admin/load", AdminRoutes.load);
+  app.post("/admin/load", function(req, res) {
+    return isLoggedIn(req, res, function() {
+      if (getAuthLevel(req.session.email) > 2) {
+        return AdminRoutes.load(req, res);
+      } else {
+        return res.send('Not Authorized to load db.');
+      }
+    });
+  });
 
   adminWhitelist = ['dhenein', 'bwinton'];
 
   getAuthLevel = function(email) {
     var domain, username, _ref;
-    _ref = email.split('@'), username = _ref[0], domain = _ref[1];
-    if (domain = 'mozilla.org' || 'mozilla.com' || 'mozillafoundation.org') {
-      if (_.contains(adminWhitelist, username)) {
-        return 3;
-      } else {
-        return 2;
+    if (email) {
+      _ref = email.split('@'), username = _ref[0], domain = _ref[1];
+      if (domain = 'mozilla.org' || 'mozilla.com' || 'mozillafoundation.org') {
+        if (_.contains(adminWhitelist, username)) {
+          return 3;
+        } else {
+          return 2;
+        }
       }
     }
     return 0;

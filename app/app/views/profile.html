@@ -6,3 +6,12 @@
 <h3><small class="text-label">Last Name </small><span editable="user.last_name" auth="userPermissions.edit" callback="update(data)"></span></h3>
 <h5><small class="text-label">Email </small><br/>{{ user.email }}</h5>
 <h4><small class="text-label">Authentication Level </small><br/><span>{{ permissions.userType }}</span></h4>
+
+
+<div ng-show="permissions.admin">
+  <h3>Admin Tools</h3>
+  <button class="btn btn-primary" ng-click="downloadDB()">Download Database</button>
+  <button class="btn btn-danger" ng-click="uploadDB()">Upload Database</button>
+  <hr/>
+  <textarea rows=100 ng-model="dbDump" class="form-control"></textarea>
+</div>
