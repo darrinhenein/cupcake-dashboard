@@ -227,12 +227,7 @@ app.get "/theme/:themeId", index
 app.get "/401", index
 
 # admin
-app.get "/admin/dump", (req, res) ->
-  isLoggedIn req, res, ->
-    if getAuthLevel(req.session.email) > 2
-      AdminRoutes.dump req, res
-    else
-      res.send 'Not Authorized to dump db.'
+app.get "/admin/dump", AdminRoutes.dump
 
 app.post "/admin/load", (req, res) ->
   isLoggedIn req, res, ->

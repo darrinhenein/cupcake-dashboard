@@ -316,15 +316,7 @@
 
   app.get("/401", index);
 
-  app.get("/admin/dump", function(req, res) {
-    return isLoggedIn(req, res, function() {
-      if (getAuthLevel(req.session.email) > 2) {
-        return AdminRoutes.dump(req, res);
-      } else {
-        return res.send('Not Authorized to dump db.');
-      }
-    });
-  });
+  app.get("/admin/dump", AdminRoutes.dump);
 
   app.post("/admin/load", function(req, res) {
     return isLoggedIn(req, res, function() {
