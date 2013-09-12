@@ -6,8 +6,7 @@ angular.module('cupcakeDashboard')
             '<a ng-show="auth" class="btn btn-primary btn-xs" ng-click="enableEditor()">Edit</a>' +
         '</div>' +
         '<form ng-show="view.editorEnabled" class="form-inline">' +
-            '<input class="form-control col-lg-2" ng-model="view.editableValue">' +
-            '<a class="btn btn-primary btn-xs" ng-click="save()">Save</a>  ' +
+            '<input ng-keyup="keyup($event)" ng-blur="save()" class="form-control col-lg-2" ng-model="view.editableValue">' +
             '<a class="btn btn-primary btn-xs" ng-click="disableEditor()">Cancel</a>' +
         '</form>' +
     '</div>';
@@ -49,6 +48,19 @@ angular.module('cupcakeDashboard')
                 obj[$scope.property] = $scope.value
                 $scope.callback({data: {path: $scope.property, value: $scope.value}});
             };
+
+
+            $scope.keyup = function(e){
+                if(e.keyCode == 13) // enter
+                {
+                    $scope.save();
+                }
+                else if (e.keyCode == 27) // escape
+                {
+                    $scope.disableEditor();
+                }
+            }
+
         }
     };
 });
