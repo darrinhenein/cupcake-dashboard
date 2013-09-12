@@ -1,0 +1,14 @@
+<div ng-controller="FeedCtrl" class="well">
+  <h4>Feed</h4>
+  <p ng-repeat="e in events">
+    <small ng-show="e.verb == 'PUT'" >
+      {{ e.owner.first_name }} {{ formatVerb(e.verb) }} <a href="/{{ e.type }}/{{ e.model._id }}">{{ e.model.title }}</a>'s <span ng-repeat="(key, value) in e.changes">{{ key }}<span  ng-show="key == 'title'"> to {{ value }}</span></span>.
+    </small>
+
+    <small ng-show="e.verb == 'POST'" >
+      {{ e.owner.first_name }} {{ formatVerb(e.verb) }} <a>{{ e.changes.title }}</a>.
+    </small>
+
+    <br/><small>{{ e.date | date:'short' }}</small>
+  </p>
+</div>

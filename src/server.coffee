@@ -9,8 +9,9 @@ Project = require("./models/project")
 Theme = require("./models/theme")
 User = require("./models/user")
 Phases = require("./models/phases")
-EventSchema = require("./models/event")
+Events = require("./models/event")
 AdminRoutes = require("./routes/admin")
+Logger = require("./logger")
 
 # logging template
 logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
@@ -18,7 +19,7 @@ logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
 
 app = express()
 
-app.resource = Project
+# app.resource = Project
 
 # app.use cors()
 app.use express.bodyParser()
@@ -26,6 +27,7 @@ app.use express.cookieParser()
 app.use express.session
   secret: 'personasecret'
 app.use express.query()
+app.use Logger
 app.use (req, res, next) ->
   rEnd = res.end
 
@@ -86,7 +88,7 @@ isLoggedIn = (req, res, next) ->
     res.logged_in_email = req.session.email
     next()
   else
-    res.send 'Not Authenticated'
+    res.send 401
     next()
 
 authProject = (req, res, next) ->
@@ -97,7 +99,7 @@ authProject = (req, res, next) ->
                        if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
                          next()
                        else
-                         res.send 'Not Authorized'
+                         res.send 403
 
 authTheme = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -105,7 +107,7 @@ authTheme = (req, res, next) ->
       if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
         next()
       else
-        res.send 'Not Authorized'
+        res.send 403
 
 authUser = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -113,7 +115,7 @@ authUser = (req, res, next) ->
       if req.session.email is doc.email
         next()
       else
-        res.send 'Not Authorized'
+        res.send 403
 
 isAdmin = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -172,6 +174,11 @@ Project.route "total.get", (req, res) ->
 Project.register app, "/api/projects"
 Theme.register app, "/api/themes"
 User.register app, "/api/users"
+
+app.get "/api/events/:num?", (req, res) ->
+  num = req.params.num || 10
+  Events.find().sort('-date').limit(num).populate('owner').exec (err, docs) ->
+    res.send docs
 
 app.get "/api/:email/projects", (req, res) ->
   User.findOne({email: req.params.email})
@@ -234,7 +241,7 @@ app.post "/admin/load", (req, res) ->
     if getAuthLevel(req.session.email) > 2
       AdminRoutes.load req, res
     else
-      res.send 'Not Authorized to load db.'
+      res.send 403
 
 # Auth Levels
 # 0 : Public (no write/delete)
@@ -269,7 +276,7 @@ app.get "/getUser", (req, res) ->
           user.authLevel = getAuthLevel user.email
           res.send user
   else
-    res.send {error: 'Not logged in'}
+    res.send 401
 
 console.log "Listening at #{HOST}:#{PORT}..."
 app.listen PORT, HOST

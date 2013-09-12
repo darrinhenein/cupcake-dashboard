@@ -49,7 +49,10 @@
             <h1>Cupcakes <small>Firefox UX Dashboard</small></h1>
         </div>
         <br/>
-        <div ui-view></div>
+        <div class="row">
+            <div class="col-md-9" ui-view></div>
+            <div class="col-md-3" ng-include="'views/feed.html'"></div>
+        </div>
     </div>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
@@ -104,6 +107,7 @@
         <script src="scripts/services/angular.persona.js"></script>
         <script src="scripts/controllers/project.js"></script>
         <script src="scripts/controllers/nav.js"></script>
+        <script src="scripts/controllers/feed.js"></script>
         <script src="scripts/controllers/theme.js"></script>
         <script src="scripts/controllers/themes.js"></script>
         <script src="scripts/controllers/user.themes.js"></script>
