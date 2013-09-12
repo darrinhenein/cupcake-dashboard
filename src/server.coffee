@@ -12,22 +12,22 @@ Phases = require("./models/phases")
 Events = require("./models/event")
 AdminRoutes = require("./routes/admin")
 Logger = require("./logger")
+io = require("socket.io")
 
 # logging template
 logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                           '<%= status %> <%= method %> <%= url %>');
 
 app = express()
+server = require("http").createServer app
+io = io.listen server
 
-# app.resource = Project
-
-# app.use cors()
 app.use express.bodyParser()
 app.use express.cookieParser()
 app.use express.session
   secret: 'personasecret'
 app.use express.query()
-app.use Logger
+app.use Logger io
 app.use (req, res, next) ->
   rEnd = res.end
 
@@ -176,7 +176,7 @@ Theme.register app, "/api/themes"
 User.register app, "/api/users"
 
 app.get "/api/events/:num?", (req, res) ->
-  num = req.params.num || 10
+  num = req.params.num || 5
   Events.find().sort('-date').limit(num).populate('owner').exec (err, docs) ->
     res.send docs
 
@@ -279,4 +279,4 @@ app.get "/getUser", (req, res) ->
     res.send 401
 
 console.log "Listening at #{HOST}:#{PORT}..."
-app.listen PORT, HOST
+server.listen PORT, HOST

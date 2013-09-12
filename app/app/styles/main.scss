@@ -179,3 +179,15 @@ h3 span.badge {
 .collaborator span {
     font-size: 13px;
 }
+
+// animations
+.feed-event.isNew {
+    font-weight: bold;
+}
+.feed-event.isNew.ng-enter{
+    transition: all 0.7s ease-out;
+    background-color: #FFF696;
+}
+.feed-event.isNew.ng-enter.ng-enter-active {
+    background-color: transparent;
+}

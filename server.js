@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -29,9 +29,15 @@
 
   Logger = require("./logger");
 
+  io = require("socket.io");
+
   logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' + '<%= status %> <%= method %> <%= url %>');
 
   app = express();
+
+  server = require("http").createServer(app);
+
+  io = io.listen(server);
 
   app.use(express.bodyParser());
 
@@ -43,7 +49,7 @@
 
   app.use(express.query());
 
-  app.use(Logger);
+  app.use(Logger(io));
 
   app.use(function(req, res, next) {
     var rEnd;
@@ -228,7 +234,7 @@
 
   app.get("/api/events/:num?", function(req, res) {
     var num;
-    num = req.params.num || 10;
+    num = req.params.num || 5;
     return Events.find().sort('-date').limit(num).populate('owner').exec(function(err, docs) {
       return res.send(docs);
     });
@@ -379,6 +385,6 @@
 
   console.log("Listening at " + HOST + ":" + PORT + "...");
 
-  app.listen(PORT, HOST);
+  server.listen(PORT, HOST);
 
 }).call(this);
