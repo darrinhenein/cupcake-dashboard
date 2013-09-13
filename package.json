@@ -9,7 +9,8 @@
     "ejs": "~0.8.4",
     "express-persona": "0.0.9",
     "underscore": "~1.5.1",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "socket.io": "~0.9.16"
   },
   "devDependencies": {
     "coffee-script": "~1.6.3",

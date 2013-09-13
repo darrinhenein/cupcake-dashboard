@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, EventSchema, HOST, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logCreate, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -23,15 +23,21 @@
 
   Phases = require("./models/phases");
 
-  EventSchema = require("./models/event");
+  Events = require("./models/event");
 
   AdminRoutes = require("./routes/admin");
+
+  Logger = require("./logger");
+
+  io = require("socket.io");
 
   logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' + '<%= status %> <%= method %> <%= url %>');
 
   app = express();
 
-  app.resource = Project;
+  server = require("http").createServer(app);
+
+  io = io.listen(server);
 
   app.use(express.bodyParser());
 
@@ -42,6 +48,8 @@
   }));
 
   app.use(express.query());
+
+  app.use(Logger.listen(io));
 
   app.use(function(req, res, next) {
     var rEnd;
@@ -96,7 +104,7 @@
       res.logged_in_email = req.session.email;
       return next();
     } else {
-      res.send('Not Authenticated');
+      res.send(401);
       return next();
     }
   };
@@ -110,7 +118,7 @@
         if (doc.owner.email === req.session.email || getAuthLevel(req.session.email) === 3) {
           return next();
         } else {
-          return res.send('Not Authorized');
+          return res.send(403);
         }
       });
     });
@@ -125,7 +133,7 @@
         if (doc.owner.email === req.session.email || getAuthLevel(req.session.email) === 3) {
           return next();
         } else {
-          return res.send('Not Authorized');
+          return res.send(403);
         }
       });
     });
@@ -139,7 +147,7 @@
         if (req.session.email === doc.email) {
           return next();
         } else {
-          return res.send('Not Authorized');
+          return res.send(403);
         }
       });
     });
@@ -151,13 +159,21 @@
     });
   };
 
+  logCreate = function(req, res, next) {
+    return Logger.log(req, res, next, io);
+  };
+
   Project.before('post', isAdmin);
+
+  Project.after('post', logCreate);
 
   Project.before('put', authProject);
 
   Project.before('delete', authProject);
 
   Theme.before('post', isAdmin);
+
+  Theme.after('post', logCreate);
 
   Theme.before('put', authTheme);
 
@@ -171,8 +187,12 @@
     if (id) {
       return Project.findOne({
         _id: id
-      }).populate('themes').populate('owner').exec(function(err, docs) {
-        return res.send(docs);
+      }).populate('themes').populate('owner').exec(function(err, doc) {
+        if (doc) {
+          return res.send(doc);
+        } else {
+          return res.send(404);
+        }
       });
     } else {
       return Project.find().populate('themes').populate('owner').exec(function(err, docs) {
@@ -194,14 +214,18 @@
       return Theme.findOne({
         _id: req.params.id
       }).populate('owner').exec(function(err, doc) {
-        return Project.find({
-          themes: doc._id
-        }).populate('themes').populate('owner').exec(function(err, docs) {
-          return res.send({
-            theme: doc,
-            projects: docs
+        if (doc) {
+          return Project.find({
+            themes: doc._id
+          }).populate('themes').populate('owner').exec(function(err, docs) {
+            return res.send({
+              theme: doc,
+              projects: docs
+            });
           });
-        });
+        } else {
+          return res.send(404);
+        }
       });
     } else {
       return Theme.find().populate('owner').exec(function(err, docs) {
@@ -223,6 +247,14 @@
   Theme.register(app, "/api/themes");
 
   User.register(app, "/api/users");
+
+  app.get("/api/events/:num?", function(req, res) {
+    var num;
+    num = req.params.num || 5;
+    return Events.find().sort('-date').limit(num).populate('owner').exec(function(err, docs) {
+      return res.send(docs);
+    });
+  });
 
   app.get("/api/:email/projects", function(req, res) {
     return User.findOne({
@@ -323,7 +355,7 @@
       if (getAuthLevel(req.session.email) > 2) {
         return AdminRoutes.load(req, res);
       } else {
-        return res.send('Not Authorized to load db.');
+        return res.send(403);
       }
     });
   });
@@ -363,14 +395,12 @@
         }
       });
     } else {
-      return res.send({
-        error: 'Not logged in'
-      });
+      return res.send(401);
     }
   });
 
   console.log("Listening at " + HOST + ":" + PORT + "...");
 
-  app.listen(PORT, HOST);
+  server.listen(PORT, HOST);
 
 }).call(this);

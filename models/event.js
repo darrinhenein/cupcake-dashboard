@@ -1,19 +1,28 @@
 (function() {
-  var EventSchema, Schema, mongoose;
+  var EventSchema, ObjectId, Schema, mongoose, restful;
 
-  mongoose = require("node-restful").mongoose;
+  restful = require("node-restful");
+
+  mongoose = restful.mongoose;
 
   Schema = mongoose.Schema;
 
-  EventSchema = new Schema({
+  ObjectId = mongoose.Schema.Types.ObjectId;
+
+  module.exports = EventSchema = restful.model("event", mongoose.Schema({
+    verb: "string",
+    mid: "string",
     type: "string",
-    details: "string",
+    model: "mixed",
+    changes: "mixed",
+    owner: {
+      type: ObjectId,
+      ref: 'user'
+    },
     date: {
       type: "date",
       "default": Date.now
     }
-  });
-
-  module.exports = EventSchema;
+  })).methods(['get']);
 
 }).call(this);

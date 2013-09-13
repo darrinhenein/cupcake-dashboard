@@ -22,6 +22,10 @@ angular.module('cupcakeDashboard')
         }
 
         this.displayName = function(user){
+          if(!user)
+          {
+            return;
+          }
 
           if(user.first_name || user.last_name)
           {
@@ -31,7 +35,20 @@ angular.module('cupcakeDashboard')
           {
             return user.email;
           }
+        }
+        this.displayNameShort = function(user){
+          if(!user)
+          {
+            return;
+          }
 
-
+          if(user.first_name)
+          {
+            return user.first_name;
+          }
+          else
+          {
+            return user.email;
+          }
         }
     });

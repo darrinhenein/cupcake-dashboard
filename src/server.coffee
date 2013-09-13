@@ -9,23 +9,25 @@ Project = require("./models/project")
 Theme = require("./models/theme")
 User = require("./models/user")
 Phases = require("./models/phases")
-EventSchema = require("./models/event")
+Events = require("./models/event")
 AdminRoutes = require("./routes/admin")
+Logger = require("./logger")
+io = require("socket.io")
 
 # logging template
 logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                           '<%= status %> <%= method %> <%= url %>');
 
 app = express()
+server = require("http").createServer app
+io = io.listen server
 
-app.resource = Project
-
-# app.use cors()
 app.use express.bodyParser()
 app.use express.cookieParser()
 app.use express.session
   secret: 'personasecret'
 app.use express.query()
+app.use Logger.listen io
 app.use (req, res, next) ->
   rEnd = res.end
 
@@ -86,7 +88,7 @@ isLoggedIn = (req, res, next) ->
     res.logged_in_email = req.session.email
     next()
   else
-    res.send 'Not Authenticated'
+    res.send 401
     next()
 
 authProject = (req, res, next) ->
@@ -97,7 +99,7 @@ authProject = (req, res, next) ->
                        if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
                          next()
                        else
-                         res.send 'Not Authorized'
+                         res.send 403
 
 authTheme = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -105,7 +107,7 @@ authTheme = (req, res, next) ->
       if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
         next()
       else
-        res.send 'Not Authorized'
+        res.send 403
 
 authUser = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -113,20 +115,28 @@ authUser = (req, res, next) ->
       if req.session.email is doc.email
         next()
       else
-        res.send 'Not Authorized'
+        res.send 403
 
 isAdmin = (req, res, next) ->
   isLoggedIn req, res, ->
     next()
 
+logCreate = (req, res, next) ->
+  Logger.log req, res, next, io
+
+
 # server side auth on projects
-Project.before('post', isAdmin)
-Project.before('put', authProject)
-Project.before('delete', authProject)
-Theme.before('post', isAdmin)
-Theme.before('put', authTheme)
-Theme.before('delete', authTheme)
-User.before('put', authUser)
+Project.before 'post'   , isAdmin
+Project.after 'post'    , logCreate
+Project.before 'put'    , authProject
+Project.before 'delete' , authProject
+
+Theme.before 'post'     , isAdmin
+Theme.after 'post'      , logCreate
+Theme.before 'put'      , authTheme
+Theme.before 'delete'   , authTheme
+
+User.before 'put'       , authUser
 
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
@@ -135,8 +145,11 @@ Project.before 'get', (req, res, next) ->
     Project.findOne({_id: id})
            .populate('themes')
            .populate('owner')
-           .exec (err, docs) ->
-             res.send docs
+           .exec (err, doc) ->
+              if doc
+                res.send doc
+              else
+                res.send 404
   else
     Project.find().populate('themes').populate('owner').exec (err, docs) ->
       res.send docs
@@ -154,13 +167,16 @@ Theme.before 'get', (req, res, next) ->
     Theme.findOne({_id: req.params.id})
          .populate('owner')
          .exec (err, doc) ->
-           Project.find({themes: doc._id})
-                  .populate('themes')
-                  .populate('owner')
-                  .exec (err, docs) ->
-                    res.send
-                      theme: doc
-                      projects: docs
+          if doc
+             Project.find({themes: doc._id})
+                    .populate('themes')
+                    .populate('owner')
+                    .exec (err, docs) ->
+                      res.send
+                        theme: doc
+                        projects: docs
+          else
+            res.send 404
   else
     Theme.find().populate('owner').exec (err, docs) ->
       res.send docs
@@ -172,6 +188,11 @@ Project.route "total.get", (req, res) ->
 Project.register app, "/api/projects"
 Theme.register app, "/api/themes"
 User.register app, "/api/users"
+
+app.get "/api/events/:num?", (req, res) ->
+  num = req.params.num || 5
+  Events.find().sort('-date').limit(num).populate('owner').exec (err, docs) ->
+    res.send docs
 
 app.get "/api/:email/projects", (req, res) ->
   User.findOne({email: req.params.email})
@@ -234,7 +255,7 @@ app.post "/admin/load", (req, res) ->
     if getAuthLevel(req.session.email) > 2
       AdminRoutes.load req, res
     else
-      res.send 'Not Authorized to load db.'
+      res.send 403
 
 # Auth Levels
 # 0 : Public (no write/delete)
@@ -269,7 +290,7 @@ app.get "/getUser", (req, res) ->
           user.authLevel = getAuthLevel user.email
           res.send user
   else
-    res.send {error: 'Not logged in'}
+    res.send 401
 
 console.log "Listening at #{HOST}:#{PORT}..."
-app.listen PORT, HOST
+server.listen PORT, HOST

@@ -1,78 +1,91 @@
-<h3>
-  <div class="row">
-    <div class="col-md-6">
-      <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
-       <small>{{ project.created_at | date }}</small>
-     </div>
-    <div class="col-md-6">
-      <span ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
-      <img src="http://avatars.io/email/{{ project.owner.email }}" width=36 height=36 />
-      <i>{{ UI.displayName(project.owner) }}</i>
-      </span>
-    </div>
-  </div>
-
-  <hr/>
-
-  <div class="row">
-    <div class="col-md-3">
-      <small>THEMES</small><br/>
-      <small ng-show="project.themes.length == 0" class="muted">No themes.</small>
-      <a href="/theme/{{ theme._id }}" ng-hide="projectPermissions.edit" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
-      <a ng-show="projectPermissions.edit" ng-click="removeTheme(theme._id)" ng-repeat="theme in project.themes"><span class="badge remove">- {{ theme.title }}</span></a>
-
-      <div ng-show="projectPermissions.edit">
-        <br/>
-        <p class="text-label">All Themes</p>
-        <span class="badge add" ng-click="addTheme(theme._id)" ng-repeat="theme in themes | filter:notIn(project.themes)">+ {{ theme.title }}</span>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>
-    </div>
-    <div class="col-md-3">
-      <small>PHASE</small>
-      <p ng-hide="projectPermissions.edit" class="lead">{{ phases[project.phase].title }}</p>
-      <form ng-show="projectPermissions.edit" class="form-inline">
-        <select ng-model="project.phase" ng-options="p.phase as p.title for p in phases" ng-change="savePhase()" class="form-control col-lg-2"></select>
-      </form>
-    </div>
-    <div class="col-md-3">
-      <small>COLLABORATORS</small>
-
-      <p ng-show="project.collaborators.length == 0" class="muted"><small>No collaborators.</small></p>
-
-      <div class="input-group" ng-show="projectPermissions.edit">
-        <input type="text" ng-model="collaborator.email" placeholder="Add Collaborator..." class="form-control">
-        <span class="input-group-btn">
-          <button class="btn btn-default" ng-click="addCollaborator()" type="button">+</button>
-        </span>
+<div ng-switch on="isFound">
+  <div ng-switch-when="true">
+    <h3>
+      <div class="row">
+        <div class="col-md-6">
+          <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
+           <small>{{ project.created_at | date }}</small>
+         </div>
+        <div class="col-md-6">
+          <span ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+          <img src="http://avatars.io/email/{{ project.owner.email }}" width=36 height=36 />
+          <i>{{ UI.displayName(project.owner) }}</i>
+          </span>
+        </div>
       </div>
 
-      <p ng-show="projectPermissions.edit"  class="collaborator edit" ng-repeat="person in project.collaborators">
-      <img src="http://avatars.io/email/{{ person.email }}" width=24 height=24 /><span>{{ person.email }}</span>
-        <button ng-click="removeCollaborator(person)" class="btn btn-xs btn-danger">-</button>
-      </p>
+      <hr/>
 
-      <p ng-hide="projectPermissions.edit" class="collaborator" ng-repeat="person in project.collaborators">
-        <a  ng-href="/{{ person.email }}/projects">
+      <div class="row">
+        <div class="col-md-3">
+          <small>THEMES</small><br/>
+          <small ng-show="project.themes.length == 0" class="muted">No themes.</small>
+          <a href="/theme/{{ theme._id }}" ng-hide="projectPermissions.edit" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
+          <a ng-show="projectPermissions.edit" ng-click="removeTheme(theme._id)" ng-repeat="theme in project.themes"><span class="badge remove">- {{ theme.title }}</span></a>
+
+          <div ng-show="projectPermissions.edit">
+            <br/>
+            <p class="text-label">All Themes</p>
+            <span class="badge add" ng-click="addTheme(theme._id)" ng-repeat="theme in themes | filter:notIn(project.themes)">+ {{ theme.title }}</span>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <small>PHASE</small>
+          <p ng-hide="projectPermissions.edit" class="lead">{{ phases[project.phase].title }}</p>
+          <form ng-show="projectPermissions.edit" class="form-inline">
+            <select ng-model="project.phase" ng-options="p.phase as p.title for p in phases" ng-change="savePhase()" class="form-control col-lg-2"></select>
+          </form>
+
+          <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>
+
+        </div>
+        <div class="col-md-6">
+          <small>COLLABORATORS</small>
+
+          <p ng-show="project.collaborators.length == 0" class="muted"><small>No collaborators.</small></p>
+
+          <div class="input-group" ng-show="projectPermissions.edit">
+            <input type="text" ng-model="collaborator.email" placeholder="Add Collaborator..." class="form-control">
+            <span class="input-group-btn">
+              <button class="btn btn-default" ng-click="addCollaborator()" type="button">+</button>
+            </span>
+          </div>
+
+          <p ng-show="projectPermissions.edit"  class="collaborator edit" ng-repeat="person in project.collaborators">
           <img src="http://avatars.io/email/{{ person.email }}" width=24 height=24 /><span>{{ person.email }}</span>
-        </a>
-      </p>
+            <button ng-click="removeCollaborator(person)" class="btn btn-xs btn-danger">-</button>
+          </p>
+
+          <p ng-hide="projectPermissions.edit" class="collaborator" ng-repeat="person in project.collaborators">
+            <a  ng-href="/{{ person.email }}/projects">
+              <img src="http://avatars.io/email/{{ person.email }}" width=24 height=24 /><span>{{ person.email }}</span>
+            </a>
+          </p>
 
 
-    </div>
+        </div>
+      </div>
+    </h3>
+
+    <hr/>
+
+    <h3><small>DESCRIPTION</small></h3>
+    <p editable="project.description" auth="projectPermissions.edit" callback="update(data)" class="lead"></p>
+
+    <div ui-view></div>
+
+    <hr/>
+
+    <button ng-show="projectPermissions.remove" ng-click="remove()" class="btn btn-danger">Delete Project</button>
   </div>
-</h3>
 
-<hr/>
+  <div ng-switch-when="false" class="alert alert-danger">
+    <h4>This project cannot be found. It may have been deleted. Go back to <a class="alert-link" ng-href="/projects">Projects</a>?</h4>
+  </div>
 
-<h3><small>DESCRIPTION</small></h3>
-<p editable="project.description" auth="projectPermissions.edit" callback="update(data)" class="lead"></p>
+  <div ng-switch-default>
+    Loading...
+  </div>
 
-<div ui-view></div>
-
-<hr/>
-
-<button ng-show="projectPermissions.remove" ng-click="remove()" class="btn btn-danger">Delete Project</button>
+</div>
