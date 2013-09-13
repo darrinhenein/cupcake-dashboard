@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logCreate, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -49,7 +49,7 @@
 
   app.use(express.query());
 
-  app.use(Logger(io));
+  app.use(Logger.listen(io));
 
   app.use(function(req, res, next) {
     var rEnd;
@@ -159,13 +159,21 @@
     });
   };
 
+  logCreate = function(req, res, next) {
+    return Logger.log(req, res, next, io);
+  };
+
   Project.before('post', isAdmin);
+
+  Project.after('post', logCreate);
 
   Project.before('put', authProject);
 
   Project.before('delete', authProject);
 
   Theme.before('post', isAdmin);
+
+  Theme.after('post', logCreate);
 
   Theme.before('put', authTheme);
 
@@ -179,8 +187,12 @@
     if (id) {
       return Project.findOne({
         _id: id
-      }).populate('themes').populate('owner').exec(function(err, docs) {
-        return res.send(docs);
+      }).populate('themes').populate('owner').exec(function(err, doc) {
+        if (doc) {
+          return res.send(doc);
+        } else {
+          return res.send(404);
+        }
       });
     } else {
       return Project.find().populate('themes').populate('owner').exec(function(err, docs) {
@@ -202,14 +214,18 @@
       return Theme.findOne({
         _id: req.params.id
       }).populate('owner').exec(function(err, doc) {
-        return Project.find({
-          themes: doc._id
-        }).populate('themes').populate('owner').exec(function(err, docs) {
-          return res.send({
-            theme: doc,
-            projects: docs
+        if (doc) {
+          return Project.find({
+            themes: doc._id
+          }).populate('themes').populate('owner').exec(function(err, docs) {
+            return res.send({
+              theme: doc,
+              projects: docs
+            });
           });
-        });
+        } else {
+          return res.send(404);
+        }
       });
     } else {
       return Theme.find().populate('owner').exec(function(err, docs) {

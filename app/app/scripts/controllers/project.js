@@ -13,8 +13,12 @@ angular.module('cupcakeDashboard')
     $scope.themes = Themes.query();
 
     $scope.project = Project.get({id: projectId}, function(){
-      $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
-    });
+        $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
+        $scope.isFound = true;
+      }, function(res) {
+        $scope.isFound = false;
+      }
+    );
 
     $scope.$watch('loggedInUser', function(){
       $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);

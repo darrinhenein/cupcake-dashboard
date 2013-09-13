@@ -181,13 +181,33 @@ h3 span.badge {
 }
 
 // animations
+.feed-event {
+    transition: all 2s ease-in-out;
+}
 .feed-event.isNew {
     font-weight: bold;
+    position: relative;
 }
-.feed-event.isNew.ng-enter{
+.feed-event.isNew:before {
+    content: '';
+    background-color: #3BBAFF;
+    height: 7px;
+    width: 7px;
+    position: absolute;
+    left: -12px;
+    top: 8px;
+    border-radius: 50%;
+}
+.feed-event.isNew.ng-enter {
     transition: all 0.7s ease-out;
     background-color: #FFF696;
 }
 .feed-event.isNew.ng-enter.ng-enter-active {
     background-color: transparent;
+}
+
+.feed-event .timeago {
+    font-style: italic;
+    color: #888;
+    font-weight: normal !important;
 }

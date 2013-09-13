@@ -9,8 +9,12 @@ angular.module('cupcakeDashboard')
     });
 
     $scope.theme = Theme.get({id: themeId}, function(){
-      $scope.themePermissions = AuthenticationService.getPermissions($scope.theme.theme);
-    });
+        $scope.themePermissions = AuthenticationService.getPermissions($scope.theme.theme);
+        $scope.isFound = true;
+      }, function(res) {
+        $scope.isFound = false;
+      }
+    );
 
     $scope.$watch('loggedInUser', function(){
       $scope.themePermissions = AuthenticationService.getPermissions($scope.theme.theme);

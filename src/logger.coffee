@@ -4,9 +4,9 @@ Event = require('./models/event')
 Theme = require('./models/theme')
 Project = require('./models/project')
 
-module.exports = (io) ->
+module.exports.listen = (io) ->
   return (req, res, next) ->
-    if req.method is 'POST' or req.method is 'PUT'
+    if req.method is 'PUT' or req.method is 'DELETE'
       if req.path.split('/')[1] is 'api'
 
         type = req.path.split('/')[2]
@@ -33,6 +33,30 @@ module.exports = (io) ->
                 Event.findOne({_id: e._id}).populate('owner').exec (err, doc) ->
                   io.sockets.emit 'feed', doc
                   next()
+      else
+        next()
+    else
+      next()
+
+module.exports.log = (req, res, next, io) ->
+    if req.method is 'POST'
+      if req.path.split('/')[1] is 'api'
+
+        type = req.path.split('/')[2]
+        type = type.substr(0, type.length-1)
+
+        method = req.method
+
+        User.findOne {email: req.session.email}, (err, user) ->
+          Event.create {
+              verb: method
+              type: type
+              model: res.locals.bundle
+              owner: user._id
+            }, (err, e) ->
+              Event.findOne({_id: e._id}).populate('owner').exec (err, doc) ->
+                io.sockets.emit 'feed', doc
+                next()
       else
         next()
     else

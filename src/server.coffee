@@ -27,7 +27,7 @@ app.use express.cookieParser()
 app.use express.session
   secret: 'personasecret'
 app.use express.query()
-app.use Logger io
+app.use Logger.listen io
 app.use (req, res, next) ->
   rEnd = res.end
 
@@ -121,14 +121,22 @@ isAdmin = (req, res, next) ->
   isLoggedIn req, res, ->
     next()
 
+logCreate = (req, res, next) ->
+  Logger.log req, res, next, io
+
+
 # server side auth on projects
-Project.before('post', isAdmin)
-Project.before('put', authProject)
-Project.before('delete', authProject)
-Theme.before('post', isAdmin)
-Theme.before('put', authTheme)
-Theme.before('delete', authTheme)
-User.before('put', authUser)
+Project.before 'post'   , isAdmin
+Project.after 'post'    , logCreate
+Project.before 'put'    , authProject
+Project.before 'delete' , authProject
+
+Theme.before 'post'     , isAdmin
+Theme.after 'post'      , logCreate
+Theme.before 'put'      , authTheme
+Theme.before 'delete'   , authTheme
+
+User.before 'put'       , authUser
 
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
@@ -137,8 +145,11 @@ Project.before 'get', (req, res, next) ->
     Project.findOne({_id: id})
            .populate('themes')
            .populate('owner')
-           .exec (err, docs) ->
-             res.send docs
+           .exec (err, doc) ->
+              if doc
+                res.send doc
+              else
+                res.send 404
   else
     Project.find().populate('themes').populate('owner').exec (err, docs) ->
       res.send docs
@@ -156,13 +167,16 @@ Theme.before 'get', (req, res, next) ->
     Theme.findOne({_id: req.params.id})
          .populate('owner')
          .exec (err, doc) ->
-           Project.find({themes: doc._id})
-                  .populate('themes')
-                  .populate('owner')
-                  .exec (err, docs) ->
-                    res.send
-                      theme: doc
-                      projects: docs
+          if doc
+             Project.find({themes: doc._id})
+                    .populate('themes')
+                    .populate('owner')
+                    .exec (err, docs) ->
+                      res.send
+                        theme: doc
+                        projects: docs
+          else
+            res.send 404
   else
     Theme.find().populate('owner').exec (err, docs) ->
       res.send docs

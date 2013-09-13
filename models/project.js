@@ -7,7 +7,7 @@
 
   ObjectId = mongoose.Schema.Types.ObjectId;
 
-  module.exports = ProjectSchema = restful.model("project", mongoose.Schema({
+  ProjectSchema = restful.model("project", mongoose.Schema({
     title: "string",
     description: "string",
     owner: {
@@ -42,5 +42,7 @@
       }
     ]
   })).methods(["get", "post", "put", "delete"]);
+
+  module.exports = ProjectSchema;
 
 }).call(this);

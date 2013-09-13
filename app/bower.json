@@ -8,6 +8,7 @@
     "es5-shim": "~2.0.8",
     "angular-ui-router": "~0.0.1",
     "angular-animate": "~1.2.0-rc.2",
-    "angular": "~1.2.0-rc.2"
+    "angular": "~1.2.0-rc.2",
+    "moment": "~2.2.1"
   }
 }

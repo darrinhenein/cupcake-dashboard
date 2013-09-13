@@ -32,7 +32,6 @@
         <ul class="nav container navbar-nav navbar-fixed-top">
             <li ng-class="{active: currentPath == '/'}"><a href="/">Themes</a></li>
             <li ng-class="{active: currentPath == '/projects'}"><a href="/projects">Projects</a></li>
-            <a class="btn btn-default navbar-btn" ng-show="permissions.add" ng-href="/projects/new">New Project</a>
             <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/projects'}">
                 <a href="/{{ loggedInUser.email }}/projects"><small class="text-label">My Projects</small></a>
             </li>
@@ -80,6 +79,8 @@
         <script src="bower_components/bootstrap-sass/js/bootstrap-scrollspy.js"></script>
         <script src="bower_components/bootstrap-sass/js/bootstrap-collapse.js"></script>
         <script src="bower_components/bootstrap-sass/js/bootstrap-tab.js"></script>
+        <script src="bower_components/moment/min/moment.min.js"></script>
+
 
         <!-- endbuild -->
 
@@ -102,6 +103,7 @@
         <script src="scripts/controllers/phases.js"></script>
         <script src="scripts/directives/progress-directive.js"></script>
         <script src="scripts/directives/editable-directive.js"></script>
+        <script src="scripts/filters/timeago-filter.js"></script>
         <script src="scripts/services/ui-helper-service.js"></script>
         <script src="scripts/services/authentication-service.js"></script>
         <script src="scripts/services/user-service.js"></script>
