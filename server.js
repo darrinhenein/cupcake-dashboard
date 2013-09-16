@@ -246,6 +246,18 @@
     }
   });
 
+  Project.route("events.get", {
+    detail: true,
+    handler: function(req, res, next) {
+      console.log(req.params.id);
+      return Events.find({
+        mid: req.params.id
+      }).exec(function(err, docs) {
+        return res.send(docs);
+      });
+    }
+  });
+
   Project.route("total.get", function(req, res) {
     return Project.find({}, function(err, docs) {
       return res.send({

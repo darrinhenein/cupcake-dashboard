@@ -194,6 +194,12 @@ Theme.before 'get', (req, res, next) ->
     Theme.find().populate('owner').exec (err, docs) ->
       res.send docs
 
+Project.route "events.get",
+  detail: yes
+  handler: (req, res, next) ->
+    Events.find({mid: req.params.id}).exec (err, docs) ->
+      res.send docs
+
 Project.route "total.get", (req, res) ->
   Project.find {}, (err, docs) ->
     res.send {total: docs.length}

@@ -36,6 +36,7 @@ module.exports.log = (req, res, next, io) ->
                 type: type
                 model: modelData
                 changes: req.body
+                mid: mid
                 owner: user._id
               }, (err, e) ->
                 Event.findOne({_id: e._id}).populate('owner').exec (err, doc) ->
