@@ -24,6 +24,7 @@
       "default": 0,
       required: true
     },
+    bugs: ["string"],
     created_at: {
       type: "date",
       "default": Date.now

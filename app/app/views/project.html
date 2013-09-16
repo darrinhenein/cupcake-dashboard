@@ -71,6 +71,21 @@
 
     <hr/>
 
+    <h3><small>BUGS</small></h3>
+    <div class="input-group" ng-show="projectPermissions.edit">
+      <input type="text" ng-model="newBug.id" placeholder="Add Bugzilla Bug by id..." class="form-control">
+      <span class="input-group-btn">
+        <button class="btn btn-default" ng-click="addBug()" type="button">+</button>
+      </span>
+      <br/>
+    </div>
+    <p ng-repeat="bug in bugs">
+      <strong>{{ bug.id }}</strong><a ng-href="https://bugzilla.mozilla.org/show_bug.cgi?id={{  bug.id }}" target="_blank"> {{ bug.summary }} </a> <i>({{ bug.assigned_to.name }})</i> <span class="label label-info">{{ bug.status }}</span>
+      <button ng-show="projectPermissions.edit" ng-click="removeBug(bug.id)" class="btn btn-xs btn-danger">-</button>
+    </p>
+    <span ng-show="project.bugs.length == 0">No bugs associated with this project.</span>
+    <span ng-show="project.bugs.length != 0 && bugs.length == 0">Loading bugs from bugzilla...</span>
+
     <h3><small>DESCRIPTION</small></h3>
     <p editable="project.description" auth="projectPermissions.edit" textarea=true callback="update(data)" class="lead"></p>
 

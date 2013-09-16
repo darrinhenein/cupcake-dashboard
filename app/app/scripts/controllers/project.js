@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectCtrl', function ($scope, $rootScope, $resource, $location, $stateParams, UIHelperService, AuthenticationService) {
+  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $stateParams, UIHelperService, AuthenticationService) {
     var projectId = $stateParams.id;
 
     var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
@@ -12,10 +12,15 @@ angular.module('cupcakeDashboard')
 
     $scope.themes = Themes.query();
     $scope.newCollaborator = {email: ''};
+    $scope.newBug = {id: ''};
+    $scope.bugs = [];
 
     $scope.project = Project.get({id: projectId}, function(){
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
         $scope.isFound = true;
+        $http.get('https://api-dev.bugzilla.mozilla.org/latest/bug/?id=' + $scope.project.bugs.join(',')).then(function(res){
+          $scope.bugs = res.data.bugs;
+        });
       }, function(res) {
         $scope.isFound = false;
       }
@@ -84,6 +89,41 @@ angular.module('cupcakeDashboard')
           Project.update({id: projectId}, obj);
           break;
       }
+    }
+
+    $scope.addBug = function(){
+      var bugs = $scope.project.bugs || [];
+      for (var i = bugs.length - 1; i >= 0; i--) {
+        if(bugs[i] == $scope.newBug.id) {
+          $scope.newBug.id = '';
+          return;
+        }
+      };
+      bugs.push($scope.newBug.id);
+      console.log(bugs);
+      Project.update({id: projectId}, {bugs: bugs}, function(data){
+        $scope.project.bugs = data.bugs;
+        $scope.newBug.id = '';
+        $http.get('https://api-dev.bugzilla.mozilla.org/latest/bug/?id=' + $scope.project.bugs.join(',')).then(function(res){
+          $scope.bugs = res.data.bugs;
+        });
+      });
+    }
+
+    $scope.removeBug = function(bugId){
+      var bugs = $scope.project.bugs;
+      newBugs = [];
+      for (var i = bugs.length - 1; i >= 0; i--) {
+        if(bugs[i] != bugId) {
+          newBugs.push(bugs[i]);
+        }
+      };
+      Project.update({id: projectId}, {bugs: newBugs}, function(data){
+        $scope.project.bugs = data.bugs;
+        $http.get('https://api-dev.bugzilla.mozilla.org/latest/bug/?id=' + $scope.project.bugs.join(',')).then(function(res){
+          $scope.bugs = res.data.bugs;
+        });
+      });
     }
 
     $scope.addCollaborator = function(){
