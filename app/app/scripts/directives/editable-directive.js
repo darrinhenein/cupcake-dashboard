@@ -5,10 +5,15 @@ angular.module('cupcakeDashboard')
             '{{value}} ' +
             '<a ng-show="auth" class="btn btn-primary btn-xs" ng-click="enableEditor()">Edit</a>' +
         '</div>' +
-        '<form ng-show="view.editorEnabled" class="form-inline">' +
-            '<input ng-keyup="keyup($event)" class="form-control col-lg-2" ng-model="view.editableValue">' +
+        '<div ng-show="view.editorEnabled" ng-switch="textarea">' +
+            '<form class="form" ng-switch-when="true">' +
+                '<textarea ng-keyup="keyup($event)" class="form-control col-lg-12" ng-model="view.editableValue"></textarea>' +
+            '</form>' +
+            '<form class="form-inline" ng-switch-default>' +
+                '<input ng-keyup="keyup($event)" class="form-control col-lg-2" ng-model="view.editableValue">' +
+            '</form>' +
             '<a class="btn btn-primary btn-xs" ng-click="disableEditor()">Cancel</a>' +
-        '</form>' +
+        '</div>' +
     '</div>';
 
     return {
@@ -19,7 +24,8 @@ angular.module('cupcakeDashboard')
             value: "=editable",
             callback: "&",
             property: "@editable",
-            auth: "="
+            auth: "=",
+            textarea: "="
         },
         controller: function($scope) {
             if(!$scope.value)
@@ -35,6 +41,7 @@ angular.module('cupcakeDashboard')
                 $scope.view.editorEnabled = true;
                 $scope.view.editableValue = $scope.value;
                 $scope.view.auth = $scope.auth;
+                $scope.view.textarea = $scope.textarea;
             };
 
             $scope.disableEditor = function() {

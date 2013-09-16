@@ -5,9 +5,9 @@
 </ul>
 
 <p ng-repeat="(key, phase) in project.phases" ng-show="activePhase==key" ng-class="{active: activePhase==phase.phase}">
-  <span editable="phase.body" auth="projectPermissions.edit" callback="updatePhaseDetails(data)"></span>
+  <span editable="phase.body" textarea=true auth="projectPermissions.edit" callback="updatePhaseDetails(data)"></span>
   <small>{{ phase.created_at | date }}</small>
 </p>
 <p ng-show="project.phases[activePhase]==undefined">
-  <span editable="newPhase.body" auth="projectPermissions.edit" callback="updatePhaseDetails(data, activePhase)"></span>
+  <span editable="newPhase.body" textarea=true auth="projectPermissions.edit" callback="updatePhaseDetails(data, activePhase)"></span>
 </p>
