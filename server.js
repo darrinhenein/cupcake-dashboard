@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logCreate, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -48,8 +48,6 @@
   }));
 
   app.use(express.query());
-
-  app.use(Logger.listen(io));
 
   app.use(function(req, res, next) {
     var rEnd;
@@ -104,8 +102,7 @@
       res.logged_in_email = req.session.email;
       return next();
     } else {
-      res.send(401);
-      return next();
+      return res.send(401);
     }
   };
 
@@ -159,27 +156,41 @@
     });
   };
 
-  logCreate = function(req, res, next) {
-    return Logger.log(req, res, next, io);
+  logEvent = function(req, res, next) {
+    if ((res.locals.status_code >= 200 && res.locals.status_code < 300) || req.method === 'DELETE') {
+      return Logger.log(req, res, next, io);
+    } else {
+      return next();
+    }
   };
 
   Project.before('post', isAdmin);
 
-  Project.after('post', logCreate);
-
   Project.before('put', authProject);
 
-  Project.before('delete', authProject);
+  Project.before('delete', function(req, res, next) {
+    return authProject(req, res, function() {
+      return logEvent(req, res, next);
+    });
+  });
 
   Theme.before('post', isAdmin);
 
-  Theme.after('post', logCreate);
-
   Theme.before('put', authTheme);
 
-  Theme.before('delete', authTheme);
+  Theme.before('delete', function(req, res, next) {
+    return authTheme(req, res, function() {
+      return logEvent(req, res, next);
+    });
+  });
 
   User.before('put', authUser);
+
+  Project.after('post', logEvent);
+
+  Theme.after('put', logEvent);
+
+  Theme.after('post', logEvent);
 
   Project.before('get', function(req, res, next) {
     var id;
@@ -202,6 +213,7 @@
   });
 
   Project.after('put', function(req, res, next) {
+    logEvent(req, res, next);
     return Project.findOne({
       _id: res.locals.bundle._id
     }).populate('themes').populate('owner').exec(function(err, doc) {

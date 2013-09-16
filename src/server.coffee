@@ -27,7 +27,6 @@ app.use express.cookieParser()
 app.use express.session
   secret: 'personasecret'
 app.use express.query()
-app.use Logger.listen io
 app.use (req, res, next) ->
   rEnd = res.end
 
@@ -89,7 +88,6 @@ isLoggedIn = (req, res, next) ->
     next()
   else
     res.send 401
-    next()
 
 authProject = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -103,11 +101,13 @@ authProject = (req, res, next) ->
 
 authTheme = (req, res, next) ->
   isLoggedIn req, res, ->
-    theme = Theme.findOne({_id:req.params.id}).populate('owner').exec (err, doc) ->
-      if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
-        next()
-      else
-        res.send 403
+    theme = Theme.findOne({_id:req.params.id})
+                 .populate('owner')
+                 .exec (err, doc) ->
+                   if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
+                     next()
+                   else
+                     res.send 403
 
 authUser = (req, res, next) ->
   isLoggedIn req, res, ->
@@ -121,22 +121,34 @@ isAdmin = (req, res, next) ->
   isLoggedIn req, res, ->
     next()
 
-logCreate = (req, res, next) ->
-  Logger.log req, res, next, io
+logEvent = (req, res, next) ->
+  if (res.locals.status_code >= 200 and res.locals.status_code < 300) or req.method is 'DELETE'
+    Logger.log req, res, next, io
+  else
+    next()
 
 
 # server side auth on projects
 Project.before 'post'   , isAdmin
-Project.after 'post'    , logCreate
 Project.before 'put'    , authProject
-Project.before 'delete' , authProject
+
+Project.before 'delete' , (req, res, next) ->
+  authProject req, res, ->
+    logEvent req, res, next
 
 Theme.before 'post'     , isAdmin
-Theme.after 'post'      , logCreate
 Theme.before 'put'      , authTheme
-Theme.before 'delete'   , authTheme
 
+Theme.before 'delete'  , (req, res, next) ->
+  authTheme req, res, ->
+    logEvent req, res, next
 User.before 'put'       , authUser
+
+
+# logging
+Project.after 'post'   , logEvent
+Theme.after 'put'      , logEvent
+Theme.after 'post'     , logEvent
 
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
@@ -155,6 +167,7 @@ Project.before 'get', (req, res, next) ->
       res.send docs
 
 Project.after 'put', (req, res, next) ->
+  logEvent req, res, next
   Project.findOne({_id: res.locals.bundle._id})
          .populate('themes')
          .populate('owner')

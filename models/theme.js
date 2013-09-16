@@ -8,7 +8,11 @@
   ObjectId = mongoose.Schema.Types.ObjectId;
 
   module.exports = ThemeSchema = restful.model("theme", mongoose.Schema({
-    title: "string",
+    title: {
+      type: "string",
+      match: /\S/,
+      required: true
+    },
     description: "string",
     owner: {
       type: ObjectId,

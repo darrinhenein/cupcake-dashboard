@@ -3,7 +3,11 @@ mongoose = restful.mongoose
 ObjectId = mongoose.Schema.Types.ObjectId
 
 ProjectSchema = restful.model("project", mongoose.Schema(
-  title: "string"
+  title: {
+    type: "string"
+    match: /\S/
+    required: true
+  }
   description: "string"
   owner: {
     type: ObjectId

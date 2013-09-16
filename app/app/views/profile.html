@@ -12,6 +12,7 @@
   <h3>Admin Tools</h3>
   <button class="btn btn-primary" ng-click="downloadDB()">Download Database</button>
   <button class="btn btn-danger" ng-click="uploadDB()">Upload Database</button>
+  <span class="alert alert info">{{ status.message }} <small class="text-muted">{{ status.date | date:'short' }}</small></span>
   <hr/>
   <textarea rows=100 ng-model="dbDump" class="form-control"></textarea>
 </div>

@@ -34,6 +34,16 @@ angular.module('cupcakeDashboard')
     $scope.downloadDB = function(){
       $http.get('/admin/dump').then(function(res){
         $scope.dbDump = angular.toJson(res.data, true);
+        $scope.status = {
+          message: "Database downloaded.",
+          date: new Date()
+        };
+      });
+    }
+
+    $scope.uploadDB = function(){
+      $http.post('/admin/load', $scope.dbDump).then(function(res){
+        $scope.status = res.data;
       });
     }
 
