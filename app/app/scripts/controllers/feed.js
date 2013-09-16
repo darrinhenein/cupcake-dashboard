@@ -1,7 +1,7 @@
 angular.module('cupcakeDashboard')
-  .controller('FeedCtrl', function ($scope, $http, $timeout) {
+  .controller('FeedCtrl', function ($scope, $http, $timeout, $location) {
 
-  var isNewDelaySeconds = 60;
+  var isNewDelaySeconds = 60 * 3;
 
   $scope.events = [];
 
@@ -9,7 +9,7 @@ angular.module('cupcakeDashboard')
     $scope.events = angular.copy(res.data, $scope.events);
   })
 
-  var socket = io.connect('http://localhost');
+  var socket = io.connect($location.host());
 
   socket.on('feed', function(data){
     $scope.$apply(function(){

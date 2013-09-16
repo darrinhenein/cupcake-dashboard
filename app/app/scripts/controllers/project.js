@@ -11,6 +11,7 @@ angular.module('cupcakeDashboard')
     var Themes = $resource('/api/themes/:id');
 
     $scope.themes = Themes.query();
+    $scope.newCollaborator = {email: ''};
 
     $scope.project = Project.get({id: projectId}, function(){
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
@@ -88,15 +89,15 @@ angular.module('cupcakeDashboard')
     $scope.addCollaborator = function(){
       var collabs = $scope.project.collaborators;
       for (var i = collabs.length - 1; i >= 0; i--) {
-        if(collabs[i].email == $scope.collaborator.email || $scope.collaborator.email == $scope.project.owner.email)
+        if(collabs[i].email == $scope.newCollaborator.email || $scope.newCollaborator.email == $scope.project.owner.email)
         {
-          $scope.collaborator.email = '';
+          $scope.newCollaborator.email = '';
           return;
         }
       };
-      collabs.push($scope.collaborator);
+      collabs.push($scope.newCollaborator);
       Project.update({id: projectId}, {collaborators: collabs}, function(data){
-        $scope.collaborator.email = '';
+        $scope.newCollaborator.email = '';
         $scope.project = data;
       });
     }

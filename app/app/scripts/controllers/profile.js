@@ -23,7 +23,6 @@ angular.module('cupcakeDashboard')
       var obj = {};
       obj[prop] = data.value;
 
-      console.log(obj, model);
 
       switch(model) {
         case 'user':

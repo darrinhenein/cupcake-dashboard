@@ -36,6 +36,7 @@
           <form ng-show="projectPermissions.edit" class="form-inline">
             <select ng-model="project.phase" ng-options="p.phase as p.title for p in phases" ng-change="savePhase()" class="form-control col-lg-2"></select>
           </form>
+          <br/>
 
           <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>
 
@@ -46,7 +47,7 @@
           <p ng-show="project.collaborators.length == 0" class="muted"><small>No collaborators.</small></p>
 
           <div class="input-group" ng-show="projectPermissions.edit">
-            <input type="text" ng-model="collaborator.email" placeholder="Add Collaborator..." class="form-control">
+            <input type="text" ng-model="newCollaborator.email" placeholder="Add Collaborator..." class="form-control">
             <span class="input-group-btn">
               <button class="btn btn-default" ng-click="addCollaborator()" type="button">+</button>
             </span>

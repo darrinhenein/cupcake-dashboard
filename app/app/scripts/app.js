@@ -2,11 +2,11 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ui.state', 'angu
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/themes');
 
     $stateProvider
       .state('base', {
-        url: '/',
+        url: '/themes',
         templateUrl: 'views/themes.html',
         controller: 'ThemesCtrl'
       })
