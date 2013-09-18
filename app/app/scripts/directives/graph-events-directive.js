@@ -1,9 +1,9 @@
 angular.module('cupcakeDashboard')
   .directive("graphEvents", function() {
     // constants
-     var margin = 30,
+     var margin = 20,
        width = 740,
-       height = 40,
+       height = 60,
        color = d3.interpolateRgb("#f77", "#77f");
 
      return {
@@ -24,12 +24,13 @@ angular.module('cupcakeDashboard')
 
          scope.$watch('data', function (newVal, oldVal) {
 
-           // clear the elements inside of the directive
-           vis.selectAll('*').remove();
-
            // if 'val' is undefined, exit
            if (!newVal) {
              return;
+           }
+
+           if (scope.data.length == 0){
+            return;
            }
 
             function getDateFromEvent(d){
@@ -51,12 +52,11 @@ angular.module('cupcakeDashboard')
               return a - b;
             });
 
-            var minY = getDateFromEvent(scope.data[0].date).getHours();
-            var maxY = getDateFromEvent(scope.data[scope.data.length-1].date).getHours();
+            var minY = getDateFromEvent(scope.data[0].date).getHours() + getDateFromEvent(scope.data[0].date).getMinutes()/60;
+            var maxY = getDateFromEvent(scope.data[scope.data.length-1].date).getHours() + getDateFromEvent(scope.data[scope.data.length-1].date).getMinutes()/60;
 
             var Xscale = d3.time.scale().domain([minX, maxX]).range([margin, width - margin]);
             var Yscale = d3.scale.linear().domain([maxY, minY]).range([0, height]);
-
             var color = d3.scale.linear().domain([maxY, minY]).range(['#E80275', '#00D4F0']);
 
             var dataPoints = [];
@@ -79,15 +79,11 @@ angular.module('cupcakeDashboard')
             var xAxis = d3.svg.axis().scale(Xscale).orient('bottom');
             var yAxis = d3.svg.axis().scale(Yscale)
               .orient('left')
-              .ticks(3)
+              .ticks(2)
               .tickFormat(function(d) {
-                var t = 'a';
-                if(d > 12){
-                  d = d - 12;
-                  t = 'p';
-                }
-                if(d == 0) d = 12;
-                return d + t;
+                var input = d3.time.format("%H");
+                var format = d3.time.format("%-I%p");
+                return format(input.parse(d.toString()));
               });
 
             var flatline = d3.svg.line()
@@ -107,6 +103,7 @@ angular.module('cupcakeDashboard')
                 })
 
             function transitionDots() {
+               vis.selectAll('*').remove();
                vis.append("path")
                 .transition()
                 .duration(100)
@@ -142,12 +139,12 @@ angular.module('cupcakeDashboard')
 
               vis.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + margin + "," + (height + margin + 10) + ")")
+                .attr("transform", "translate(" + margin + "," + (height + margin) + ")")
                 .call(xAxis);
 
               vis.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + (margin + 10) + "," + margin +  ")")
+                .attr("transform", "translate(" + (margin + 15) + "," + margin +  ")")
                 .call(yAxis);
 
                function transitionEnd() {

@@ -4,6 +4,7 @@
   </li>
 </ul>
 
+<small class="text-muted">{{ phases[activePhase].prompt | uppercase }}</small><br/>
 <p ng-repeat="(key, phase) in project.phases" ng-show="activePhase==key" ng-class="{active: activePhase==phase.phase}">
   <span editable="phase.body" textarea=true auth="projectPermissions.edit" callback="updatePhaseDetails(data)"></span>
   <small>{{ phase.created_at | date }}</small>

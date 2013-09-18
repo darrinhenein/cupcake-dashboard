@@ -16,6 +16,7 @@ angular.module('cupcakeDashboard')
     UIHelperService.phases().then(function(data){
       $scope.phases = data;
     });
+
     UIHelperService.total().then(function(data){
       $scope.projectsTotal = data;
     });

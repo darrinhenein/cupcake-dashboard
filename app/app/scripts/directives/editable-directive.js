@@ -7,12 +7,14 @@ angular.module('cupcakeDashboard')
         '</div>' +
         '<div ng-show="view.editorEnabled" ng-switch="textarea">' +
             '<form class="form" ng-switch-when="true">' +
-                '<textarea ng-keyup="keyup($event)" class="form-control col-lg-12" ng-model="view.editableValue"></textarea>' +
+                '<textarea class="form-control col-lg-12" ng-model="view.editableValue"></textarea>' +
+                '<a class="btn btn-danger btn-xs" ng-click="disableEditor()">Cancel</a>' +
+                '  <a class="btn btn-primary btn-xs" ng-click="save()">Save</a>' +
             '</form>' +
             '<form class="form-inline" ng-switch-default>' +
                 '<input ng-keyup="keyup($event)" class="form-control col-lg-2" ng-model="view.editableValue">' +
+                '<a class="btn btn-primary btn-xs" ng-click="disableEditor()">Cancel</a>' +
             '</form>' +
-            '<a class="btn btn-primary btn-xs" ng-click="disableEditor()">Cancel</a>' +
         '</div>' +
     '</div>';
 
