@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-6">
           <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
-           <small>{{ project.created_at | date }}</small>
+           <small>Created {{ project.created_at | date }}</small>
          </div>
         <div class="col-md-6">
           <span ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
@@ -14,6 +14,8 @@
         </div>
       </div>
 
+      <hr/>
+      <div graph-events="events"></div>
       <hr/>
 
       <div class="row">
@@ -36,11 +38,11 @@
           <form ng-show="projectPermissions.edit" class="form-inline">
             <select ng-model="project.phase" ng-options="p.phase as p.title for p in phases" ng-change="savePhase()" class="form-control col-lg-2"></select>
           </form>
-          <br/>
+<!--           <br/>
 
           <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>
 
-        </div>
+ -->        </div>
         <div class="col-md-6">
           <small>COLLABORATORS</small>
 
@@ -84,7 +86,7 @@
       <button ng-show="projectPermissions.edit" ng-click="removeBug(bug.id)" class="btn btn-xs btn-danger">-</button>
     </p>
     <span ng-show="project.bugs.length == 0">No bugs associated with this project.</span>
-    <span ng-show="project.bugs.length != 0 && bugs.length == 0">Loading bugs from bugzilla...</span>
+    <span ng-show="findingBugs">Loading bugs from bugzilla...</span>
 
     <h3><small>DESCRIPTION</small></h3>
     <p editable="project.description" auth="projectPermissions.edit" textarea=true callback="update(data)" class="lead"></p>

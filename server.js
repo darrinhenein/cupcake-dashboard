@@ -249,7 +249,6 @@
   Project.route("events.get", {
     detail: true,
     handler: function(req, res, next) {
-      console.log(req.params.id);
       return Events.find({
         mid: req.params.id
       }).exec(function(err, docs) {
@@ -274,7 +273,7 @@
 
   app.get("/api/events/:num?", function(req, res) {
     var num;
-    num = req.params.num || 5;
+    num = req.params.num || 500;
     return Events.find().sort('-date').limit(num).populate('owner').exec(function(err, docs) {
       return res.send(docs);
     });
@@ -369,6 +368,8 @@
   app.get("/themes/new", index);
 
   app.get("/theme/:themeId", index);
+
+  app.get("/about", index);
 
   app.get("/401", index);
 

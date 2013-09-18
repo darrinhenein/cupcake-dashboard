@@ -1,10 +1,11 @@
+  <div graph-events="events"></div>
   <div ng-include="'views/projects-nav.html'"></div>
   <table ng-show="projects.length" class="table table-hover">
   <thead>
     <tr>
     <th>Title</th>
     <th>Owner</th>
-    <th>Date Started</th>
+    <th>Themes</th>
     <th>Phase</th>
     <th>Progress</th>
     </tr>
@@ -16,10 +17,10 @@
         <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email">○</span>
       </td>
       <td>{{ UI.displayName(project.owner) }}</td>
-      <td>{{ project.created_at | date }}</td>
+      <td><span ng-repeat="theme in project.themes" class="text-label">{{ theme.title }}<br/></span></td>
       <td>{{ phases[project.phase].title }}</td>
       <td>
-        <progress-bar progress="{{project.progress}}" />
+        <progress-bar progress="{{((project.phase / (phases.length-1)) * 100)}}" />
       </td>
     </tr>
     </tbody>

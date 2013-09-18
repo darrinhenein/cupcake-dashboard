@@ -7,6 +7,12 @@ angular.module('cupcakeDashboard')
       $scope.projects = data;
     })
 
+    $scope.$watch('projects', function(){
+      $http.get('/api/events/').then(function(res){
+        $scope.events = res.data;
+      });
+    })
+
     UIHelperService.phases().then(function(data){
       $scope.phases = data;
     });

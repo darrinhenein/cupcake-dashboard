@@ -63,6 +63,11 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ui.state', 'angu
         templateUrl: 'views/projects.html',
         controller: 'PhaseCtrl'
       })
+      .state('about', {
+        url: '/about',
+        templateUrl: 'views/about.html',
+        controller: 'AboutCtrl'
+      })
       .state('notAuthorized', {
         url: '/401',
         templateUrl: 'views/401.html'

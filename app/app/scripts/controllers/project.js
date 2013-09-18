@@ -14,17 +14,31 @@ angular.module('cupcakeDashboard')
     $scope.newCollaborator = {email: ''};
     $scope.newBug = {id: ''};
     $scope.bugs = [];
+    $scope.events = [];
 
     $scope.project = Project.get({id: projectId}, function(){
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
         $scope.isFound = true;
-        $http.get('https://api-dev.bugzilla.mozilla.org/latest/bug/?id=' + $scope.project.bugs.join(',')).then(function(res){
-          $scope.bugs = res.data.bugs;
-        });
+
+        if($scope.project.bugs.length > 0)
+        {
+          $scope.findingBugs = true;
+          $http.get('https://api-dev.bugzilla.mozilla.org/latest/bug/?id=' + $scope.project.bugs.join(',')).then(function(res){
+            $scope.bugs = res.data.bugs;
+            $scope.findingBugs = false;
+          });
+        }
+
       }, function(res) {
         $scope.isFound = false;
       }
     );
+
+    $scope.$watch('project', function(){
+      $http.get('/api/projects/' + projectId + '/events').then(function(res){
+        $scope.events = res.data;
+      });
+    });
 
     $scope.$watch('loggedInUser', function(){
       $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);

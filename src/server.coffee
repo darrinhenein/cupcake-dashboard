@@ -209,7 +209,7 @@ Theme.register app, "/api/themes"
 User.register app, "/api/users"
 
 app.get "/api/events/:num?", (req, res) ->
-  num = req.params.num || 5
+  num = req.params.num || 500
   Events.find().sort('-date').limit(num).populate('owner').exec (err, docs) ->
     res.send docs
 
@@ -264,6 +264,7 @@ app.get "/phase/:phaseId", index
 app.get "/themes", index
 app.get "/themes/new", index
 app.get "/theme/:themeId", index
+app.get "/about", index
 app.get "/401", index
 
 # admin

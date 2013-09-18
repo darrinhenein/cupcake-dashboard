@@ -23,7 +23,10 @@ ProjectSchema = restful.model("project", mongoose.Schema(
     default: 0
     required: true
   }
-  bugs: ["string"]
+  bugs: [{
+    type: String
+    match: /\d/
+  }]
   created_at: {
     type: "date"
     default: Date.now
