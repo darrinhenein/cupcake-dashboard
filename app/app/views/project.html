@@ -89,7 +89,7 @@
     <span ng-show="findingBugs">Loading bugs from bugzilla...</span>
 
     <h3><small>DESCRIPTION</small></h3>
-    <p editable="project.description" auth="projectPermissions.edit" textarea=true callback="update(data)" class="lead"></p>
+    <p editable="project.description" auth="projectPermissions.edit" textarea=true markdown=true callback="update(data)" class="lead"></p>
 
     <div ui-view></div>
 

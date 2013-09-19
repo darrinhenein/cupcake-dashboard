@@ -1,8 +1,8 @@
 angular.module('cupcakeDashboard')
-  .directive("editable", function() {
+  .directive("editable", function($sanitize) {
     var editorTemplate = '<div class="click-to-edit">' +
         '<div ng-hide="view.editorEnabled">' +
-            '{{value}} ' +
+            '<span ng-class="{markdown: view.markdown == true}" ng-bind-html="view.renderedValue"></span> ' +
             '<a ng-show="auth" class="btn btn-primary btn-xs" ng-click="enableEditor()">Edit</a>' +
         '</div>' +
         '<div ng-show="view.editorEnabled" ng-switch="textarea">' +
@@ -27,15 +27,25 @@ angular.module('cupcakeDashboard')
             callback: "&",
             property: "@editable",
             auth: "=",
-            textarea: "="
+            textarea: "=",
+            markdown: "="
         },
         controller: function($scope) {
             if(!$scope.value)
             {
                 $scope.value = '';
             }
+
+            var renderedValue = $scope.value;
+            if($scope.markdown)
+            {
+                renderedValue = markdown.toHTML(renderedValue);
+            }
+
             $scope.view = {
                 editableValue: $scope.value,
+                renderedValue: renderedValue,
+                markdown: $scope.markdown,
                 editorEnabled: false
             };
 
@@ -59,6 +69,14 @@ angular.module('cupcakeDashboard')
                 obj = {}
                 obj[$scope.property] = $scope.value
                 $scope.callback({data: {path: $scope.property, value: $scope.value}});
+                if($scope.markdown)
+                {
+                    $scope.view.renderedValue = markdown.toHTML($scope.value);
+                }
+                else
+                {
+                    $scope.view.renderedValue = $scope.value;
+                }
             };
 
 

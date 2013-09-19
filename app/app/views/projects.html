@@ -15,7 +15,7 @@
     <tr ng-repeat="project in projects" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
       <td>
         <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a>
-        <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email">○</span>
+        <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
       </td>
       <td>{{ UI.displayName(project.owner) }}</td>
       <td><span ng-repeat="theme in project.themes" class="text-label">{{ theme.title }}<br/></span></td>

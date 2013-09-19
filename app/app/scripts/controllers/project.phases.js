@@ -28,7 +28,7 @@ angular.module('cupcakeDashboard')
         phases = {};
       }
 
-      phases[phase] = obj;
+      phases[$scope.activePhase] = obj;
 
       Project.update({id: $stateParams.id}, {phases: phases}, function(data){
         $scope.$parent.project = data;

@@ -1,4 +1,4 @@
-angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ui.state', 'angular-tools.persona'])
+angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'ui.state', 'angular-tools.persona'])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
     $locationProvider.html5Mode(true);

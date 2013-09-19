@@ -1,9 +1,9 @@
 angular.module('cupcakeDashboard')
   .directive("graphEvents", function() {
     // constants
-     var margin = 20,
+     var margin = 15,
        width = 740,
-       height = 60,
+       height = 86,
        color = d3.interpolateRgb("#f77", "#77f");
 
      return {
@@ -55,8 +55,8 @@ angular.module('cupcakeDashboard')
             var minY = getDateFromEvent(scope.data[0].date).getHours() + getDateFromEvent(scope.data[0].date).getMinutes()/60;
             var maxY = getDateFromEvent(scope.data[scope.data.length-1].date).getHours() + getDateFromEvent(scope.data[scope.data.length-1].date).getMinutes()/60;
 
-            var Xscale = d3.time.scale().domain([minX, maxX]).range([margin, width - margin]);
-            var Yscale = d3.scale.linear().domain([maxY, minY]).range([0, height]);
+            var Xscale = d3.time.scale().domain([minX, maxX]).range([margin*2, width - margin]);
+            var Yscale = d3.scale.linear().domain([maxY + 1, minY - 1]).range([margin, height - margin]);
             var color = d3.scale.linear().domain([maxY, minY]).range(['#E80275', '#00D4F0']);
 
             var dataPoints = [];
@@ -139,12 +139,12 @@ angular.module('cupcakeDashboard')
 
               vis.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + margin + "," + (height + margin) + ")")
+                .attr("transform", "translate(" + margin + "," + (height + margin/2) + ")")
                 .call(xAxis);
 
               vis.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + (margin + 15) + "," + margin +  ")")
+                .attr("transform", "translate(" + (margin + 20) + "," + margin +  ")")
                 .call(yAxis);
 
                function transitionEnd() {
