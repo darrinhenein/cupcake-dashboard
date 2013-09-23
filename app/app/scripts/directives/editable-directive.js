@@ -2,7 +2,7 @@ angular.module('cupcakeDashboard')
   .directive("editable", function($sanitize) {
     var editorTemplate = '<div class="click-to-edit">' +
         '<div ng-hide="view.editorEnabled">' +
-            '<span ng-class="{markdown: view.markdown == true}" ng-bind-html="view.renderedValue"></span> ' +
+            '<span ng-class="{markdown: view.markdown == true}" ng-bind-html="view.renderedValue | linkify"></span> ' +
             '<a ng-show="auth" class="btn btn-primary btn-xs" ng-click="enableEditor()">Edit</a>' +
         '</div>' +
         '<div ng-show="view.editorEnabled" ng-switch="textarea">' +

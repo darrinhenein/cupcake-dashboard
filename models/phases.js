@@ -17,7 +17,7 @@
       phase: 3,
       prompt: "What are the reasons behind the decision we reached?"
     }, {
-      title: "Shipped",
+      title: "Resolved",
       phase: 4,
       prompt: ""
     }

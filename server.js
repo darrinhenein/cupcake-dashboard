@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -22,6 +22,8 @@
   User = require("./models/user");
 
   Phases = require("./models/phases");
+
+  Statuses = require("./models/status");
 
   Events = require("./models/event");
 
@@ -198,7 +200,7 @@
     if (id) {
       return Project.findOne({
         _id: id
-      }).populate('themes').populate('owner').exec(function(err, doc) {
+      }).populate('themes').populate('owner').populate('status.related').exec(function(err, doc) {
         if (doc) {
           return res.send(doc);
         } else {
@@ -213,10 +215,10 @@
   });
 
   Project.after('put', function(req, res, next) {
-    logEvent(req, res, next);
     return Project.findOne({
       _id: res.locals.bundle._id
-    }).populate('themes').populate('owner').exec(function(err, doc) {
+    }).populate('themes').populate('owner').populate('status.related').exec(function(err, doc) {
+      logEvent(req, res, next);
       return res.send(doc);
     });
   });
@@ -337,6 +339,10 @@
     return async.parallel(queries, function() {
       return res.send(Phases);
     });
+  });
+
+  app.get("/api/statuses", function(req, res) {
+    return res.send(Statuses);
   });
 
   index = function(req, res) {

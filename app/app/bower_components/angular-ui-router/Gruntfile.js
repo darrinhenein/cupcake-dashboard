@@ -31,11 +31,14 @@ module.exports = function (grunt) {
       build: {
         src: [
           'src/common.js',
+          'src/resolve.js',
           'src/templateFactory.js',
           'src/urlMatcherFactory.js',
           'src/urlRouter.js',
           'src/state.js',
+          'src/view.js',
           'src/viewDirective.js',
+          'src/stateDirectives.js',
           'src/compat.js'
         ],
         dest: '<%= builddir %>/<%= pkg.name %>.js'
@@ -64,24 +67,27 @@ module.exports = function (grunt) {
     },
     watch: {
       files: ['src/*.js', 'test/**/*.js'],
-      tasks: ['build', 'karma:debug:run']
+      tasks: ['build', 'karma:background:run']
     },
     connect: {
-      server: {}
+      server: {},
+      sample: {
+        options:{
+          port: 5555,
+          keepalive: true
+        }
+      }
     },
   karma: {
-    unit: {
-      configFile: 'test/test-config.js',
-      runnerPort: 9999,
-      singleRun: true,
-      browsers: ['PhantomJS']
+    options: {
+      configFile: 'config/karma.js'
     },
-    
-    debug: {
-      configFile: 'test/test-config.js',
-      runnerPort: 9999,
+    unit: {
+      singleRun: true
+    },
+    background: {
       background: true,
-      browsers: ['Chrome']
+      browsers: [ grunt.option('browser') || 'PhantomJS' ]
     }
   }
   });
@@ -90,11 +96,12 @@ module.exports = function (grunt) {
   grunt.registerTask('build', 'Perform a normal build', ['concat', 'uglify']);
   grunt.registerTask('dist', 'Perform a clean build and generate documentation', ['clean', 'build', 'jsdoc']);
   grunt.registerTask('release', 'Tag and perform a release', ['prepare-release', 'dist', 'perform-release']);
-  grunt.registerTask('dev', 'Run dev server and watch for changes', ['build', 'connect', 'karma:debug', 'watch']);
+  grunt.registerTask('dev', 'Run dev server and watch for changes', ['build', 'connect', 'karma:background', 'watch']);
+  grunt.registerTask('sample', 'Run connect server with keepalive:true for sample app development', ['connect:sample']);
 
   grunt.registerTask('jsdoc', 'Generate documentation', function () {
     promising(this,
-      system('node_modules/jsdoc/jsdoc -c jsdoc-conf.json -d \'' + grunt.config('builddir') + '\'/doc src')
+      system('node_modules/jsdoc/jsdoc -c config/jsdoc.js -d \'' + grunt.config('builddir') + '\'/doc src')
     );
   });
 
@@ -103,6 +110,8 @@ module.exports = function (grunt) {
       ensureCleanMaster().then(function () {
         shjs.rm('-rf', 'build');
         return system('git checkout gh-pages');
+      }).then(function () {
+        return system('git merge master');
       }).then(function () {
         return system('grunt dist');
       }).then(function () {

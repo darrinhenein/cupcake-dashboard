@@ -43,6 +43,18 @@
         email: "string"
       }
     ],
+    status: {
+      index: {
+        type: "number",
+        "default": 0
+      },
+      related: [
+        {
+          type: ObjectId,
+          ref: 'project'
+        }
+      ]
+    },
     is_finished: "boolean",
     phases: {},
     themes: [

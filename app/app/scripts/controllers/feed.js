@@ -21,6 +21,12 @@ angular.module('cupcakeDashboard')
     });
   })
 
+  $scope.feedLink = function(model){
+    params = [model.type, model._id];
+    if (model.phase != undefined) params.push(model.phase);
+    return params.join('/');
+  }
+
   $scope.formatVerb = function(verb){
     switch(verb){
       case 'POST':

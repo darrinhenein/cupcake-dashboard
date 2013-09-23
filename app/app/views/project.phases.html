@@ -1,4 +1,4 @@
-<ul class="chevrons" ng-init="count=0">
+<ul id="phases" class="chevrons" ng-init="count=0">
   <li ng-class="{ completed: phase.phase <= project.phase, active: phase.phase == activePhase, hasBody: project.phases[phase.phase].body.length}" ng-repeat="phase in phases">
     <a href="{{ '/project/' + project._id + '/' + phase.phase }}">{{ phase.title }}</a>
   </li>

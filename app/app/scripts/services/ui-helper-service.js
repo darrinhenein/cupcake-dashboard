@@ -4,11 +4,20 @@ angular.module('cupcakeDashboard')
         self = this;
 
         self._phases = [];
+        self._statuses = [];
         self._total = null;
 
         this.phases = function(){
           var promise = $http.get('/api/phases', { cache: false }).then(function(res){
             self._phases = res.data;
+            return res.data;
+          })
+          return promise;
+        }
+
+        this.statuses = function(){
+          var promise = $http.get('/api/statuses', { cache: false }).then(function(res){
+            self._statuses = res.data;
             return res.data;
           })
           return promise;

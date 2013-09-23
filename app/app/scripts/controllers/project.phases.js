@@ -10,7 +10,7 @@ angular.module('cupcakeDashboard')
     if($stateParams.phase){
       $scope.activePhase = $stateParams.phase;
     } else {
-      $scope.activePhase = project.phase;
+      $scope.activePhase = $scope.$parent.project.phase;
     }
 
     $scope.updatePhaseDetails = function(data, phase){

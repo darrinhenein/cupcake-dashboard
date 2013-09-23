@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $stateParams, UIHelperService, AuthenticationService) {
+  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $state, $stateParams, UIHelperService, AuthenticationService) {
     var projectId = $stateParams.id;
 
     var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
@@ -15,10 +15,15 @@ angular.module('cupcakeDashboard')
     $scope.newBug = {id: ''};
     $scope.bugs = [];
     $scope.events = [];
+    $scope.projects = [];
 
     $scope.project = Project.get({id: projectId}, function(){
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
         $scope.isFound = true;
+
+        $http.get('/api/projects').then(function(res){
+          $scope.projects = res.data;
+        });
 
         if($scope.project.bugs.length > 0)
         {
@@ -85,6 +90,32 @@ angular.module('cupcakeDashboard')
       $scope.phases = data;
     });
 
+    UIHelperService.statuses().then(function(data){
+      $scope.statuses = data;
+    });
+
+    $scope.statusTitle = function(index){
+      for (var i = $scope.statuses.length - 1; i >= 0; i--) {
+        if($scope.statuses[i].index == index) return $scope.statuses[i].title;
+      };
+    }
+
+    $scope.updateStatus = function(index){
+      Project.update({id: projectId}, {status: {index: index}}, function(data){
+        $scope.project.status.index = data.status.index;
+      });
+    }
+
+    $scope.saveRelated = function(projects){
+      relatedIds = [];
+      for (var i = projects.length - 1; i >= 0; i--) {
+        relatedIds.push(projects[i]._id);
+      };
+      Project.update({id: projectId}, {status:{related: relatedIds}}, function(res){
+        $scope.project.status.related = res.status.related;
+      });
+    }
+
     $scope.savePhase = function(){
       Project.update({id: projectId}, {phase: $scope.project.phase});
     }
@@ -114,7 +145,6 @@ angular.module('cupcakeDashboard')
         }
       };
       bugs.push($scope.newBug.id);
-      console.log(bugs);
       Project.update({id: projectId}, {bugs: bugs}, function(data){
         $scope.project.bugs = data.bugs;
         $scope.newBug.id = '';

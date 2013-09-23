@@ -58,11 +58,11 @@ function UrlMatcher(pattern) {
   //    \{(?:[^{}\\]+|\\.)*\}     - a matched set of curly braces containing other atoms
   var placeholder = /([:*])(\w+)|\{(\w+)(?:\:((?:[^{}\\]+|\\.|\{(?:[^{}\\]+|\\.)*\})+))?\}/g,
       names = {}, compiled = '^', last = 0, m,
-      segments = this.segments = [], 
+      segments = this.segments = [],
       params = this.params = [];
 
   function addParameter(id) {
-    if (!/^\w+$/.test(id)) throw new Error("Invalid parameter name '" + id + "' in pattern '" + pattern + "'");
+    if (!/^\w+(-+\w+)*$/.test(id)) throw new Error("Invalid parameter name '" + id + "' in pattern '" + pattern + "'");
     if (names[id]) throw new Error("Duplicate parameter name '" + id + "' in pattern '" + pattern + "'");
     names[id] = true;
     params.push(id);
@@ -161,7 +161,9 @@ UrlMatcher.prototype.exec = function (path, searchParams) {
     nPath = this.segments.length-1,
     values = {}, i;
 
-  for (i=0; i<nPath; i++) values[params[i]] = decodeURIComponent(m[i+1]);
+  if (nPath !== m.length - 1) throw new Error("Unbalanced capture group in route '" + this.source + "'");
+
+  for (i=0; i<nPath; i++) values[params[i]] = m[i+1];
   for (/**/; i<nTotal; i++) values[params[i]] = searchParams[params[i]];
 
   return values;
@@ -200,7 +202,7 @@ UrlMatcher.prototype.format = function (values) {
   for (i=0; i<nPath; i++) {
     value = values[params[i]];
     // TODO: Maybe we should throw on null here? It's not really good style to use '' and null interchangeabley
-    if (value != null) result += value;
+    if (value != null) result += encodeURIComponent(value);
     result += segments[i+1];
   }
   for (/**/; i<nTotal; i++) {
@@ -242,7 +244,7 @@ function $UrlMatcherFactory() {
    * @return {boolean}
    */
   this.isMatcher = function (o) {
-    return o instanceof UrlMatcher;
+    return isObject(o) && isFunction(o.exec) && isFunction(o.format) && isFunction(o.concat);
   };
 
   this.$get = function () {
@@ -251,4 +253,4 @@ function $UrlMatcherFactory() {
 }
 
 // Register as a provider so it's available to other providers
-angular.module('ui.util').provider('$urlMatcherFactory', $UrlMatcherFactory);
+angular.module('ui.router.util').provider('$urlMatcherFactory', $UrlMatcherFactory);

@@ -9,6 +9,7 @@ Project = require("./models/project")
 Theme = require("./models/theme")
 User = require("./models/user")
 Phases = require("./models/phases")
+Statuses = require("./models/status")
 Events = require("./models/event")
 AdminRoutes = require("./routes/admin")
 Logger = require("./logger")
@@ -157,6 +158,7 @@ Project.before 'get', (req, res, next) ->
     Project.findOne({_id: id})
            .populate('themes')
            .populate('owner')
+           .populate('status.related')
            .exec (err, doc) ->
               if doc
                 res.send doc
@@ -167,11 +169,12 @@ Project.before 'get', (req, res, next) ->
       res.send docs
 
 Project.after 'put', (req, res, next) ->
-  logEvent req, res, next
   Project.findOne({_id: res.locals.bundle._id})
          .populate('themes')
          .populate('owner')
+         .populate('status.related')
          .exec (err, doc) ->
+           logEvent req, res, next
            res.send doc
 
 Theme.before 'get', (req, res, next) ->
@@ -247,6 +250,9 @@ app.get "/api/phases", (req, res) ->
 
     async.parallel queries, ->
       res.send Phases
+
+app.get "/api/statuses", (req, res) ->
+  res.send Statuses
 
 index = (req, res) -> res.render 'index.html'
 

@@ -1,6 +1,7 @@
-angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'ui.state', 'angular-tools.persona'])
-  .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'linkify', 'ui.router', 'angular-tools.persona'])
+  .config(function ($stateProvider, $anchorScrollProvider, $urlRouterProvider, $locationProvider) {
 
+    $anchorScrollProvider. disableAutoScrolling();
     $locationProvider.html5Mode(true);
     $urlRouterProvider.otherwise('/themes');
 
@@ -73,7 +74,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'ui
         templateUrl: 'views/401.html'
       })
   })
-  .run(function ($rootScope, $location, $http, AuthenticationService, UIHelperService){
+  .run(function ($rootScope, $location, $http, AuthenticationService, $anchorScroll, UIHelperService){
 
     $rootScope.UI = UIHelperService;
 
@@ -91,6 +92,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'ui
 
         $rootScope.currentPath = to.url;
 
+
         // if route requires auth and user is not logged in
         if(!to.auth) to.auth = 0;
 
@@ -99,4 +101,4 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'ui
           $location.path('/401');
         }
       });
-  });
+  }).value('$anchorScroll', angular.noop);;

@@ -3,8 +3,21 @@
     <h3>
       <div class="row">
         <div class="col-md-6">
+          <span class="text-label" ng-hide="projectPermissions.edit">{{ statusTitle(project.status.index) }}</span>
           <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
            <small>Created {{ project.created_at | date }}</small>
+           <br/>
+           <div ng-show="projectPermissions.edit" class="status-buttons btn-group btn-group-xs">
+             <button ng-click="updateStatus(status.index)" ng-class="{'btn-primary': project.status.index == status.index}" ng-repeat="status in statuses" type="button" class="btn btn-default">{{ status.title }}</button>
+           </div>
+            <small ng-hide="project.status.related.length == 0">RELATED PROJECTS</small>
+            <div ng-show="projectPermissions.edit">
+              <br/>
+                <select  multiple ng-model="relatedProjects" ng-multiple='true' ng-options="p.title for p in projects" ng-change="saveRelated(relatedProjects)" class="form-control col-lg-2"></select>
+              <br/>
+           </div>
+           <a ng-href="project/{{ related._id }}" class="btn btn-xs btn-primary btn-spaced" ng-repeat="related in project.status.related">{{ related.title }}</a>
+
          </div>
         <div class="col-md-6">
           <span ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
