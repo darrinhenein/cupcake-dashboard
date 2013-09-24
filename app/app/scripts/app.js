@@ -3,7 +3,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
 
     $anchorScrollProvider. disableAutoScrolling();
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise('/themes');
+    $urlRouterProvider.otherwise('/projects');
 
     $stateProvider
       .state('base', {

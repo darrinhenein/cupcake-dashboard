@@ -16,7 +16,7 @@
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
-    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico?v=2">
 </head>
   <body ng-app="cupcakeDashboard">
     <!--[if lt IE 7]>
@@ -31,7 +31,14 @@
     <!-- Add your site or application content here -->
     <nav class="navbar navbar-default navbar-fixed-top"  role="navigation">
         <ul class="nav container navbar-nav navbar-fixed-top">
-            <li ng-class="{active: currentPath == '/'}"><a href="/">Themes</a></li>
+            <li class="dropdown" ng-class="{newItems: newNotifications > 0}">
+              <!-- Link or button to toggle dropdown -->
+              <a data-toggle="dropdown" ng-click="newNotifications = 0"><span class="cupcake-icon"></span><span class="badge" ng-class="{'badge-danger': newNotifications > 0}">{{ newNotifications }}</span></a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" ng-include="'views/feed.html'">
+              </ul>
+            </li>
+            <a class="navbar-brand" href="/projects">Cupcakes <small>Firefox UX Dashboard</small></a>
+            <li ng-class="{active: currentPath == '/themes'}"><a href="/themes">Themes</a></li>
             <li ng-class="{active: currentPath == '/projects'}"><a href="/projects">Projects</a></li>
             <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/projects'}">
                 <a href="/{{ loggedInUser.email }}/projects"><small class="text-label">My Projects</small></a>
@@ -39,18 +46,18 @@
             <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/themes'}">
                 <a href="/{{ loggedInUser.email }}/themes"><small class="text-label">My Themes</small></a>
             </li>
+
             <li class="pull-right navbar-text">
                 <user></user>
             </li>
         </ul>
     </nav>
-    <div class="container">
-        <div class="page-header">
+    <div class="container main-container">
+<!--         <div class="page-header row">
             <h1>Cupcakes <small>Firefox UX Dashboard</small></h1>
         </div>
-        <div class="row">
-            <div class="col-md-9" ui-view></div>
-            <div class="col-md-3" ng-include="'views/feed.html'"></div>
+ -->        <div class="row">
+            <div ui-view></div>
         </div>
         <div class="row" ng-include="'views/footer.html'"></div>
     </div>
@@ -64,22 +71,22 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://login.persona.org/include.js" type="text/javascript"></script>
-    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/jquery/jquery.min.js"></script>
 
         <!-- build:js scripts/plugins.js -->
-        <script src="bower_components/bootstrap-sass/js/bootstrap-affix.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-alert.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-dropdown.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-tooltip.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-modal.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-transition.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-button.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-popover.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-typeahead.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-carousel.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-scrollspy.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-collapse.js"></script>
-        <script src="bower_components/bootstrap-sass/js/bootstrap-tab.js"></script>
+        <script src="bower_components/bootstrap-sass/js/affix.js"></script>
+        <script src="bower_components/bootstrap-sass/js/alert.js"></script>
+        <script src="bower_components/bootstrap-sass/js/dropdown.js"></script>
+        <script src="bower_components/bootstrap-sass/js/tooltip.js"></script>
+        <script src="bower_components/bootstrap-sass/js/modal.js"></script>
+        <script src="bower_components/bootstrap-sass/js/transition.js"></script>
+        <script src="bower_components/bootstrap-sass/js/button.js"></script>
+        <script src="bower_components/bootstrap-sass/js/popover.js"></script>
+        <script src="bower_components/bootstrap-sass/js/typeahead.js"></script>
+        <script src="bower_components/bootstrap-sass/js/carousel.js"></script>
+        <script src="bower_components/bootstrap-sass/js/scrollspy.js"></script>
+        <script src="bower_components/bootstrap-sass/js/collapse.js"></script>
+        <script src="bower_components/bootstrap-sass/js/tab.js"></script>
         <script src="bower_components/moment/min/moment.min.js"></script>
         <script src="bower_components/underscore/underscore-min.js"></script>
         <script src="scripts/lib/markdown.min.js"></script>
@@ -110,6 +117,7 @@
         <script src="scripts/controllers/phases.js"></script>
         <script src="scripts/directives/progress-directive.js"></script>
         <script src="scripts/directives/graph-events-directive.js"></script>
+        <script src="scripts/directives/graph-activity-directive.js"></script>
         <script src="scripts/directives/editable-directive.js"></script>
         <script src="scripts/filters/timeago-filter.js"></script>
         <script src="scripts/services/ui-helper-service.js"></script>

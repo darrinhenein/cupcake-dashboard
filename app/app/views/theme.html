@@ -10,16 +10,17 @@
         <th>Title</th>
         <th>Owner</th>
         <th>Date Started</th>
-        <th>Phase</th>
+        <th>Activity</th>
         <th>Progress</th>
         </tr>
         <tr ng-repeat="project in theme.projects" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
           <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
           <td>{{ UI.displayName(project.owner) }}</td>
           <td>{{ project.created_at | date }}</td>
-          <td>{{ phases[project.phase].title }}</td>
+          <td><div graph-activity="project._id"></div></td>
           <td>
-            <progress-bar progress="{{project.progress}}"></progress-bar>
+            <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
+            <progress-bar progress="{{((project.phase / (phases.length-1)) * 100)}}" />
           </td>
         </tr>
      </table>

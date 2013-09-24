@@ -1,9 +1,10 @@
 angular.module('cupcakeDashboard')
-  .controller('FeedCtrl', function ($scope, $http, $timeout, $location) {
+  .controller('FeedCtrl', function ($rootScope, $scope, $http, $timeout, $location) {
 
   var isNewDelaySeconds = 60 * 3;
 
   $scope.events = [];
+  $rootScope.newNotifications = 0;
 
   $http.get('/api/events').then(function(res){
     $scope.events = angular.copy(res.data, $scope.events);
@@ -14,6 +15,7 @@ angular.module('cupcakeDashboard')
   socket.on('feed', function(data){
     $scope.$apply(function(){
       data.isNew = true;
+      $rootScope.newNotifications ++;
       $scope.events.push(data);
       $timeout(function(){
         data.isNew = false;
@@ -21,9 +23,9 @@ angular.module('cupcakeDashboard')
     });
   })
 
-  $scope.feedLink = function(model){
-    params = [model.type, model._id];
-    if (model.phase != undefined) params.push(model.phase);
+  $scope.feedLink = function(e){
+    params = [e.type, e.model._id];
+    if (e.model.phase != undefined) params.push(e.model.phase);
     return params.join('/');
   }
 

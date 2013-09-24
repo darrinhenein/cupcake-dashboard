@@ -137,6 +137,7 @@ angular.module('cupcakeDashboard')
     }
 
     $scope.addBug = function(){
+      if($scope.newBug.id == "") return;
       var bugs = $scope.project.bugs || [];
       for (var i = bugs.length - 1; i >= 0; i--) {
         if(bugs[i] == $scope.newBug.id) {
@@ -171,6 +172,7 @@ angular.module('cupcakeDashboard')
     }
 
     $scope.addCollaborator = function(){
+      if($scope.newCollaborator.email == "") return;
       var collabs = $scope.project.collaborators;
       for (var i = collabs.length - 1; i >= 0; i--) {
         if(collabs[i].email == $scope.newCollaborator.email || $scope.newCollaborator.email == $scope.project.owner.email)

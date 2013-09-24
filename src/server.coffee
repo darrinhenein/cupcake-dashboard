@@ -5,6 +5,7 @@ restful = require("node-restful")
 async = require("async")
 url = require("url")
 mongoose = restful.mongoose
+moment = require("moment")
 Project = require("./models/project")
 Theme = require("./models/theme")
 User = require("./models/user")
@@ -200,8 +201,30 @@ Theme.before 'get', (req, res, next) ->
 Project.route "events.get",
   detail: yes
   handler: (req, res, next) ->
-    Events.find({mid: req.params.id}).exec (err, docs) ->
+    Events.find({mid: req.params.id}).sort('-date').exec (err, docs) ->
       res.send docs
+
+Project.route "activity.get",
+  detail: yes
+  handler: (req, res, next) ->
+    now = moment().toDate()
+    ago = moment().subtract('days', 7).toDate()
+    arr = []
+    for i in [0...7]
+      arr[i] =
+        date: moment().subtract('days', i).format("MM-DD-YYYY")
+
+    Events.find({
+            mid: req.params.id,
+            date: {"$gt": ago, "$lte": now}
+          })
+          .sort('-date')
+          .exec (err, docs) ->
+            docs = _.countBy docs, (e) ->
+              return moment(e.date).format("MM-DD-YYYY")
+            for d in arr
+              d.count = docs[d.date] || 0
+            res.send arr
 
 Project.route "total.get", (req, res) ->
   Project.find {}, (err, docs) ->
@@ -212,8 +235,15 @@ Theme.register app, "/api/themes"
 User.register app, "/api/users"
 
 app.get "/api/events/:num?", (req, res) ->
-  num = req.params.num || 500
+  num = req.params.num || 1000
   Events.find().sort('-date').limit(num).populate('owner').exec (err, docs) ->
+    res.send docs
+
+app.get "/api/events/:num/counts", (req, res) ->
+  num = req.params.num
+  Events.find().sort('-date').limit(num).exec (err, docs) ->
+    docs = _.countBy docs, (e) ->
+      return moment(e.date).format("MM-DD-YYYY")
     res.send docs
 
 app.get "/api/:email/projects", (req, res) ->

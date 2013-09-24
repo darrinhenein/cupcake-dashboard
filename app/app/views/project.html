@@ -13,7 +13,7 @@
             <small ng-hide="project.status.related.length == 0">RELATED PROJECTS</small>
             <div ng-show="projectPermissions.edit">
               <br/>
-                <select  multiple ng-model="relatedProjects" ng-multiple='true' ng-options="p.title for p in projects" ng-change="saveRelated(relatedProjects)" class="form-control col-lg-2"></select>
+                <select multiple ng-model="relatedProjects" ng-multiple='true' ng-options="p.title for p in projects" ng-change="saveRelated(relatedProjects)" class="form-control col-lg-2"></select>
               <br/>
            </div>
            <a ng-href="project/{{ related._id }}" class="btn btn-xs btn-primary btn-spaced" ng-repeat="related in project.status.related">{{ related.title }}</a>

@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, mongoose, mongourl, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -14,6 +14,8 @@
   url = require("url");
 
   mongoose = restful.mongoose;
+
+  moment = require("moment");
 
   Project = require("./models/project");
 
@@ -253,8 +255,40 @@
     handler: function(req, res, next) {
       return Events.find({
         mid: req.params.id
-      }).exec(function(err, docs) {
+      }).sort('-date').exec(function(err, docs) {
         return res.send(docs);
+      });
+    }
+  });
+
+  Project.route("activity.get", {
+    detail: true,
+    handler: function(req, res, next) {
+      var ago, arr, i, now, _i;
+      now = moment().toDate();
+      ago = moment().subtract('days', 7).toDate();
+      arr = [];
+      for (i = _i = 0; _i < 7; i = ++_i) {
+        arr[i] = {
+          date: moment().subtract('days', i).format("MM-DD-YYYY")
+        };
+      }
+      return Events.find({
+        mid: req.params.id,
+        date: {
+          "$gt": ago,
+          "$lte": now
+        }
+      }).sort('-date').exec(function(err, docs) {
+        var d, _j, _len;
+        docs = _.countBy(docs, function(e) {
+          return moment(e.date).format("MM-DD-YYYY");
+        });
+        for (_j = 0, _len = arr.length; _j < _len; _j++) {
+          d = arr[_j];
+          d.count = docs[d.date] || 0;
+        }
+        return res.send(arr);
       });
     }
   });
@@ -275,8 +309,19 @@
 
   app.get("/api/events/:num?", function(req, res) {
     var num;
-    num = req.params.num || 500;
+    num = req.params.num || 1000;
     return Events.find().sort('-date').limit(num).populate('owner').exec(function(err, docs) {
+      return res.send(docs);
+    });
+  });
+
+  app.get("/api/events/:num/counts", function(req, res) {
+    var num;
+    num = req.params.num;
+    return Events.find().sort('-date').limit(num).exec(function(err, docs) {
+      docs = _.countBy(docs, function(e) {
+        return moment(e.date).format("MM-DD-YYYY");
+      });
       return res.send(docs);
     });
   });

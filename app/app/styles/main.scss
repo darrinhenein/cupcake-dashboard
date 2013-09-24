@@ -5,7 +5,7 @@ $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
 
 $body-background: #FEFEFE;
-$link-color: #6B18B0;
+$link-color: #6A62A3;
 $font-family-sans-serif: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 
@@ -31,6 +31,11 @@ body {
 .navbar-nav{
     margin: 0 auto;
 }
+
+.main-container {
+    margin-top: 40px;
+}
+
 .form-inline .form-control {
     width: auto;
     margin-right: 5px;
@@ -67,6 +72,9 @@ body {
 //     top: 1px;
 //     font-size: 24px;
 // }
+.table thead>tr>th {
+  width: 25%;
+}
 
 tr.owned {
     color: #5F4E82;
@@ -74,8 +82,13 @@ tr.owned {
 
 a{cursor:pointer;}
 
+.progress {
+    height: 13px;
+    box-shadow: none;
+}
+
 .progress .bar{
-    @include background(linear-gradient($link-color, darken($link-color, 10%)));
+    background-color: #7970bd;
     transition: all 1s ease-in-out;
     height: 100%;
 }
@@ -155,6 +168,10 @@ h3 span.badge {
     padding: 0 3px;
     text-transform: uppercase;
 }
+.text-label .muted{
+    color: #454749;
+}
+
 .click-to-edit a.btn {
     opacity: 0.2;
 }
@@ -183,21 +200,15 @@ h3 span.badge {
 // animations
 .feed-event {
     transition: all 2s ease-in-out;
+    padding: 15px;
+    border-bottom: 1px solid #DDD;
 }
 .feed-event.isNew {
     font-weight: bold;
     position: relative;
+    background-color: #C8E3E6;
 }
-.feed-event.isNew:before {
-    content: '';
-    background-color: #3BBAFF;
-    height: 7px;
-    width: 7px;
-    position: absolute;
-    left: -12px;
-    top: 8px;
-    border-radius: 50%;
-}
+
 .feed-event.isNew.ng-enter {
     transition: all 0.7s ease-out;
     background-color: #FFF696;
@@ -242,4 +253,50 @@ svg {
 h3 .btn-spaced {
     margin-right: 8px;
     font-size: 10px;
+}
+
+.cupcake-icon {
+    background: url("../images/cupcake-icon.svg") left center no-repeat;
+    background-size: 54px;
+    height: 24px;
+    width: 27px;
+    margin-right: 6px;
+    display: inline-block;
+}
+
+.newItems .cupcake-icon {
+    background-position: right center;
+}
+
+.dropdown .badge {
+    position: relative;
+    top: -6px;
+}
+
+.badge-danger {
+    background-color: #74308E;
+}
+
+.navbar-nav > li > .dropdown-menu {
+    width: 350px;
+    padding: 0px;
+    margin-top: -9px;
+}
+
+li.dropdown {
+    top: -2px;
+}
+
+.navbar-default .navbar-brand {
+    font-weight: bold;
+    color: #594875;
+}
+
+.navbar-default .navbar-brand small{
+    font-weight: normal;
+}
+
+.feedList {
+    list-style-type: none;
+    padding: 0px;
 }

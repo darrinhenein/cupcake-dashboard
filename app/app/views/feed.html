@@ -1,12 +1,11 @@
-<div ng-controller="FeedCtrl" class="well">
-  <h4>Feed</h4>
-  <p ng-class="{isNew: e.isNew == true}" ng-repeat="e in events | orderBy:'-date' | limitTo:5" class="feed-event" ng-switch on="e.verb">
+<ul class="feedList" ng-controller="FeedCtrl">
+  <li ng-class="{isNew: e.isNew == true}" ng-repeat="e in events | orderBy:'-date' | limitTo:5" class="feed-event" ng-switch on="e.verb">
     <small ng-switch-when="PUT" >
-      {{ UI.displayNameShort(e.owner) }} {{ formatVerb(e.verb) }} <a href="/{{ e.type }}/{{ e.model._id }}/{{ e.model.phase }}">{{ e.model.title }}</a>'s <span ng-repeat="(key, value) in e.changes">{{ key }}<span  ng-show="key == 'title'"> to {{ value }}</span></span>.
+      {{ UI.displayNameShort(e.owner) }} {{ formatVerb(e.verb) }} <a href="{{ feedLink(e) }}">{{ e.model.title }}</a>'s <span ng-repeat="(key, value) in e.changes">{{ key }}<span  ng-show="key == 'title'"> to {{ value }}</span></span>.
     </small>
 
     <small ng-switch-when="POST" >
-      {{ UI.displayNameShort(e.owner) }} {{ formatVerb(e.verb) }} <a href="{{ feedLink(e.model) }}">{{ e.model.title }}</a>.
+      {{ UI.displayNameShort(e.owner) }} {{ formatVerb(e.verb) }} <a href="{{ feedLink(e) }}">{{ e.model.title }}</a>.
     </small>
 
     <small ng-switch-when="DELETE" >
@@ -14,5 +13,5 @@
     </small>
 
     <br/><small class="timeago">{{ e.date | timeAgo }}</small>
-  </p>
-</div>
+  </li>
+</ul>

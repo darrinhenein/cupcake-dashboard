@@ -6,21 +6,21 @@
     <tr>
     <th>Title</th>
     <th>Owner</th>
-    <th>Themes</th>
-    <th>Phase</th>
+    <th>Activity</th>
     <th>Progress</th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="project in projects | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
       <td>
-        <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a>
+        <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a><br/>
+        <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>
         <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
       </td>
       <td>{{ UI.displayName(project.owner) }}</td>
-      <td><span ng-repeat="theme in project.themes" class="text-label">{{ theme.title }}<br/></span></td>
-      <td>{{ phases[project.phase].title }}</td>
+      <td><div graph-activity="project._id"></div></td>
       <td>
+        <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
         <progress-bar progress="{{((project.phase / (phases.length-1)) * 100)}}" />
       </td>
     </tr>
