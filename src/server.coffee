@@ -24,6 +24,8 @@ app = express()
 server = require("http").createServer app
 io = io.listen server
 
+
+app.use express.compress()
 app.use express.bodyParser()
 app.use express.cookieParser()
 app.use express.session
@@ -202,6 +204,12 @@ Project.route "events.get",
   detail: yes
   handler: (req, res, next) ->
     Events.find({mid: req.params.id}).sort('-date').exec (err, docs) ->
+      res.send docs
+
+Project.route "phases.get",
+  detail: yes
+  handler: (req, res, next) ->
+    Events.find({changes: 'phases'}).exec (err, docs) ->
       res.send docs
 
 Project.route "activity.get",

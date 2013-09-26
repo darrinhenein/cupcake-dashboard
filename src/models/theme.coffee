@@ -9,6 +9,7 @@ module.exports = ThemeSchema = restful.model("theme", mongoose.Schema(
     required: true
   }
   description: "string"
+  notes: "string"
   owner: {
     type: ObjectId
     ref: 'user'

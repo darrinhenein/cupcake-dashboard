@@ -43,6 +43,8 @@
 
   io = io.listen(server);
 
+  app.use(express.compress());
+
   app.use(express.bodyParser());
 
   app.use(express.cookieParser());
@@ -256,6 +258,17 @@
       return Events.find({
         mid: req.params.id
       }).sort('-date').exec(function(err, docs) {
+        return res.send(docs);
+      });
+    }
+  });
+
+  Project.route("phases.get", {
+    detail: true,
+    handler: function(req, res, next) {
+      return Events.find({
+        changes: 'phases'
+      }).exec(function(err, docs) {
         return res.send(docs);
       });
     }

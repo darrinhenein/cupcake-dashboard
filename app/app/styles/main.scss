@@ -233,7 +233,7 @@ h3 span.badge {
 
 .axis text {
     font-family: sans-serif;
-    font-size: 9px;
+    font-size: 11px;
     fill: #DDD;
 }
 
@@ -299,4 +299,11 @@ li.dropdown {
 .feedList {
     list-style-type: none;
     padding: 0px;
+}
+
+.axis.y.white text{
+    fill: #FFF;
+    font-weight: bold;
+    opacity: 0.8;
+    font-size: 9px;
 }

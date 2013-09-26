@@ -14,6 +14,7 @@
       required: true
     },
     description: "string",
+    notes: "string",
     owner: {
       type: ObjectId,
       ref: 'user'

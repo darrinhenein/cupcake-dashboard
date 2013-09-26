@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .controller('FeedCtrl', function ($rootScope, $scope, $http, $timeout, $location) {
+  .controller('FeedCtrl', function ($rootScope, $window, $scope, $http, $timeout, $location) {
 
   var isNewDelaySeconds = 60 * 3;
 
@@ -15,13 +15,23 @@ angular.module('cupcakeDashboard')
   socket.on('feed', function(data){
     $scope.$apply(function(){
       data.isNew = true;
-      $rootScope.newNotifications ++;
+      $rootScope.changeNotificationNumber(1);
       $scope.events.push(data);
       $timeout(function(){
         data.isNew = false;
       }, isNewDelaySeconds * 1000, true);
     });
   })
+
+  $rootScope.changeNotificationNumber = function(delta, reset){
+    $rootScope.newNotifications += delta;
+    $window.document.title = "(" + $rootScope.newNotifications + ") Cupcakes | Firefox UX Dashboard"
+    if(reset)
+    {
+      $rootScope.newNotifications = 0;
+      $window.document.title = "Cupcakes | Firefox UX Dashboard"
+    }
+  }
 
   $scope.feedLink = function(e){
     params = [e.type, e.model._id];

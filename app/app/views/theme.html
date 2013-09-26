@@ -26,6 +26,11 @@
      </table>
      <div ng-show="!theme.projects.length" class="well">No projects.</div>
 
+
+      <h3 ng-show="theme.theme.notes.length > 0 || themePermissions.edit " ><small>NOTES</small></h3>
+      <p editable="theme.theme.notes" auth="themePermissions.edit" textarea=true markdown=true callback="update(data)"></p>
+      <br/>
+
      <button ng-show="themePermissions.remove" ng-click="remove()" class="btn btn-danger">Delete Theme</button>
   </div>
 

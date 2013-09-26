@@ -28,8 +28,10 @@
       </div>
 
       <hr/>
-      <div graph-events="events"></div>
-      <hr/>
+      <div ng-show="events.length > 0">
+        <div graph-phase-lanes="events" lanes="phases"></div>
+        <hr/>
+      </div>
 
       <div class="row">
         <div class="col-md-3">

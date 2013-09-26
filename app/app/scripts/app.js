@@ -74,7 +74,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
         templateUrl: 'views/401.html'
       })
   })
-  .run(function ($rootScope, $location, $http, AuthenticationService, $anchorScroll, UIHelperService){
+  .run(function ($rootScope, $window, $location, $http, AuthenticationService, $anchorScroll, UIHelperService){
 
     $rootScope.UI = UIHelperService;
 
@@ -91,7 +91,7 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
     $rootScope.$on('$stateChangeStart', function (ev, to, toParams, from, fromParams) {
 
         $rootScope.currentPath = to.url;
-
+        $window.ga('send', 'pageview', $location.path());
 
         // if route requires auth and user is not logged in
         if(!to.auth) to.auth = 0;
