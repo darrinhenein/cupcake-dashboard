@@ -1,10 +1,9 @@
 angular.module('cupcakeDashboard')
-  .directive("graphEvents", function() {
+  .directive("graphEvents", function($http) {
     // constants
-     var margin = 15,
-       width = 740,
-       height = 86,
-       color = d3.interpolateRgb("#f77", "#77f");
+     var margin = {left: 65, right: 25, top: 10, bottom: 20},
+       width = 640,
+       height = 90;
 
      return {
        restrict: 'A',
@@ -14,22 +13,27 @@ angular.module('cupcakeDashboard')
        },
        link: function (scope, element, attrs) {
 
+        $http.get("/api/phases").then(function(res){
+          scope.phases = res.data;
+        });
          // set up initial svg object
          var vis = d3.select(element[0])
            .append("svg")
-             .attr("width", width + margin*2)
-             .attr("height", height + margin*2)
-             .attr("viewBox", "0 0 " + (width + margin*2) + " " + (height + margin*2));
+             .attr("width", width + margin.left + margin.right)
+             .attr("height", height + margin.top + margin.bottom)
+             .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+             .append("g")
+               .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 
-         scope.$watch('data', function (newVal, oldVal) {
+         scope.$watchCollection('[phases, data]', function (newVal, oldVal) {
 
            // if 'val' is undefined, exit
            if (!newVal) {
              return;
            }
 
-           if (scope.data.length == 0){
+           if (!scope.data || !scope.phases){
             return;
            }
 
@@ -37,114 +41,74 @@ angular.module('cupcakeDashboard')
               return new Date(d);
             }
 
-            scope.data.sort(function(a, b){
+            data = _.filter(scope.data, function(e){
+              return e.model.phase != undefined;
+            })
+
+            data.sort(function(a, b){
               a = new Date(a.date);
               b = new Date(b.date);
               return a<b?-1:a>b?1:0;
             });
 
-            var minX = getDateFromEvent(scope.data[0].date);
-            var maxX = getDateFromEvent(scope.data[scope.data.length-1].date);
+            var minX = getDateFromEvent(data[0].date);
+            var maxX = getDateFromEvent(data[data.length-1].date);
 
-            scope.data.sort(function(a, b){
-              a = new Date(a.date).getHours();
-              b = new Date(b.date).getHours();
-              return a - b;
-            });
+            var Xscale = d3.time.scale().domain([minX, maxX]).range([0, width]);
+            var Yscale = d3.scale.ordinal().domain(scope.phases.map(function(p){return p.phase;})).rangeBands([height, 0], 1);
+            var color = d3.scale.linear().domain([0, scope.phases.length-1]).range(['#00D4F0','#E80275']);
 
-            var minY = getDateFromEvent(scope.data[0].date).getHours() + getDateFromEvent(scope.data[0].date).getMinutes()/60;
-            var maxY = getDateFromEvent(scope.data[scope.data.length-1].date).getHours() + getDateFromEvent(scope.data[scope.data.length-1].date).getMinutes()/60;
 
-            var Xscale = d3.time.scale().domain([minX, maxX]).range([margin*2, width - margin]);
-            var Yscale = d3.scale.linear().domain([maxY + 1, minY - 1]).range([margin, height - margin]);
-            var color = d3.scale.linear().domain([maxY, minY]).range(['#E80275', '#00D4F0']);
-
-            var dataPoints = [];
-
-            scope.data.sort(function(a, b){
+            data.sort(function(a, b){
               a = new Date(a.date);
               b = new Date(b.date);
               return a<b?-1:a>b?1:0;
             });
 
-            for(i = 0; i < scope.data.length; i++){
-                d = new Date(scope.data[i].date);
-                dataPoints.push([d.getDate() + d.getHours()/24 + d.getMinutes()/60, d.getHours() + d.getMinutes()/60]);
-            }
-
-            dataPoints.sort(function(a, b){
-              return a[0] - b[0];
-            });
 
             var xAxis = d3.svg.axis().scale(Xscale).orient('bottom');
             var yAxis = d3.svg.axis().scale(Yscale)
               .orient('left')
-              .ticks(2)
               .tickFormat(function(d) {
-                var input = d3.time.format("%H");
-                var format = d3.time.format("%-I%p");
-                return format(input.parse(d.toString()));
+                return scope.phases[d].title;
               });
 
-            var flatline = d3.svg.line()
-                .x(function(d){
-                  return Xscale(getDateFromEvent(d.date)) + margin;
-                })
-                .y(function(d){
-                  return height + margin + 5;
-                })
-
-            var line = d3.svg.line()
-                .x(function(d){
-                  return Xscale(getDateFromEvent(d.date)) + margin;
-                })
-                .y(function(d){
-                  return Yscale(getDateFromEvent(d.date).getHours() + getDateFromEvent(d.date).getMinutes()/60) + margin;
-                })
 
             function transitionDots() {
                vis.selectAll('*').remove();
-               vis.append("path")
-                .transition()
-                .duration(100)
-                .attr("d", flatline(scope.data))
-                .attr("fill", "none")
-                .attr("stroke", "#CCC")
-                .each("end", transitionLine);
-
-                function transitionLine() {
-                  d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .attr("d", line(scope.data));
-                }
-
 
                vis.selectAll("svg")
                .append("g")
-               .attr('transform', 'translate(' + margin + ',' + margin + ')')
-               .data(scope.data)
+               .data(data)
                .enter().append("circle")
                .transition()
                .duration(100)
                .attr("opacity", "0.5")
-               .attr("r", "2px")
+               .attr("r", function(d){
+                if(d.type == 'POST')
+                {
+                  return '7px';
+                }
+                else
+                {
+                  return '4px';
+                }
+               })
                .attr("fill", "#FFF")
-               .attr('transform', 'translate(' + margin + ',' + margin + ')')
+               .attr("data-phase", function(d){ return d.model.phase; })
                .attr({
                   'cx': function(e){ return Xscale(getDateFromEvent(e.date))},
-                  'cy': height + margin + 5
+                  'cy': height + margin.top + 5
                })
                .each("end", transitionEnd);
 
               vis.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + margin + "," + (height + margin/2) + ")")
+                .attr("transform", "translate(0," + height + ")")
                 .call(xAxis);
 
               vis.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + (margin + 20) + "," + margin +  ")")
                 .call(yAxis);
 
                function transitionEnd() {
@@ -152,9 +116,18 @@ angular.module('cupcakeDashboard')
                   .transition()
                   .duration(500)
                   .attr({
-                     'cy': function(e){return Yscale(getDateFromEvent(e.date).getHours() + getDateFromEvent(e.date).getMinutes()/60)}
+                     'cy': function(e){return Yscale(e.model.phase)}
                   })
-                  .attr("fill", function(e){d = new Date(e.date); return color(d.getHours())});
+                  .attr("fill", function(e){
+                    if(e.type == 'POST')
+                    {
+                      return '#6FE302';
+                    }
+                    else
+                    {
+                      return color(e.model.phase);
+                    }
+                  });
                }
              }
 

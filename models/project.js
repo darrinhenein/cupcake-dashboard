@@ -38,6 +38,9 @@
       type: "date",
       "default": Date.now
     },
+    last_updated: {
+      type: Date
+    },
     collaborators: [
       {
         email: "string"

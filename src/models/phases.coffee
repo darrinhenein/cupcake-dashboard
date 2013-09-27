@@ -20,8 +20,8 @@ module.exports = [
         prompt: "What are the reasons behind the decision we reached?"
       },
       {
-        title: "Resolved",
+        title: "Decision",
         phase: 4,
-        prompt: ""
+        prompt: "What is the decicion we reached?"
       }
     ]

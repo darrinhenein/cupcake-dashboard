@@ -29,6 +29,15 @@ module.exports.log = (req, res, next, io) ->
             modelData = res.locals.bundle
             cb()
 
+        updateModel = (cb) ->
+          if type is 'theme'
+            schema = Theme
+          else if type is 'project'
+            schema = Project
+          schema.update {_id: mid}, {last_updated: new Date()}, (err, doc) ->
+            cb()
+
+
         sendPacket = (cb) ->
           User.findOne {email: req.session.email}, (err, user) ->
             Event.create {
@@ -43,7 +52,7 @@ module.exports.log = (req, res, next, io) ->
                   io.sockets.emit 'feed', doc
                   cb()
 
-        async.series [getModel, sendPacket], (err, results) ->
+        async.series [getModel, updateModel, sendPacket], (err, results) ->
           next()
       else
         next()

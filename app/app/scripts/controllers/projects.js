@@ -10,7 +10,7 @@ angular.module('cupcakeDashboard')
     $scope.archivedFilter = function(p){
       if(p.status.index == 3 && $scope.showArchived == false)
       {
-        return false
+        return false;
       }
       else
       {
@@ -34,6 +34,17 @@ angular.module('cupcakeDashboard')
         $scope.events = res.data;
       });
     })
+
+    $scope.sortProjectsByDate = function(p){
+      if(!p.last_updated)
+      {
+        return 0;
+      }
+      else
+      {
+        return p.last_updated;
+      }
+    }
 
     UIHelperService.phases().then(function(data){
       $scope.phases = data;

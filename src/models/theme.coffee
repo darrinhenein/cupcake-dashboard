@@ -18,6 +18,9 @@ module.exports = ThemeSchema = restful.model("theme", mongoose.Schema(
     type: "date"
     default: Date.now
   }
+  last_updated: {
+    type: Date
+  }
   is_finished: "boolean"
 )).methods [
   "get"

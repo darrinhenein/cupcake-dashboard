@@ -1,5 +1,5 @@
   <div class="row">
-    <div class="col-md-8" graph-events="events"></div>
+    <div class="col-md-8" graph-events="events" phases="phases"></div>
     <div class="col-md-4" graph-phase-distribution></div>
   </div>
   <hr/>
@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="project in projects | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+    <tr ng-repeat="project in projects | orderBy:sortProjectsByDate:true | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
       <td>
         <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a><br/>
         <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>

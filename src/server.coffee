@@ -328,7 +328,7 @@ app.post "/admin/load", (req, res) ->
 # 3 : Admin  (all access)
 
 # whitelist of admin emails
-adminWhitelist = ['dhenein', 'bwinton']
+adminWhitelist = ['dhenein', 'bwinton', 'lco']
 
 getAuthLevel = (email) ->
   if email

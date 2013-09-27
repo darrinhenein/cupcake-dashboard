@@ -449,7 +449,7 @@
     });
   });
 
-  adminWhitelist = ['dhenein', 'bwinton'];
+  adminWhitelist = ['dhenein', 'bwinton', 'lco'];
 
   getAuthLevel = function(email) {
     var domain, username, _ref;

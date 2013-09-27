@@ -23,6 +23,9 @@
       type: "date",
       "default": Date.now
     },
+    last_updated: {
+      type: Date
+    },
     is_finished: "boolean"
   })).methods(["get", "post", "put", "delete"]);
 

@@ -14,7 +14,7 @@
   async = require('async');
 
   module.exports.log = function(req, res, next, io) {
-    var getModel, method, mid, modelData, sendPacket, type;
+    var getModel, method, mid, modelData, sendPacket, type, updateModel;
     if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
       if (req.path.split('/')[1] === 'api') {
         type = req.path.split('/')[2];
@@ -41,6 +41,21 @@
             return cb();
           }
         };
+        updateModel = function(cb) {
+          var schema;
+          if (type === 'theme') {
+            schema = Theme;
+          } else if (type === 'project') {
+            schema = Project;
+          }
+          return schema.update({
+            _id: mid
+          }, {
+            last_updated: new Date()
+          }, function(err, doc) {
+            return cb();
+          });
+        };
         sendPacket = function(cb) {
           return User.findOne({
             email: req.session.email
@@ -62,7 +77,7 @@
             });
           });
         };
-        return async.series([getModel, sendPacket], function(err, results) {
+        return async.series([getModel, updateModel, sendPacket], function(err, results) {
           return next();
         });
       } else {
