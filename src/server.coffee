@@ -354,7 +354,7 @@ app.get "/getUser", (req, res) ->
           user.authLevel = getAuthLevel user.email
           res.send user
   else
-    res.send 401
+    res.send 200
 
 console.log "Listening at #{HOST}:#{PORT}..."
 server.listen PORT, HOST

@@ -95,6 +95,8 @@ angular.module('cupcakeDashboard')
     });
 
     $scope.statusTitle = function(index){
+      if(!$scope.statuses) return '';
+
       for (var i = $scope.statuses.length - 1; i >= 0; i--) {
         if($scope.statuses[i].index == index) return $scope.statuses[i].title;
       };

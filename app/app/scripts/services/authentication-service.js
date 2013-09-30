@@ -32,6 +32,17 @@ angular.module('cupcakeDashboard')
         if(res.data.email){
           $rootScope.loggedInUser = res.data;
           self.user = res.data;
+
+          if(!self.user.first_name || !self.user.last_name)
+          {
+            _.defer(function(){
+              $('.profileLink').tooltip({
+                title: 'Complete your profile!',
+                placement: 'bottom'
+              })
+              .tooltip('show');
+            });
+          }
         }
       });
     }

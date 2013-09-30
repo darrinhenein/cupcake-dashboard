@@ -10,7 +10,7 @@
     <th>Title</th>
     <th>Owner</th>
     <th>Activity</th>
-    <th>Progress</th>
+    <th ng-show="navPhase == 'all'" >Progress</th>
     </tr>
     </thead>
     <tbody>
@@ -22,9 +22,9 @@
       </td>
       <td>{{ UI.displayName(project.owner) }}</td>
       <td><div graph-activity="project._id"></div></td>
-      <td>
+      <td ng-show="navPhase == 'all'">
         <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
-        <progress-bar progress="{{((project.phase / (phases.length-1)) * 100)}}" />
+        <progress-bar project="project" range="phases" />
       </td>
     </tr>
     </tbody>

@@ -83,11 +83,11 @@ angular.module('cupcakeDashboard')
                .enter().append("circle")
                .transition()
                .duration(100)
-               .attr("opacity", "0.5")
+               .attr("opacity", "0.25")
                .attr("r", function(d){
-                if(d.type == 'POST')
+                if(d.verb == 'POST')
                 {
-                  return '7px';
+                  return '6px';
                 }
                 else
                 {
@@ -119,9 +119,9 @@ angular.module('cupcakeDashboard')
                      'cy': function(e){return Yscale(e.model.phase)}
                   })
                   .attr("fill", function(e){
-                    if(e.type == 'POST')
+                    if(e.verb == 'POST')
                     {
-                      return '#6FE302';
+                      return '#00F0E0';
                     }
                     else
                     {

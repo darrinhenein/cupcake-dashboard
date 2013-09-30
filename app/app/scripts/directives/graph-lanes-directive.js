@@ -20,30 +20,28 @@ angular.module('cupcakeDashboard')
              .attr("height", height + margin.top + margin.bottom)
              .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom));
 
-         scope.$watch('data', function (newVal, oldVal) {
+         var drawGraph = function () {
 
-           // if 'val' is undefined, exit
-           if (!newVal) {
-             return;
-           }
 
            if (!scope.data || !scope.lanes){
             return;
            }
 
+           var tempData = scope.data;
 
-           var temp = _.filter(_.map(scope.data, function(e){
-            if(e.date && e.model)
-            {
-              return {date: e.date, phase: e.model.phase || 0};
-            }
-           }), function(o){
-              return o != undefined;
-           });
+           var temp = _.chain(tempData)
+            .map(function(e){
+              if(_.has(e, 'date') && _.has(e, 'model'))
+              {
+                return {date: e.date, phase: e.model.phase || 0};
+              }
+            })
+            .filter(function(o){
+              return _.isObject(o);
+            })
+            .value();
 
            var data = [];
-
-           if(temp.length == 0) return;
 
            temp.sort(function(a, b){
              a = new Date(a.date);
@@ -69,6 +67,7 @@ angular.module('cupcakeDashboard')
             data.push(_.extend(temp[temp.length-1], {index: count}));
             count++;
            }
+
 
            var x = d3.scale.linear().domain([0, count-1]).range([margin.left, width]);
            var y = d3.scale.ordinal().domain(scope.lanes.map(function(p){return p.phase;})).rangeRoundBands([height, margin.bottom], 0.05);
@@ -177,7 +176,10 @@ angular.module('cupcakeDashboard')
 
            lanes();
 
-         });
+         };
+
+         scope.$watch('data', drawGraph);
+         scope.$watch('lanes', drawGraph);
       }
     }
 });

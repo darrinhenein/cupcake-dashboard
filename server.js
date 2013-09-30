@@ -484,7 +484,7 @@
         }
       });
     } else {
-      return res.send(401);
+      return res.send(200);
     }
   });
 
