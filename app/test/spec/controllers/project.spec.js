@@ -16,7 +16,16 @@ describe('Controller: ProjectCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+  it('scope properties should be defined', function() {
+    scope.newBug.should.be.defined;
+    scope.bugs.should.have.length(0);
+    scope.events.should.have.length(0);
+    scope.projects.should.have.length(0);
+    scope.themes.should.exist;
   });
+
+  it('should have a new empty collaborator with an email field', function(){
+    scope.newCollaborator.email.should.exist;
+  });
+
 });

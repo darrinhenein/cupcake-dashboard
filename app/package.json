@@ -37,7 +37,10 @@
     "matchdep": "~0.1.2",
     "connect-livereload": "~0.2.0",
     "grunt-google-cdn": "~0.2.0",
-    "grunt-ngmin": "~0.0.2"
+    "grunt-ngmin": "~0.0.2",
+    "karma-chai": "0.0.2",
+    "karma-mocha": "~0.1",
+    "karma-spec-reporter": "0.0.6"
   },
   "engines": {
     "node": ">=0.8.0"

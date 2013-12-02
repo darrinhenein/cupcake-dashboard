@@ -29,7 +29,7 @@ angular.module('cupcakeDashboard')
     if(reset)
     {
       $rootScope.newNotifications = 0;
-      $window.document.title = "Cupcakes | Firefox UX Dashboard"
+      $window.document.title = "Concepts | Firefox UX Dashboard"
     }
   }
 

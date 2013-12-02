@@ -5,7 +5,10 @@ A dashboard for cupcakes.
 
 ### Developers: ###
 
-1. `npm install` to install coffee-script as a devDependency.
+*Required: node.js, npm, bower.*
+
+1. `npm install` to install dependencies.
+1. `bower install` and `npm install` in the /app directory to install client app dependencies.
 1. Needs mongo running.
 1. `grunt` in the main directory to build the server.
 1. `node server.js` to start the server.
