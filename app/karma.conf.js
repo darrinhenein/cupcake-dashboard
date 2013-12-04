@@ -34,7 +34,7 @@ module.exports = function(config) {
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
     logLevel: config.LOG_ERROR,
 
-    reporters: ['spec'],
+    reporters: ['spec', 'coverage'],
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
@@ -53,6 +53,21 @@ module.exports = function(config) {
       // 'Chrome'
       // 'Firefox'
     ],
+
+    preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      'app/scripts/*.js': ['coverage'],
+      'app/scripts/controllers/*.js': ['coverage'],
+      'app/scripts/directives/*.js': ['coverage'],
+      'app/scripts/filters/*.js': ['coverage'],
+      'app/scripts/services/*.js': ['coverage']
+    },
+
+    coverageReporter: {
+      type : 'text'
+    },
 
 
     // Continuous Integration mode
