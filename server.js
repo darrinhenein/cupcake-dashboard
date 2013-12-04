@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -16,6 +16,8 @@
   mongoose = restful.mongoose;
 
   moment = require("moment");
+
+  helmet = require("helmet");
 
   Project = require("./models/project");
 
@@ -42,6 +44,21 @@
   server = require("http").createServer(app);
 
   io = io.listen(server);
+
+  policy = {
+    defaultPolicy: {
+      'default-src': ["'none'"],
+      'img-src': ['*'],
+      'font-src': ['*'],
+      'script-src': ["'self'", 'www.google-analytics.com', 'https://login.persona.org', "'unsafe-inline'", "'unsafe-eval'"],
+      'style-src': ["'self'", 'fonts.googleapis.com', "'unsafe-inline'"],
+      'connect-src': ["'self'"]
+    }
+  };
+
+  helmet.csp.policy(policy);
+
+  helmet.defaults(app);
 
   app.use(express.compress());
 

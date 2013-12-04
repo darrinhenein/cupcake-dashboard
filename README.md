@@ -5,7 +5,7 @@ A dashboard for cupcakes.
 
 ### Developers: ###
 
-*Required: node.js, npm, bower.*
+*Required: node.js, npm, bower, ruby + compass gem*
 
 1. `npm install` to install dependencies.
 1. `bower install` and `npm install` in the /app directory to install client app dependencies.
@@ -23,3 +23,7 @@ and save it as `stackato`
 1. `stackato info` (Do this once to make sure it‘s all working.)
 1. (Optionally do a `stackato delete` to remove the old version.)
 1. `stackato push` (Do this every time you want to deploy. ;)
+
+
+#### A Note on Persona Login ####
+Rather than visiting http://localhost:3000 in your browser, you must visit http://127.0.0.1:3000 in order for Persona login to work.

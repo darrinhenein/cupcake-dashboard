@@ -6,6 +6,7 @@ async = require("async")
 url = require("url")
 mongoose = restful.mongoose
 moment = require("moment")
+helmet = require("helmet")
 Project = require("./models/project")
 Theme = require("./models/theme")
 User = require("./models/user")
@@ -23,6 +24,25 @@ logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
 app = express()
 server = require("http").createServer app
 io = io.listen server
+
+# security middleware
+
+policy = {
+  defaultPolicy: {
+    'default-src': ["'none'"],
+    'img-src': ['*'],
+    'font-src': ['*'],
+    'script-src': ["'self'", 'www.google-analytics.com', 'https://login.persona.org', "'unsafe-inline'", "'unsafe-eval'"],
+    'style-src': ["'self'", 'fonts.googleapis.com', "'unsafe-inline'"],
+    'connect-src': ["'self'"]
+  }
+}
+
+helmet.csp.policy(policy);
+
+# app.use helmet.csp()
+helmet.defaults app
+
 
 
 app.use express.compress()
