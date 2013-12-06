@@ -19,6 +19,14 @@ angular.module('cupcakeDashboard')
 
     $scope.project = Project.get({id: projectId}, function(){
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
+        $scope.projectPermissions.showEdit = $scope.projectPermissions.edit;
+        $scope.projectPermissions.edit = false;
+
+        $scope.toggleEdit = function() {
+          $scope.projectPermissions.edit = !$scope.projectPermissions.edit;
+          $scope.projectPermissions.showEdit = !$scope.projectPermissions.showEdit;
+        }
+
         $scope.isFound = true;
 
         $http.get('/api/projects').then(function(res){

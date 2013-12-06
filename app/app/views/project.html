@@ -20,10 +20,13 @@
 
          </div>
         <div class="col-md-6">
-          <span ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+          <div ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
           <img src="http://avatars.io/email/{{ project.owner.email }}" width=36 height=36 />
           <i>{{ UI.displayName(project.owner) }}</i>
-          </span>
+          </div>
+          <div class="clearfix"></div>
+          <div class="btn btn-primary pull-right" ng-show="projectPermissions.showEdit" ng-click="toggleEdit()">Edit this Project</div>
+          <div class="btn btn-success pull-right" ng-show="projectPermissions.edit" ng-click="toggleEdit()">Done Editing</div>
         </div>
       </div>
 

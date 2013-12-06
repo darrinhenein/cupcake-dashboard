@@ -29,11 +29,12 @@ io = io.listen server
 
 policy = {
   defaultPolicy: {
-    'default-src': ["'none'"],
+    'default-src': ["'none'", 'https://login.persona.org'],
     'img-src': ['*'],
     'font-src': ['*'],
-    'script-src': ["'self'", 'www.google-analytics.com', 'https://login.persona.org', "'unsafe-inline'", "'unsafe-eval'"],
+    'script-src': ["'self'", 'www.google-analytics.com', 'https://*.persona.org', "'unsafe-inline'", "'unsafe-eval'"],
     'style-src': ["'self'", 'fonts.googleapis.com', "'unsafe-inline'"],
+    'xhr-src': ["'self'"],
     'connect-src': ["'self'"]
   }
 }
@@ -96,7 +97,7 @@ audience = 'http://' + HOST + ':' + PORT
 
 if process.env.VCAP_APPLICATION
   vcap = JSON.parse process.env.VCAP_APPLICATION
-  audience = 'http://' + vcap.uris[0]
+  audience = vcap.uris[0]
 
 require('express-persona') app,
   audience: audience

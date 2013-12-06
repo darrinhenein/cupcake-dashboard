@@ -25,7 +25,7 @@ angular.module('cupcakeDashboard')
 
   $rootScope.changeNotificationNumber = function(delta, reset){
     $rootScope.newNotifications += delta;
-    $window.document.title = "(" + $rootScope.newNotifications + ") Cupcakes | Firefox UX Dashboard"
+    $window.document.title = "(" + $rootScope.newNotifications + ") Concepts | Firefox UX Dashboard"
     if(reset)
     {
       $rootScope.newNotifications = 0;
