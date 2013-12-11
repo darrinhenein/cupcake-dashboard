@@ -18,6 +18,8 @@ angular.module('cupcakeDashboard')
       var model = path.split('.')[0];
       var prop = path.split('.')[1];
 
+      if(data.property) prop = data.property;
+
       // create object to PUT to server
       var obj = {};
       obj[prop] = data.value;
@@ -28,7 +30,7 @@ angular.module('cupcakeDashboard')
         phases = {};
       }
 
-      phases[$scope.activePhase] = obj;
+      phases[phase] = obj;
 
       Project.update({id: $stateParams.id}, {phases: phases}, function(data){
         $scope.$parent.project = data;

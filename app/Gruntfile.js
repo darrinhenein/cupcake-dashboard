@@ -28,6 +28,13 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     yeoman: yeomanConfig,
+    sloc: {
+      all: {
+       files: {
+         './app/scripts' : ['**.js']
+       }
+      }
+    },
     watch: {
       coffee: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],

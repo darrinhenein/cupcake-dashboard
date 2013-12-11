@@ -307,3 +307,48 @@ li.dropdown {
     opacity: 0.8;
     font-size: 9px;
 }
+
+.project-phase {
+    position: relative;
+}
+
+.project-phase .phase-title {
+    padding-left: 32px;
+}
+
+.project-phase .phase-details {
+    border-bottom: 1px solid #EEE;
+    margin-bottom: 40px;
+}
+.project-phase .phase-details small{
+    margin-bottom: 15px;
+    display: block;
+}
+.project-phase .timeline {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    bottom: -25px;
+    width: 6px;
+    border-radius: 3px;
+    padding: 0;
+    background: #EEE;
+}
+
+.project-phase .timeline.last {
+    background: none;
+}
+
+.project-phase .timeline .knob {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #EEE;
+    top: -9px;
+    left: -7px;
+}
+.project-phase.active .timeline .knob {
+    background-color: $link-color;
+}

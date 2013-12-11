@@ -25,7 +25,8 @@ angular.module('cupcakeDashboard')
         scope: {
             value: "=editable",
             callback: "&",
-            property: "@editable",
+            path: "@editable",
+            property: "@property",
             auth: "=",
             textarea: "=",
             markdown: "="
@@ -66,9 +67,9 @@ angular.module('cupcakeDashboard')
                 }
                 $scope.disableEditor();
                 $scope.value = $scope.view.editableValue;
-                obj = {}
-                obj[$scope.property] = $scope.value
-                $scope.callback({data: {path: $scope.property, value: $scope.value}});
+                obj = {};
+                obj[$scope.path] = $scope.value;
+                $scope.callback({data: {path: $scope.path, property: $scope.property, value: $scope.value}});
                 if($scope.markdown)
                 {
                     $scope.view.renderedValue = markdown.toHTML($scope.value);
