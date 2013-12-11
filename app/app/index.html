@@ -35,7 +35,7 @@
         <ul class="nav container navbar-nav navbar-fixed-top">
             <li class="dropdown" ng-class="{newItems: newNotifications > 0}">
               <!-- Link or button to toggle dropdown -->
-              <a data-toggle="dropdown" ng-click="changeNotificationNumber(0, true)"><span class="cupcake-icon"></span><span class="badge" ng-class="{'badge-danger': newNotifications > 0}">{{ newNotifications }}</span></a>
+              <a data-toggle="dropdown" ng-click="changeNotificationNumber(0, true)"><span class="cupcake-icon"></span><span class="badge" ng-class="{'badge-danger': newNotifications > 0}" ng-bind="newNotifications"></span></a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" ng-include="'views/feed.html'">
               </ul>
             </li>
