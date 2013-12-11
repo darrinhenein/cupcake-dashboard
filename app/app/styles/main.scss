@@ -137,6 +137,10 @@ small.description {
     max-width: 250px;
     display: inline-block;
 }
+.profile {
+    font-size: 18px;
+    margin: 20px 0;
+}
 .profile img{
     border-radius: 50%;
     border: 3px solid #EEE;
@@ -308,6 +312,21 @@ li.dropdown {
     font-size: 9px;
 }
 
+.sidebar {
+    background-color: #fafafa;
+    padding-bottom: 40px;
+    padding-left: 30px;
+}
+
+.sidebar small {
+    display: block;
+    padding-top: 20px;
+}
+
+.sidebar h3 small {
+    font-size: 14px;
+}
+
 .project-phase {
     position: relative;
 }
@@ -347,8 +366,28 @@ li.dropdown {
     background: white;
     border: 3px solid #EEE;
     top: -9px;
-    left: -7px;
+    left: -6px;
 }
+
+.project-phase .timeline.muted .knob {
+    background-color: #EEE;
+}
+
 .project-phase.active .timeline .knob {
     background-color: $link-color;
+}
+
+.sidebar .project-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: #33335B;
+}
+
+.main-content .lead {
+    line-height: 150%;
+}
+
+.main-content .lead, .main-content .markdown {
+    font-family: "Droid Serif", Gerogia, serif;
+    color: #232324;
 }

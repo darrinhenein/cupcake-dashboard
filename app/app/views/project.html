@@ -1,127 +1,18 @@
 <div ng-switch on="isFound">
-  <div ng-switch-when="true">
-    <h3>
-      <div class="row">
-        <div class="col-md-6">
-          <span class="text-label" ng-hide="projectPermissions.edit">{{ statusTitle(project.status.index) }}</span>
-          <span editable="project.title" auth="projectPermissions.edit" callback="update(data)"></span>
-           <small>Created {{ project.created_at | date }}</small><small ng-hide="!project.last_updated"> | Updated {{ project.last_updated | date }}</small>
-           <br/>
-           <div ng-show="projectPermissions.edit" class="status-buttons btn-group btn-group-xs">
-             <button ng-click="updateStatus(status.index)" ng-class="{'btn-primary': project.status.index == status.index}" ng-repeat="status in statuses" type="button" class="btn btn-default">{{ status.title }}</button>
-           </div>
-            <small ng-hide="project.status.related.length == 0">RELATED PROJECTS</small>
-            <div ng-show="projectPermissions.edit">
-              <br/>
-                <select multiple ng-model="relatedProjects" ng-multiple='true' ng-options="p.title for p in projects" ng-change="saveRelated(relatedProjects)" class="form-control col-lg-2"></select>
-              <br/>
-           </div>
-           <a ng-href="project/{{ related._id }}" class="btn btn-xs btn-primary btn-spaced" ng-repeat="related in project.status.related">{{ related.title }}</a>
-
-         </div>
-        <div class="col-md-6">
-          <div ng-show="project.owner.email!=null" class="pull-right profile" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
-          <img src="http://avatars.io/email/{{ project.owner.email }}" width=36 height=36 />
-          <i>{{ UI.displayName(project.owner) }}</i>
-          </div>
-          <div class="clearfix"></div>
-          <div class="btn btn-primary pull-right" ng-show="projectPermissions.showEdit" ng-click="toggleEdit()">Edit this Project</div>
-          <div class="btn btn-success pull-right" ng-show="projectPermissions.edit" ng-click="toggleEdit()">Done Editing</div>
-        </div>
-      </div>
-
-      <hr/>
-      <div ng-show="events.length > 0">
-        <div graph-phase-lanes="events" lanes="phases"></div>
-        <hr/>
-      </div>
-
-      <div class="row">
-        <div class="col-md-3">
-          <small>THEMES</small><br/>
-          <small ng-show="project.themes.length == 0" class="muted">No themes.</small>
-          <a href="/theme/{{ theme._id }}" ng-hide="projectPermissions.edit" ng-repeat="theme in project.themes"><span class="badge">{{ theme.title }}</span></a>
-          <a ng-show="projectPermissions.edit" ng-click="removeTheme(theme._id)" ng-repeat="theme in project.themes"><span class="badge remove">- {{ theme.title }}</span></a>
-
-          <div ng-show="projectPermissions.edit">
-            <br/>
-            <p class="text-label">All Themes</p>
-            <span class="badge add" ng-click="addTheme(theme._id)" ng-repeat="theme in themes | filter:notIn(project.themes)">+ {{ theme.title }}</span>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <small>PHASE</small>
-          <p ng-hide="projectPermissions.edit" class="lead">{{ phases[project.phase].title }}</p>
-          <form ng-show="projectPermissions.edit" class="form-inline">
-            <select ng-model="project.phase" ng-options="p.phase as p.title for p in phases" ng-change="savePhase()" class="form-control col-lg-2"></select>
-          </form>
-<!--           <br/>
-
-          <small>PROGRESS</small><span editable="project.progress" auth="projectPermissions.edit" callback="update(data)" class="lead text-info"></span>
-
- -->        </div>
-        <div class="col-md-6">
-          <small>COLLABORATORS</small>
-
-          <p ng-show="project.collaborators.length == 0" class="muted"><small>No collaborators.</small></p>
-
-          <div class="input-group" ng-show="projectPermissions.edit">
-            <input type="text" ng-model="newCollaborator.email" placeholder="Add Collaborator..." class="form-control">
-            <span class="input-group-btn">
-              <button class="btn btn-default" ng-click="addCollaborator()" type="button">+</button>
-            </span>
-          </div>
-
-          <p ng-show="projectPermissions.edit"  class="collaborator edit" ng-repeat="person in project.collaborators">
-          <img src="http://avatars.io/email/{{ person.email }}" width=24 height=24 /><span>{{ person.email }}</span>
-            <button ng-click="removeCollaborator(person)" class="btn btn-xs btn-danger">-</button>
-          </p>
-
-          <p ng-hide="projectPermissions.edit" class="collaborator" ng-repeat="person in project.collaborators">
-            <a  ng-href="/{{ person.email }}/projects">
-              <img src="http://avatars.io/email/{{ person.email }}" width=24 height=24 /><span>{{ person.email }}</span>
-            </a>
-          </p>
-
-
-        </div>
-      </div>
-    </h3>
-
-    <hr/>
-
-    <h3><small>BUGS</small></h3>
-    <div class="input-group" ng-show="projectPermissions.edit">
-      <input type="text" ng-model="newBug.id" placeholder="Add Bugzilla Bug by id..." class="form-control">
-      <span class="input-group-btn">
-        <button class="btn btn-default" ng-click="addBug()" type="button">+</button>
-      </span>
-      <br/>
-    </div>
-    <p ng-repeat="bug in bugs">
-      <strong>{{ bug.id }}</strong><a ng-href="https://bugzilla.mozilla.org/show_bug.cgi?id={{  bug.id }}" target="_blank"> {{ bug.summary }} </a> <i>({{ bug.assigned_to.name }})</i> <span class="label label-info">{{ bug.status }}</span>
-      <button ng-show="projectPermissions.edit" ng-click="removeBug(bug.id)" class="btn btn-xs btn-danger">-</button>
-    </p>
-    <span ng-show="project.bugs.length == 0">No bugs associated with this project.</span>
-    <span ng-show="findingBugs">Loading bugs from bugzilla...</span>
-
-    <h3><small>DESCRIPTION</small></h3>
-    <p editable="project.description" auth="projectPermissions.edit" textarea=true markdown=true callback="update(data)" class="lead"></p>
-
-    <div ui-view></div>
-
-    <hr/>
-
-    <button ng-show="projectPermissions.remove" ng-click="remove()" class="btn btn-danger">Delete Project</button>
+  <div ng-switch-when="true" class="row">
+    <div class="col-md-9 main-content" ng-include="'views/project.main.html'"></div>
+    <div class="col-md-3 sidebar" ng-include="'views/project.sidebar.html'"></div>
   </div>
-
-  <div ng-switch-when="false" class="alert alert-danger">
-    <h4>This project cannot be found. It may have been deleted. Go back to <a class="alert-link" ng-href="/projects">Projects</a>?</h4>
+  <div ng-show="events.length > 0">
+    <div graph-phase-lanes="events" lanes="phases"></div>
   </div>
+  <hr/>
 
-  <div ng-switch-default>
-    Loading...
-  </div>
+<div ng-switch-when="false" class="alert alert-danger">
+  <h4>This project cannot be found. It may have been deleted. Go back to <a class="alert-link" ng-href="/projects">Projects</a>?</h4>
+</div>
 
+<div ng-switch-default>
+  Loading...
+</div> <button ng-show="projectPermissions.remove" ng-click="remove()" class="btn btn-danger pull-right">Delete Project</button>
 </div>

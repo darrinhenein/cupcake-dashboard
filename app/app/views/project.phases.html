@@ -6,11 +6,11 @@
  -->
 
  <div ng-repeat="phase in phases" ng-class="{active: phase.phase==project.phase}" class="row project-phase">
-  <div class="col-lg-1 timeline" ng-class="{last: $last}">
+  <div class="col-lg-1 timeline" ng-class="{last: $last, muted: phase.phase > project.phase}">
     <div class="knob"></div>
   </div>
   <div class="col-lg-2 phase-title">
-    <h4 ng-cloak>{{ phases[phase.phase].title }}</h4>
+    <h4 ng-cloak ng-class="{'text-muted' : phase.phase > project.phase}">{{ phases[phase.phase].title }}</h4>
   </div>
   <div class="col-lg-9 phase-details">
     <small ng-cloak class="text-muted">{{ phases[phase.phase].prompt | uppercase }}</small>
