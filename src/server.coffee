@@ -9,6 +9,7 @@ moment = require("moment")
 helmet = require("helmet")
 Project = require("./models/project")
 Theme = require("./models/theme")
+Product = require("./models/product")
 User = require("./models/user")
 Phases = require("./models/phases")
 Statuses = require("./models/status")
@@ -134,6 +135,16 @@ authTheme = (req, res, next) ->
                    else
                      res.send 403
 
+authProduct = (req, res, next) ->
+  isLoggedIn req, res, ->
+    product = Product.findOne({_id:req.params.id})
+                 .populate('owner')
+                 .exec (err, doc) ->
+                   if doc.owner.email is req.session.email or getAuthLevel(req.session.email) is 3
+                     next()
+                   else
+                     res.send 403
+
 authUser = (req, res, next) ->
   isLoggedIn req, res, ->
     User.findOne({_id: req.params.id}).exec (err, doc) ->
@@ -154,26 +165,34 @@ logEvent = (req, res, next) ->
 
 
 # server side auth on projects
-Project.before 'post'   , isAdmin
+Project.before 'post'   , isLoggedIn
 Project.before 'put'    , authProject
 
 Project.before 'delete' , (req, res, next) ->
   authProject req, res, ->
     logEvent req, res, next
 
-Theme.before 'post'     , isAdmin
-Theme.before 'put'      , authTheme
+Theme.before 'post'   , isLoggedIn
+Theme.before 'put'    , authTheme
+Product.before 'post' , isLoggedIn
+Product.before 'put'  , authProduct
 
 Theme.before 'delete'  , (req, res, next) ->
   authTheme req, res, ->
     logEvent req, res, next
+Product.before 'delete'  , (req, res, next) ->
+  authProduct req, res, ->
+    logEvent req, res, next
+
 User.before 'put'       , authUser
 
 
 # logging
-Project.after 'post'   , logEvent
-Theme.after 'put'      , logEvent
-Theme.after 'post'     , logEvent
+Project.after 'post' , logEvent
+Theme.after 'put'    , logEvent
+Theme.after 'post'   , logEvent
+Product.after 'put'  , logEvent
+Product.after 'post' , logEvent
 
 Project.before 'get', (req, res, next) ->
   # override node-restful and populate the themes
@@ -181,6 +200,7 @@ Project.before 'get', (req, res, next) ->
   if id
     Project.findOne({_id: id})
            .populate('themes')
+           .populate('products')
            .populate('owner')
            .populate('status.related')
            .exec (err, doc) ->
@@ -189,12 +209,13 @@ Project.before 'get', (req, res, next) ->
               else
                 res.send 404
   else
-    Project.find().populate('themes').populate('owner').exec (err, docs) ->
+    Project.find().populate('themes').populate('products').populate('owner').exec (err, docs) ->
       res.send docs
 
 Project.after 'put', (req, res, next) ->
   Project.findOne({_id: res.locals.bundle._id})
          .populate('themes')
+         .populate('products')
          .populate('owner')
          .populate('status.related')
          .exec (err, doc) ->
@@ -210,6 +231,7 @@ Theme.before 'get', (req, res, next) ->
           if doc
              Project.find({themes: doc._id})
                     .populate('themes')
+                    .populate('products')
                     .populate('owner')
                     .exec (err, docs) ->
                       res.send
@@ -219,6 +241,27 @@ Theme.before 'get', (req, res, next) ->
             res.send 404
   else
     Theme.find().populate('owner').exec (err, docs) ->
+      res.send docs
+
+Product.before 'get', (req, res, next) ->
+  # add related projects to product response if querying one product
+  if req.params.id
+    Product.findOne({_id: req.params.id})
+         .populate('owner')
+         .exec (err, doc) ->
+          if doc
+             Project.find({products: doc._id})
+                    .populate('themes')
+                    .populate('products')
+                    .populate('owner')
+                    .exec (err, docs) ->
+                      res.send
+                        product: doc
+                        projects: docs
+          else
+            res.send 404
+  else
+    Product.find().populate('owner').exec (err, docs) ->
       res.send docs
 
 Project.route "events.get",
@@ -261,6 +304,7 @@ Project.route "total.get", (req, res) ->
 
 Project.register app, "/api/projects"
 Theme.register app, "/api/themes"
+Product.register app, "/api/products"
 User.register app, "/api/users"
 
 app.get "/api/events/:num?", (req, res) ->
@@ -278,12 +322,13 @@ app.get "/api/events/:num/counts", (req, res) ->
 app.get "/api/:email/projects", (req, res) ->
   User.findOne({email: req.params.email})
       .exec (err, doc) ->
-        Project.find({"owner": doc._id}).populate('owner').populate('themes').exec (err, projects) ->
+        Project.find({"owner": doc._id}).populate('owner').populate('themes').populate('products').exec (err, projects) ->
           res.send projects
 
 app.get "/api/:email/collaborations", (req, res) ->
   Project.where("collaborators.email", req.params.email)
          .populate('themes')
+         .populate('products')
          .populate('owner')
          .exec (err, collaborations) ->
            res.send collaborations
@@ -291,6 +336,11 @@ app.get "/api/:email/collaborations", (req, res) ->
 app.get "/api/:email/themes", (req, res) ->
   User.findOne({email: req.params.email}).exec (err, doc) ->
     Theme.find({"owner": doc._id}).populate('owner').exec (err, docs) ->
+      res.send docs
+
+app.get "/api/:email/products", (req, res) ->
+  User.findOne({email: req.params.email}).exec (err, doc) ->
+    Product.find({"owner": doc._id}).populate('owner').exec (err, docs) ->
       res.send docs
 
 app.get "/api/phase/:id", (req, res) ->
@@ -329,6 +379,9 @@ app.get "/phase/:phaseId", index
 app.get "/themes", index
 app.get "/themes/new", index
 app.get "/theme/:themeId", index
+app.get "/products", index
+app.get "/products/new", index
+app.get "/product/:productId", index
 app.get "/about", index
 app.get "/401", index
 

@@ -78,7 +78,7 @@ angular.module('cupcakeDashboard')
                     return x(d.title) + ((width/scope.data.length - 10)/2);
                   })
                   .attr("y", function(d){
-                    return (height - y(d.count)) + 15;
+                    return (height - y(d.count)) + 12;
                   })
                   .attr("font-size", "11px")
                   .attr("fill", "#FFF")

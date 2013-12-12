@@ -2,6 +2,7 @@ _ = require("underscore")
 User = require('./models/user')
 Event = require('./models/event')
 Theme = require('./models/theme')
+Product = require('./models/product')
 Project = require('./models/project')
 async = require('async')
 
@@ -22,6 +23,8 @@ module.exports.log = (req, res, next, io) ->
               schema = Theme
             else if type is 'project'
               schema = Project
+            else if type is 'product'
+              schema = Product
             schema.findOne({_id: mid}).select('title').exec (err, doc) ->
               modelData = doc
               cb()
@@ -34,6 +37,8 @@ module.exports.log = (req, res, next, io) ->
             schema = Theme
           else if type is 'project'
             schema = Project
+          else if type is 'product'
+            schema = Product
           schema.update {_id: mid}, {last_updated: new Date()}, (err, doc) ->
             cb()
 

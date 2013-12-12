@@ -65,6 +65,12 @@
         type: ObjectId,
         ref: 'theme'
       }
+    ],
+    products: [
+      {
+        type: ObjectId,
+        ref: 'product'
+      }
     ]
   })).methods(["get", "post", "put", "delete"]);
 

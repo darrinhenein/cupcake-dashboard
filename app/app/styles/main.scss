@@ -391,3 +391,29 @@ li.dropdown {
     font-family: "Droid Serif", Gerogia, serif;
     color: #232324;
 }
+
+.list-group-item {
+    position: relative;
+}
+
+.list-group-item span.title {
+    font-size: 12px;
+    width: 90%;
+    display: block;
+}
+
+.list-group-item .circle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #DDD;
+    background-color: white;
+    right: 10px;
+    top: 15px;
+}
+
+.list-group-item.on .circle {
+    background-color: #A3ED2B;
+    border-color: #A3ED2B;
+}

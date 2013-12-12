@@ -8,7 +8,7 @@ angular.module('cupcakeDashboard')
         self._total = null;
 
         this.phases = function(){
-          var promise = $http.get('/api/phases', { cache: false }).then(function(res){
+          var promise = $http.get('/api/phases', { cache: true }).then(function(res){
             self._phases = res.data;
             return res.data;
           })
@@ -16,7 +16,7 @@ angular.module('cupcakeDashboard')
         }
 
         this.statuses = function(){
-          var promise = $http.get('/api/statuses', { cache: false }).then(function(res){
+          var promise = $http.get('/api/statuses', { cache: true }).then(function(res){
             self._statuses = res.data;
             return res.data;
           })

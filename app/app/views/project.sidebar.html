@@ -27,6 +27,7 @@
 </h3>
 <small ng-hide="project.status.related.length == 0">RELATED PROJECTS</small>
 <div ng-show="projectPermissions.edit">
+  <small>RELATED PROJECTS</small>
  <br/>
  <select multiple ng-model="relatedProjects" ng-multiple='true' ng-options="p.title for p in projects" ng-change="saveRelated(relatedProjects)" class="form-control col-lg-2"></select>
  <br/>

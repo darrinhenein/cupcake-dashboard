@@ -1,5 +1,5 @@
 (function() {
-  var Event, Phases, Project, Theme, User, async, mongoose, pkg;
+  var Event, Phases, Product, Project, Theme, User, async, mongoose, pkg;
 
   Project = require("../models/project");
 
@@ -8,6 +8,8 @@
   User = require("../models/user");
 
   Theme = require("../models/theme");
+
+  Product = require("../models/product");
 
   Event = require("../models/event");
 
@@ -38,6 +40,12 @@
         });
       });
       queue.push(function(next) {
+        return Product.find(function(err, docs) {
+          response.products = docs;
+          return next();
+        });
+      });
+      queue.push(function(next) {
         return User.find(function(err, docs) {
           response.users = docs;
           return next();
@@ -58,7 +66,7 @@
       });
     },
     load: function(req, res) {
-      var data, dropEvents, dropProjects, dropThemes, dropUsers, queue;
+      var data, dropEvents, dropProducts, dropProjects, dropThemes, dropUsers, queue;
       data = req.body;
       queue = [];
       dropProjects = function(next) {
@@ -68,6 +76,11 @@
       };
       dropThemes = function(next) {
         return mongoose.connection.db.dropCollection('themes', function(err, docs) {
+          return next();
+        });
+      };
+      dropProducts = function(next) {
+        return mongoose.connection.db.dropCollection('products', function(err, docs) {
           return next();
         });
       };
@@ -94,6 +107,12 @@
         });
       });
       queue.push(function(next) {
+        return Product.create(data.products, function(err) {
+          console.log("created " + data.products.length + " products");
+          return next();
+        });
+      });
+      queue.push(function(next) {
         return User.create(data.users, function(err) {
           console.log("created " + data.users.length + " users");
           return next();
@@ -105,7 +124,7 @@
           return next();
         });
       });
-      return async.parallel([dropProjects, dropThemes, dropUsers, dropEvents], function(next) {
+      return async.parallel([dropProjects, dropThemes, dropProducts, dropUsers, dropEvents], function(next) {
         return async.parallel(queue, function(next) {
           return res.send({
             message: "Database recreated successfully.",

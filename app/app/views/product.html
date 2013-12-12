@@ -1,0 +1,42 @@
+<div ng-switch on="isFound">
+  <div ng-switch-when="true">
+    <h2><span editable="product.product.title" auth="productPermissions.edit" callback="update(data)"></span></h2>
+    <p class="lead"><span editable="product.product.description" auth="productPermissions.edit" callback="update(data)"></span></p>
+    <h4><i>{{ UI.displayName(product.product.owner) }}</i></h4>
+    <hr/>
+
+      <table ng-show="product.projects.length" class="table table-hover">
+        <tr>
+        <th>Title</th>
+        <th>Owner</th>
+        <th>Date Started</th>
+        <th>Activity</th>
+        <th>Progress</th>
+        </tr>
+        <tr ng-repeat="project in product.projects" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+          <td><a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a></td>
+          <td>{{ UI.displayName(project.owner) }}</td>
+          <td>{{ project.created_at | date }}</td>
+          <td><div graph-activity="project._id"></div></td>
+          <td>
+            <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
+            <progress-bar progress="{{((project.phase / (phases.length-1)) * 100)}}" />
+          </td>
+        </tr>
+     </table>
+     <div ng-show="!product.projects.length" class="well">No projects.</div>
+
+     <button ng-show="productPermissions.remove" ng-click="remove()" class="btn btn-danger">Delete product</button>
+  </div>
+
+  <div ng-switch-when="false" class="alert alert-danger">
+    <h4>This product cannot be found. It may have been deleted. Go back to <a class="alert-link" ng-href="/products">products</a>?</h4>
+  </div>
+
+  <div ng-switch-default>
+    Loading...
+  </div>
+
+</div>
+
+

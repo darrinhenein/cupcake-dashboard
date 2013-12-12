@@ -6,10 +6,15 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
     $urlRouterProvider.otherwise('/projects');
 
     $stateProvider
-      .state('base', {
+      .state('themes', {
         url: '/themes',
         templateUrl: 'views/themes.html',
         controller: 'ThemesCtrl'
+      })
+      .state('products', {
+        url: '/products',
+        templateUrl: 'views/products.html',
+        controller: 'ProductsCtrl'
       })
         .state('profile', {
           url: '/profile',
@@ -22,6 +27,11 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
           templateUrl: 'views/theme.html',
           controller: 'ThemeCtrl'
         })
+        .state('product', {
+          url: '/product/:id',
+          templateUrl: 'views/product.html',
+          controller: 'ProductCtrl'
+        })
         .state('user-themes', {
           url: '/:email/themes',
           templateUrl: 'views/user.themes.html',
@@ -31,6 +41,12 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
           url: '/themes/new',
           templateUrl: 'views/themes.new.html',
           controller: 'NewThemeCtrl',
+          auth: 2
+        })
+        .state('new-product', {
+          url: '/products/new',
+          templateUrl: 'views/products.new.html',
+          controller: 'NewProductCtrl',
           auth: 2
         })
         .state('projects', {

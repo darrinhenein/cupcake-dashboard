@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -22,6 +22,8 @@
   Project = require("./models/project");
 
   Theme = require("./models/theme");
+
+  Product = require("./models/product");
 
   User = require("./models/user");
 
@@ -160,6 +162,21 @@
     });
   };
 
+  authProduct = function(req, res, next) {
+    return isLoggedIn(req, res, function() {
+      var product;
+      return product = Product.findOne({
+        _id: req.params.id
+      }).populate('owner').exec(function(err, doc) {
+        if (doc.owner.email === req.session.email || getAuthLevel(req.session.email) === 3) {
+          return next();
+        } else {
+          return res.send(403);
+        }
+      });
+    });
+  };
+
   authUser = function(req, res, next) {
     return isLoggedIn(req, res, function() {
       return User.findOne({
@@ -188,7 +205,7 @@
     }
   };
 
-  Project.before('post', isAdmin);
+  Project.before('post', isLoggedIn);
 
   Project.before('put', authProject);
 
@@ -198,12 +215,22 @@
     });
   });
 
-  Theme.before('post', isAdmin);
+  Theme.before('post', isLoggedIn);
 
   Theme.before('put', authTheme);
 
+  Product.before('post', isLoggedIn);
+
+  Product.before('put', authProduct);
+
   Theme.before('delete', function(req, res, next) {
     return authTheme(req, res, function() {
+      return logEvent(req, res, next);
+    });
+  });
+
+  Product.before('delete', function(req, res, next) {
+    return authProduct(req, res, function() {
       return logEvent(req, res, next);
     });
   });
@@ -216,13 +243,17 @@
 
   Theme.after('post', logEvent);
 
+  Product.after('put', logEvent);
+
+  Product.after('post', logEvent);
+
   Project.before('get', function(req, res, next) {
     var id;
     id = req.route.params.id;
     if (id) {
       return Project.findOne({
         _id: id
-      }).populate('themes').populate('owner').populate('status.related').exec(function(err, doc) {
+      }).populate('themes').populate('products').populate('owner').populate('status.related').exec(function(err, doc) {
         if (doc) {
           return res.send(doc);
         } else {
@@ -230,7 +261,7 @@
         }
       });
     } else {
-      return Project.find().populate('themes').populate('owner').exec(function(err, docs) {
+      return Project.find().populate('themes').populate('products').populate('owner').exec(function(err, docs) {
         return res.send(docs);
       });
     }
@@ -239,7 +270,7 @@
   Project.after('put', function(req, res, next) {
     return Project.findOne({
       _id: res.locals.bundle._id
-    }).populate('themes').populate('owner').populate('status.related').exec(function(err, doc) {
+    }).populate('themes').populate('products').populate('owner').populate('status.related').exec(function(err, doc) {
       logEvent(req, res, next);
       return res.send(doc);
     });
@@ -253,7 +284,7 @@
         if (doc) {
           return Project.find({
             themes: doc._id
-          }).populate('themes').populate('owner').exec(function(err, docs) {
+          }).populate('themes').populate('products').populate('owner').exec(function(err, docs) {
             return res.send({
               theme: doc,
               projects: docs
@@ -265,6 +296,31 @@
       });
     } else {
       return Theme.find().populate('owner').exec(function(err, docs) {
+        return res.send(docs);
+      });
+    }
+  });
+
+  Product.before('get', function(req, res, next) {
+    if (req.params.id) {
+      return Product.findOne({
+        _id: req.params.id
+      }).populate('owner').exec(function(err, doc) {
+        if (doc) {
+          return Project.find({
+            products: doc._id
+          }).populate('themes').populate('products').populate('owner').exec(function(err, docs) {
+            return res.send({
+              product: doc,
+              projects: docs
+            });
+          });
+        } else {
+          return res.send(404);
+        }
+      });
+    } else {
+      return Product.find().populate('owner').exec(function(err, docs) {
         return res.send(docs);
       });
     }
@@ -336,6 +392,8 @@
 
   Theme.register(app, "/api/themes");
 
+  Product.register(app, "/api/products");
+
   User.register(app, "/api/users");
 
   app.get("/api/events/:num?", function(req, res) {
@@ -363,14 +421,14 @@
     }).exec(function(err, doc) {
       return Project.find({
         "owner": doc._id
-      }).populate('owner').populate('themes').exec(function(err, projects) {
+      }).populate('owner').populate('themes').populate('products').exec(function(err, projects) {
         return res.send(projects);
       });
     });
   });
 
   app.get("/api/:email/collaborations", function(req, res) {
-    return Project.where("collaborators.email", req.params.email).populate('themes').populate('owner').exec(function(err, collaborations) {
+    return Project.where("collaborators.email", req.params.email).populate('themes').populate('products').populate('owner').exec(function(err, collaborations) {
       return res.send(collaborations);
     });
   });
@@ -380,6 +438,18 @@
       email: req.params.email
     }).exec(function(err, doc) {
       return Theme.find({
+        "owner": doc._id
+      }).populate('owner').exec(function(err, docs) {
+        return res.send(docs);
+      });
+    });
+  });
+
+  app.get("/api/:email/products", function(req, res) {
+    return User.findOne({
+      email: req.params.email
+    }).exec(function(err, doc) {
+      return Product.find({
         "owner": doc._id
       }).populate('owner').exec(function(err, docs) {
         return res.send(docs);
@@ -450,6 +520,12 @@
   app.get("/themes/new", index);
 
   app.get("/theme/:themeId", index);
+
+  app.get("/products", index);
+
+  app.get("/products/new", index);
+
+  app.get("/product/:productId", index);
 
   app.get("/about", index);
 

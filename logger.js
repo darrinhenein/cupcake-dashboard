@@ -1,5 +1,5 @@
 (function() {
-  var Event, Project, Theme, User, async, _;
+  var Event, Product, Project, Theme, User, async, _;
 
   _ = require("underscore");
 
@@ -8,6 +8,8 @@
   Event = require('./models/event');
 
   Theme = require('./models/theme');
+
+  Product = require('./models/product');
 
   Project = require('./models/project');
 
@@ -29,6 +31,8 @@
               schema = Theme;
             } else if (type === 'project') {
               schema = Project;
+            } else if (type === 'product') {
+              schema = Product;
             }
             return schema.findOne({
               _id: mid
@@ -47,6 +51,8 @@
             schema = Theme;
           } else if (type === 'project') {
             schema = Project;
+          } else if (type === 'product') {
+            schema = Product;
           }
           return schema.update({
             _id: mid

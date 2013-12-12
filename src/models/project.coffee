@@ -55,6 +55,10 @@ ProjectSchema = restful.model("project", mongoose.Schema(
     type: ObjectId
     ref: 'theme'
     }]
+  products: [{
+    type: ObjectId
+    ref: 'product'
+    }]
 )).methods [
   "get"
   "post"

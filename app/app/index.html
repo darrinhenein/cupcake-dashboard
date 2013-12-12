@@ -40,8 +40,9 @@
               </ul>
             </li>
             <a class="navbar-brand" href="/projects">Concepts <small>Firefox UX Dashboard</small></a>
-            <li ng-class="{active: currentPath == '/themes'}"><a href="/themes">Themes</a></li>
             <li ng-class="{active: currentPath == '/projects'}"><a href="/projects">Projects</a></li>
+            <li ng-class="{active: currentPath == '/themes'}"><a href="/themes">Themes</a></li>
+            <li ng-class="{active: currentPath == '/products'}"><a href="/products">Products</a></li>
             <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/projects'}">
                 <a href="/{{ loggedInUser.email }}/projects"><small class="text-label">My Projects</small></a>
             </li>
@@ -103,6 +104,7 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/about.js"></script>
         <script src="scripts/controllers/projects.js"></script>
+        <script src="scripts/controllers/projects.filter.js"></script>
         <script src="scripts/controllers/profile.js"></script>
         <script src="scripts/controllers/user.projects.js"></script>
         <script src="scripts/controllers/project.phases.js"></script>
@@ -115,15 +117,20 @@
         <script src="scripts/directives/graph-lanes-directive.js"></script>
         <script src="scripts/directives/editable-directive.js"></script>
         <script src="scripts/filters/timeago-filter.js"></script>
+        <script src="scripts/filters/theme-filter.js"></script>
+        <script src="scripts/filters/product-filter.js"></script>
         <script src="scripts/services/ui-helper-service.js"></script>
         <script src="scripts/services/authentication-service.js"></script>
-        <script src="scripts/services/user-service.js"></script>
+        <script src="scripts/services/events-service.js"></script>
         <script src="scripts/services/angular.persona.js"></script>
         <script src="scripts/controllers/project.js"></script>
         <script src="scripts/controllers/nav.js"></script>
         <script src="scripts/controllers/feed.js"></script>
         <script src="scripts/controllers/theme.js"></script>
         <script src="scripts/controllers/themes.js"></script>
+        <script src="scripts/controllers/product.js"></script>
+        <script src="scripts/controllers/products.js"></script>
+        <script src="scripts/controllers/products.new.js"></script>
         <script src="scripts/controllers/user.themes.js"></script>
         <script src="scripts/controllers/themes.new.js"></script>
         <!-- endbuild -->

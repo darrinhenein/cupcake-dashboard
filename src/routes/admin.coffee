@@ -2,6 +2,7 @@ Project = require "../models/project"
 Phases = require "../models/phases"
 User = require "../models/user"
 Theme = require "../models/theme"
+Product = require "../models/product"
 Event = require "../models/event"
 mongoose = require("node-restful").mongoose
 async = require("async")
@@ -22,6 +23,11 @@ module.exports =
     queue.push (next) ->
       Theme.find (err, docs) ->
         response.themes = docs
+        next()
+
+    queue.push (next) ->
+      Product.find (err, docs) ->
+        response.products = docs
         next()
 
     queue.push (next) ->
@@ -53,6 +59,10 @@ module.exports =
       mongoose.connection.db.dropCollection 'themes', (err, docs) ->
         next()
 
+    dropProducts = (next) ->
+      mongoose.connection.db.dropCollection 'products', (err, docs) ->
+        next()
+
     dropUsers = (next) ->
       mongoose.connection.db.dropCollection 'users', (err, docs) ->
         next()
@@ -72,6 +82,11 @@ module.exports =
         next()
 
     queue.push (next) ->
+      Product.create data.products, (err) ->
+        console.log "created " + data.products.length + " products"
+        next()
+
+    queue.push (next) ->
       User.create data.users, (err) ->
         console.log "created " + data.users.length + " users"
         next()
@@ -81,7 +96,7 @@ module.exports =
         console.log "created " + data.events.length + " events"
         next()
 
-    async.parallel [dropProjects, dropThemes, dropUsers, dropEvents], (next) ->
+    async.parallel [dropProjects, dropThemes, dropProducts, dropUsers, dropEvents], (next) ->
       async.parallel queue, (next) ->
         res.send
           message:"Database recreated successfully."

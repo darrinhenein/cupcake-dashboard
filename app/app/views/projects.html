@@ -1,34 +1,57 @@
-  <div class="row">
-    <div class="col-md-8" graph-events="events" phases="phases"></div>
-    <div class="col-md-4" graph-phase-distribution></div>
+<div class="row">
+  <div class="col-md-8" graph-events="events" phases="phases"></div>
+  <div class="col-md-4" graph-phase-distribution></div>
+</div>
+
+<hr/>
+<div class="row">
+ <!-- sidebar  -->
+ <div class="col-md-2">
+  <div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Products</h3></div>
+    <ul class="list-group">
+      <a class="list-group-item" ng-click="toggleFilter('product', product._id)" ng-repeat="product in products" ng-class="{on: productFilter[product._id]}"><span class="title" ng-bind="product.title"></span><span class="circle"></span></a>
+    </ul>
   </div>
-  <hr/>
+  <div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Themes</h3></div>
+    <ul class="list-group">
+      <a class="list-group-item" ng-click="toggleFilter('theme', theme._id)" ng-repeat="theme in themes" ng-class="{on: themeFilter[theme._id]}"><span class="title" ng-bind="theme.title"></span><span class="circle"></span></a>
+    </ul>
+  </div>
+
+</div>
+<!-- project listing -->
+<div class="col-md-10">
   <div ng-include="'views/projects-nav.html'"></div>
   <table ng-show="projects.length" class="table table-hover">
-  <thead>
-    <tr>
-    <th>Title</th>
-    <th>Owner</th>
-    <th>Activity</th>
-    <th ng-show="navPhase == 'all'" >Progress</th>
-    </tr>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Owner</th>
+        <th>Activity</th>
+        <th ng-show="navPhase == 'all'" >Progress</th>
+      </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="project in projects | orderBy:sortProjectsByDate:true | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
-      <td>
-        <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a><br/>
-        <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>
-        <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
-      </td>
-      <td>{{ UI.displayName(project.owner) }}</td>
-      <td><div graph-activity="project._id"></div></td>
-      <td ng-show="navPhase == 'all'">
-        <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
-        <progress-bar project="project" range="phases" />
-      </td>
-    </tr>
+      <tr ng-repeat="project in filtered = (projects | arrayProductFilter:productFilter | arrayThemeFilter:themeFilter) | orderBy:sortProjectsByDate:true | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+        <td>
+          <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a><br/>
+          <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>
+          <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
+        </td>
+        <td>{{ UI.displayName(project.owner) }}</td>
+        <td><div graph-activity="project._id"></div></td>
+        <td ng-show="navPhase == 'all'">
+          <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
+          <progress-bar project="project" range="phases" />
+        </td>
+      </tr>
     </tbody>
- </table>
- <div ng-show="!projects.length" class="well well-lg">No projects.</div>
- <a class="btn btn-default navbar-btn" ng-show="permissions.add" ng-href="/projects/new">New Project</a>
- <a type="button" ng-click="showArchived = !showArchived" class="btn btn-primary" ng-class="{'btn-danger': showArchived}">{{ showText() }} Archived</a>
+  </table>
+  <div ng-show="!filtered.length" class="well well-lg">No projects.</div>
+  <a class="btn btn-default navbar-btn" ng-show="permissions.add" ng-href="/projects/new">New Project</a>
+  <a type="button" ng-click="showArchived = !showArchived" class="btn btn-primary" ng-class="{'btn-danger': showArchived}">{{ showText() }} Archived</a>
+
+</div>
+</div>
