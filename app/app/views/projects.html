@@ -1,39 +1,40 @@
 <div class="row">
-  <div class="col-md-8" graph-events="events" phases="phases"></div>
-  <div class="col-md-4" graph-phase-distribution></div>
-</div>
-
-<hr/>
-<div class="row">
  <!-- sidebar  -->
  <div class="col-md-2">
+  <div class="well well-sm">
+    <h4 class="text-center">{{ filtered.length }} Projects</h4>
+    <h6 class="text-center"><small><i>in current view</i></small></h6>
+    <hr/>
+    <a class="btn btn-primary btn-block btn-xs" ng-show="permissions.add" ng-href="/projects/new">New Project</a>
+    <a class="btn btn-block btn-xs btn-default" type="button" ng-click="showArchived = !showArchived"ng-class="{'btn-danger': showArchived}">{{ showText() }} Archived</a>
+  </div>
   <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Products</h3></div>
     <ul class="list-group">
-      <a class="list-group-item" ng-click="toggleFilter('product', product._id)" ng-repeat="product in products" ng-class="{on: productFilter[product._id]}"><span class="title" ng-bind="product.title"></span><span class="circle"></span></a>
+      <a class="list-group-item" ng-click="toggleFilter('product', product._id)" ng-repeat="product in products" ng-class="{on: filters.products[product._id]}"><span class="title" ng-bind="product.title"></span><span class="circle"></span></a>
+    </ul>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Phases</h3></div>
+    <ul class="list-group">
+      <a class="list-group-item" ng-click="toggleFilter('phase', phase.phase)" ng-repeat="phase in phases" ng-class="{on: filters.phase === phase.phase}"><span class="title" ng-bind="phase.title"></span><span class="circle"></span></a>
     </ul>
   </div>
   <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Themes</h3></div>
     <ul class="list-group">
-      <a class="list-group-item" ng-click="toggleFilter('theme', theme._id)" ng-repeat="theme in themes" ng-class="{on: themeFilter[theme._id]}"><span class="title" ng-bind="theme.title"></span><span class="circle"></span></a>
+      <a class="list-group-item" ng-click="toggleFilter('theme', theme._id)" ng-repeat="theme in themes" ng-class="{on: filters.themes[theme._id]}"><span class="title" ng-bind="theme.title"></span><span class="circle"></span></a>
     </ul>
   </div>
 </div>
+
 <!-- project listing -->
 <div class="col-md-10">
-  <div ng-include="'views/projects-nav.html'"></div>
+  <div class="col-md-8" graph-events="events" phases="phases" projects="filtered"></div>
+  <div class="col-md-4" graph-phase-distribution projects="filtered"></div>
   <table ng-show="projects.length" class="table table-hover">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Owner</th>
-        <th>Activity</th>
-        <th ng-show="navPhase == 'all'" >Progress</th>
-      </tr>
-    </thead>
     <tbody>
-      <tr ng-repeat="project in filtered = (projects | arrayProductFilter:productFilter | arrayThemeFilter:themeFilter) | orderBy:sortProjectsByDate:true | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+      <tr ng-repeat="project in filtered | filter:archivedFilter | orderBy:sortProjectsByDate:true" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
         <td>
           <a class="projectTitle" ng-href="/project/{{ project._id }}"><strong>{{ project.title }}</strong></a><br/>
           <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>
@@ -41,16 +42,14 @@
         </td>
         <td>{{ UI.displayName(project.owner) }}</td>
         <td><div graph-activity="project._id"></div></td>
-        <td ng-show="navPhase == 'all'">
+        <td>
           <span class="text-label muted">{{ phases[project.phase].title }}</span><br/>
           <progress-bar project="project" range="phases" />
         </td>
       </tr>
     </tbody>
   </table>
-  <div ng-show="!filtered.length" class="well well-lg">No projects.</div>
-  <a class="btn btn-default navbar-btn" ng-show="permissions.add" ng-href="/projects/new">New Project</a>
-  <a type="button" ng-click="showArchived = !showArchived" class="btn btn-primary" ng-class="{'btn-danger': showArchived}">{{ showText() }} Archived</a>
-
+  <div ng-show="!filtered.length" class="well well-lg">No projects. <i ng-show="projects.length">Try another filter?</i></div>
 </div>
+
 </div>

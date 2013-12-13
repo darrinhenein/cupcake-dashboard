@@ -8,7 +8,6 @@ angular.module('cupcakeDashboard', [
   .config(function ($routeProvider, $locationProvider) {
 
     $locationProvider.html5Mode(true);
-    $routeProvider.otherwise('/projects');
 
     $routeProvider
       .when('/themes', {
@@ -48,7 +47,8 @@ angular.module('cupcakeDashboard', [
         })
         .when('/projects', {
           templateUrl: 'views/projects.html',
-          controller: 'ProjectsCtrl'
+          controller: 'ProjectsCtrl',
+          reloadOnSearch: false
         })
         .when('/:email/projects', {
           templateUrl: 'views/user.projects.html',
@@ -74,6 +74,9 @@ angular.module('cupcakeDashboard', [
       .when('/401', {
         templateUrl: 'views/401.html'
       })
+      .otherwise({
+        redirectTo: '/projects'
+      });
   })
   .run(function ($rootScope, $window, $location, $http, AuthenticationService, UIHelperService){
 

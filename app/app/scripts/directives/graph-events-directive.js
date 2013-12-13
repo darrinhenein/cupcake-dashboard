@@ -9,13 +9,12 @@ angular.module('cupcakeDashboard')
        restrict: 'A',
        scope: {
          data: '=graphEvents',
-         grouped: '='
+         grouped: '=',
+         phases: '=',
+         projects: '='
        },
        link: function (scope, element, attrs) {
 
-        $http.get("/api/phases").then(function(res){
-          scope.phases = res.data;
-        });
          // set up initial svg object
          var vis = d3.select(element[0])
            .append("svg")
@@ -25,17 +24,18 @@ angular.module('cupcakeDashboard')
              .append("g")
                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-
-         scope.$watchCollection('[phases, data]', function (newVal, oldVal) {
+         scope.$watchCollection('[phases, data, projects]', function (newVal, oldVal) {
 
            // if 'val' is undefined, exit
-           if (!newVal) {
+           if (!newVal || newVal === oldVal) {
              return;
            }
 
            if (!scope.data || !scope.phases){
             return;
            }
+
+            console.log(scope);
 
             function getDateFromEvent(d){
               return new Date(d);
@@ -44,6 +44,12 @@ angular.module('cupcakeDashboard')
             data = _.filter(scope.data, function(e){
               return e.model.phase != undefined;
             })
+
+            var projectIds = _.pluck(scope.projects, '_id' );
+
+            data = _.filter(data, function(e){
+              return _.contains(projectIds, e.model._id)
+            });
 
             data.sort(function(a, b){
               a = new Date(a.date);

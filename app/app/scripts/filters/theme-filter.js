@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .filter('arrayThemeFilter', [function () {
+  .filter('arrayTheme', [function () {
     return function (projects, themeFilter) {
       if(!_.contains(_.values(themeFilter), true)) return projects;
 

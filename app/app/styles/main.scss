@@ -400,6 +400,9 @@ li.dropdown {
     font-size: 12px;
     width: 90%;
     display: block;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .list-group-item .circle {

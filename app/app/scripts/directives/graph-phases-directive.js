@@ -8,6 +8,9 @@ angular.module('cupcakeDashboard')
 
      return {
        restrict: 'A',
+       // scope: {
+       //  projects: '='
+       // },
        link: function (scope, element, attrs) {
 
         $http.get("/api/phases").then(function(res){
@@ -34,6 +37,12 @@ angular.module('cupcakeDashboard')
            if (!scope.data){
             return;
            }
+
+           // var projectIds = _.pluck(scope.projects, '_id' );
+
+           // data = _.filter(data, function(e){
+           //   return _.contains(projectIds, e.model._id)
+           // });
 
            var maxY = _.max(scope.data, function(d){
              return d.count;

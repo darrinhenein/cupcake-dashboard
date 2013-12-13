@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .filter('arrayProductFilter', [function () {
+  .filter('arrayProduct', [function () {
     return function (projects, productFilter) {
       if(!_.contains(_.values(productFilter), true)) return projects;
 
