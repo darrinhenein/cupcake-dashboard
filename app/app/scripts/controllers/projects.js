@@ -1,5 +1,6 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectsCtrl', function ($scope, $location, $stateParams, $rootScope, $resource, $http, UIHelperService, EventsService) {
+  .controller('ProjectsCtrl', function ($scope, $location, $rootScope, $resource, $http, UIHelperService, EventsService) {
+
 
     $rootScope.navPhase = 'all';
     $scope.events = EventsService.getAllEvents().then(function(res){

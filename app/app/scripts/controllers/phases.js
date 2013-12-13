@@ -1,9 +1,9 @@
 angular.module('cupcakeDashboard')
-  .controller('PhaseCtrl', function ($scope, $rootScope, $http, $stateParams, UIHelperService) {
+  .controller('PhaseCtrl', function ($scope, $rootScope, $http, $routeParams, UIHelperService) {
 
-    $rootScope.navPhase = $stateParams.id;
+    $rootScope.navPhase = $routeParams.id;
 
-    $http.get('/api/phase/' + $stateParams.id, { cache: false }).success(function(data){
+    $http.get('/api/phase/' + $routeParams.id, { cache: false }).success(function(data){
       $scope.projects = data;
     })
 

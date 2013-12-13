@@ -17,7 +17,7 @@
     "angular-mocks": "~1.2.3",
     "angular-resource": "~1.2.3",
     "angular-sanitize": "~1.2.3",
-    "angular-route": "~1.2.3"
+    "angular-route": "~1.2.4"
   },
   "resolutions": {
     "angular": "~1.2.3"

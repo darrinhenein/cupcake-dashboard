@@ -1,6 +1,6 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $state, $stateParams, UIHelperService, AuthenticationService) {
-    var projectId = $stateParams.id;
+  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $routeParams, UIHelperService, AuthenticationService) {
+    var projectId = $routeParams.id;
 
     var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
       'update': {
@@ -9,6 +9,7 @@ angular.module('cupcakeDashboard')
     });
 
     var Themes = $resource('/api/themes/:id');
+
 
     $scope.themes = Themes.query();
     $scope.newCollaborator = {email: ''};
@@ -21,6 +22,12 @@ angular.module('cupcakeDashboard')
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
         $scope.projectPermissions.showEdit = $scope.projectPermissions.edit;
         $scope.projectPermissions.edit = false;
+
+        if($routeParams.phase){
+          $scope.activePhase = $routeParams.phase;
+        } else {
+          $scope.activePhase = $scope.project.phase;
+        }
 
         $scope.toggleEdit = function() {
           $scope.projectPermissions.edit = !$scope.projectPermissions.edit;
@@ -211,6 +218,30 @@ angular.module('cupcakeDashboard')
         $scope.project = data;
       });
 
+    }
+
+    $scope.updatePhaseDetails = function(data, phase){
+      var path = data.path;
+      var model = path.split('.')[0];
+      var prop = path.split('.')[1];
+
+      if(data.property) prop = data.property;
+
+      // create object to PUT to server
+      var obj = {};
+      obj[prop] = data.value;
+
+      var phases = $scope.$parent.project.phases;
+      if(!phases)
+      {
+        phases = {};
+      }
+
+      phases[phase] = obj;
+
+      Project.update({id: $routeParams.id}, {phases: phases}, function(data){
+        $scope.$parent.project = data;
+      });
     }
 
     $scope.notIn = function(group){

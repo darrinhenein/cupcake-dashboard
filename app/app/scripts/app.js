@@ -1,96 +1,81 @@
-angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'linkify', 'ui.router', 'angular-tools.persona'])
-  .config(function ($stateProvider, $anchorScrollProvider, $urlRouterProvider, $locationProvider) {
+angular.module('cupcakeDashboard', [
+    'ngResource',
+    'ngAnimate',
+    'ngSanitize',
+    'ngRoute',
+    'linkify',
+    'angular-tools.persona'])
+  .config(function ($routeProvider, $locationProvider) {
 
-    $anchorScrollProvider. disableAutoScrolling();
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise('/projects');
+    $routeProvider.otherwise('/projects');
 
-    $stateProvider
-      .state('themes', {
-        url: '/themes',
+    $routeProvider
+      .when('/themes', {
         templateUrl: 'views/themes.html',
         controller: 'ThemesCtrl'
       })
-      .state('products', {
-        url: '/products',
+      .when('/products', {
         templateUrl: 'views/products.html',
         controller: 'ProductsCtrl'
       })
-        .state('profile', {
-          url: '/profile',
+        .when('/profile', {
           templateUrl: 'views/profile.html',
           controller: 'ProfileCtrl',
           auth: 1
         })
-        .state('theme', {
-          url: '/theme/:id',
+        .when('/theme/:id', {
           templateUrl: 'views/theme.html',
           controller: 'ThemeCtrl'
         })
-        .state('product', {
-          url: '/product/:id',
+        .when('/product/:id', {
           templateUrl: 'views/product.html',
           controller: 'ProductCtrl'
         })
-        .state('user-themes', {
-          url: '/:email/themes',
+        .when('/:email/themes', {
           templateUrl: 'views/user.themes.html',
           controller: 'UserThemesCtrl'
         })
-        .state('new-theme', {
-          url: '/themes/new',
+        .when('/themes/new', {
           templateUrl: 'views/themes.new.html',
           controller: 'NewThemeCtrl',
           auth: 2
         })
-        .state('new-product', {
-          url: '/products/new',
+        .when('/products/new', {
           templateUrl: 'views/products.new.html',
           controller: 'NewProductCtrl',
           auth: 2
         })
-        .state('projects', {
-          url: '/projects',
+        .when('/projects', {
           templateUrl: 'views/projects.html',
           controller: 'ProjectsCtrl'
         })
-        .state('user-projects', {
-          url: '/:email/projects',
+        .when('/:email/projects', {
           templateUrl: 'views/user.projects.html',
           controller: 'UserProjectsCtrl'
         })
-        .state('new-project', {
-          url: '/projects/new',
+        .when('/projects/new', {
           templateUrl: 'views/projects.new.html',
           controller: 'NewProjectsCtrl',
           auth: 2
         })
-        .state('project', {
-          url: '/project/:id',
+        .when('/project/:id/:phase?', {
           templateUrl: 'views/project.html',
           controller: 'ProjectCtrl'
         })
-          .state('project.phases', {
-            url: '/:phase',
-            templateUrl: 'views/project.phases.html',
-            controller: 'ProjectPhasesCtrl'
-          })
-      .state('phase', {
-        url: '/phase/:id',
+      .when('/phase/:id', {
         templateUrl: 'views/projects.html',
         controller: 'PhaseCtrl'
       })
-      .state('about', {
-        url: '/about',
+      .when('/about', {
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
       })
-      .state('notAuthorized', {
-        url: '/401',
+      .when('/401', {
         templateUrl: 'views/401.html'
       })
   })
-  .run(function ($rootScope, $window, $location, $http, AuthenticationService, $anchorScroll, UIHelperService){
+  .run(function ($rootScope, $window, $location, $http, AuthenticationService, UIHelperService){
 
     $rootScope.UI = UIHelperService;
 
@@ -104,17 +89,17 @@ angular.module('cupcakeDashboard', ['ngResource', 'ngAnimate', 'ngSanitize', 'li
     });
 
     // sockets
-    $rootScope.$on('$stateChangeStart', function (ev, to, toParams, from, fromParams) {
+    $rootScope.$on('$routeChangeStart', function (e, next, current) {
 
-        $rootScope.currentPath = to.url;
+        $rootScope.currentPath = next.url;
         $window.ga('send', 'pageview', $location.path());
 
         // if route requires auth and user is not logged in
-        if(!to.auth) to.auth = 0;
+        if(!next.auth) next.auth = 0;
 
-        if (!AuthenticationService.canViewLevel(to.auth)) {
+        if (!AuthenticationService.canViewLevel(next.auth)) {
           // redirect back to login
           $location.path('/401');
         }
       });
-  }).value('$anchorScroll', angular.noop);;
+  });

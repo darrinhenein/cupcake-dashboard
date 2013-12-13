@@ -1,7 +1,7 @@
 angular.module('cupcakeDashboard')
-  .controller('UserProjectsCtrl', function ($scope, $rootScope, $stateParams, $http, UIHelperService) {
+  .controller('UserProjectsCtrl', function ($scope, $rootScope, $routeParams, $http, UIHelperService) {
 
-    userEmail = $stateParams.email;
+    userEmail = $routeParams.email;
 
     $scope.email = userEmail;
 

@@ -36,7 +36,7 @@
     <tbody>
       <tr ng-repeat="project in filtered = (projects | arrayProductFilter:productFilter | arrayThemeFilter:themeFilter) | orderBy:sortProjectsByDate:true | filter:archivedFilter" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
         <td>
-          <a class="projectTitle" ng-href="/project/{{ project._id }}/{{ project.phase }}"><strong>{{ project.title }}</strong></a><br/>
+          <a class="projectTitle" ng-href="/project/{{ project._id }}"><strong>{{ project.title }}</strong></a><br/>
           <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>
           <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
         </td>

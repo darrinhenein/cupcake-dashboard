@@ -1,6 +1,6 @@
 angular.module('cupcakeDashboard')
-  .controller('ProductCtrl', function ($scope, $resource, $location, $stateParams, UIHelperService, AuthenticationService) {
-    var productId = $stateParams.id;
+  .controller('ProductCtrl', function ($scope, $resource, $location, $routeParams, UIHelperService, AuthenticationService) {
+    var productId = $routeParams.id;
 
     var Product = $resource('/api/products/:id', { cache: false, isArray: false, id: productId}, {
       'update': {
