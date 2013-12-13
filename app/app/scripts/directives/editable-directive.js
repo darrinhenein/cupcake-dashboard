@@ -38,6 +38,7 @@ angular.module('cupcakeDashboard')
             }
 
             var renderedValue = $scope.value;
+
             if($scope.markdown)
             {
                 renderedValue = markdown.toHTML(renderedValue);
@@ -69,7 +70,9 @@ angular.module('cupcakeDashboard')
                 $scope.value = $scope.view.editableValue;
                 obj = {};
                 obj[$scope.path] = $scope.value;
+
                 $scope.callback({data: {path: $scope.path, property: $scope.property, value: $scope.value}});
+
                 if($scope.markdown)
                 {
                     $scope.view.renderedValue = markdown.toHTML($scope.value);

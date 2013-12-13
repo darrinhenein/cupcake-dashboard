@@ -1,5 +1,6 @@
 angular.module('cupcakeDashboard')
   .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $routeParams, UIHelperService, AuthenticationService) {
+
     var projectId = $routeParams.id;
 
     var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
@@ -10,13 +11,14 @@ angular.module('cupcakeDashboard')
 
     var Themes = $resource('/api/themes/:id');
 
-
     $scope.themes = Themes.query();
     $scope.newCollaborator = {email: ''};
     $scope.newBug = {id: ''};
     $scope.bugs = [];
     $scope.events = [];
     $scope.projects = [];
+    $scope.phases = [];
+    $scope.statuses = [];
 
     $scope.project = Project.get({id: projectId}, function(){
         $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
@@ -221,6 +223,7 @@ angular.module('cupcakeDashboard')
     }
 
     $scope.updatePhaseDetails = function(data, phase){
+
       var path = data.path;
       var model = path.split('.')[0];
       var prop = path.split('.')[1];
@@ -231,7 +234,7 @@ angular.module('cupcakeDashboard')
       var obj = {};
       obj[prop] = data.value;
 
-      var phases = $scope.$parent.project.phases;
+      var phases = $scope.project.phases;
       if(!phases)
       {
         phases = {};
@@ -240,7 +243,7 @@ angular.module('cupcakeDashboard')
       phases[phase] = obj;
 
       Project.update({id: $routeParams.id}, {phases: phases}, function(data){
-        $scope.$parent.project = data;
+        $scope.project = data;
       });
     }
 

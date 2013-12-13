@@ -18,6 +18,9 @@ angular.module('cupcakeDashboard')
       return arr;
     }
 
+    $scope.productFilter = {};
+    $scope.themeFilter = {};
+
     var Themes = $resource('/api/themes/:id', { cache: false, isArray: false});
     $scope.themes = Themes.query(function(){
       $scope.themeFilter = _.object($scope.themes, createStateArray($scope.themes.length));

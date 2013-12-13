@@ -1,9 +1,9 @@
 angular.module('cupcakeDashboard')
-  .directive("graphPhaseLanes", function($http) {
+  .directive("graphPhaseLanes", function() {
     // constants
-     var margin = {left: 45, right: 25, top: 0, bottom: 20},
-       width = 740,
-       height = 90;
+     var  margin = {left: 45, right: 25, top: 0, bottom: 20};
+     var   width = 740;
+     var  height = 90;
 
      return {
        restrict: 'A',
@@ -22,8 +22,7 @@ angular.module('cupcakeDashboard')
 
          var drawGraph = function () {
 
-
-           if (!scope.data || !scope.lanes){
+           if (!scope.data || !scope.lanes || scope.data.length === 0){
             return;
            }
 
@@ -165,7 +164,7 @@ angular.module('cupcakeDashboard')
 
                  vis.append("g")
                      .attr("class", "x axis")
-                     .attr('transform', 'translate(' + margin.left + ',' + (height) + ')')
+                     .attr('transform', 'translate(' + margin.left + ',' + height + ')')
                      .call(xAxis);
 
                  vis.append("g")

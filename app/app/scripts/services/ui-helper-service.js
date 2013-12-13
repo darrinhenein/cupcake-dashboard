@@ -8,19 +8,17 @@ angular.module('cupcakeDashboard')
         self._total = null;
 
         this.phases = function(){
-          var promise = $http.get('/api/phases', { cache: true }).then(function(res){
+          return $http.get('/api/phases', { cache: true }).then(function(res){
             self._phases = res.data;
             return res.data;
-          })
-          return promise;
+          });
         }
 
         this.statuses = function(){
-          var promise = $http.get('/api/statuses', { cache: true }).then(function(res){
+          return $http.get('/api/statuses', { cache: true }).then(function(res){
             self._statuses = res.data;
             return res.data;
-          })
-          return promise;
+          });
         }
 
         this.total = function(){
