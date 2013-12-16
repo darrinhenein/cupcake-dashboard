@@ -23,6 +23,11 @@ html, body {
 //     color: $link-color;
 // }
 
+a:active, li:active {
+  outline: none !important;
+}
+
+
 body {
     // padding-top: 70px;
     color: #333;
@@ -291,6 +296,10 @@ li.dropdown {
     top: -2px;
 }
 
+.navbar-nav a.selected {
+    color: #222;
+}
+
 .navbar-default .navbar-brand {
     font-weight: bold;
     color: #594875;
@@ -431,4 +440,8 @@ li.dropdown {
 
 a.projectTitle {
     color: #251E52;
+}
+
+:-moz-any-link:focus, a:focus {
+  outline: none;
 }

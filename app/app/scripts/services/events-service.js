@@ -1,13 +1,18 @@
 angular.module('cupcakeDashboard')
-  .service('EventsService', function Events($http) {
+  .service('EventsService', function Events($http, $q, $angularCacheFactory) {
 
-    self = this;
+    var _cache = $angularCacheFactory('eventCache');
 
-    self._allEvents = [];
-
-    this.getAllEvents = function(){
-      return $http.get('/api/events/');
-    }
-
+     return {
+      getEvents: function () {
+        var defer = $q.defer();
+        $http.get('/api/events', {
+              cache: _cache
+          }).success(function(res){
+            defer.resolve(res);
+          });
+        return defer.promise;
+      }
+    };
 
   });

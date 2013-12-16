@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/angular-csp.css">
         <!-- endbuild -->
-    <link rel="shortcut icon" href="/favicon.ico?v=2">
+    <link rel="shortcut icon" href="/favicon.ico?v=3">
 </head>
   <body ng-app="cupcakeDashboard" ng-csp>
     <!--[if lt IE 7]>
@@ -40,13 +40,13 @@
               </ul>
             </li>
             <a class="navbar-brand" href="/projects">Concepts <small>Firefox UX Dashboard</small></a>
-            <li ng-class="{active: currentPath == '/projects'}"><a href="/projects">Projects</a></li>
-            <li ng-class="{active: currentPath == '/themes'}"><a href="/themes">Themes</a></li>
-            <li ng-class="{active: currentPath == '/products'}"><a href="/products">Products</a></li>
-            <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/projects'}">
+            <li ng-class="{selected: currentPath == '/projects' || currentPath == '/'}"><a href="/projects">Projects</a></li>
+            <li ng-class="{selected: currentPath == '/themes'}"><a href="/themes">Themes</a></li>
+            <li ng-class="{selected: currentPath == '/products'}"><a href="/products">Products</a></li>
+            <li ng-show="loggedInUser.email != null" ng-class="{selected: currentPath == '/:email/projects'}">
                 <a href="/{{ loggedInUser.email }}/projects"><small class="text-label">My Projects</small></a>
             </li>
-            <li ng-show="loggedInUser.email != null" ng-class="{active: currentPath == '/:email/themes'}">
+            <li ng-show="loggedInUser.email != null" ng-class="{selected: currentPath == '/:email/themes'}">
                 <a href="/{{ loggedInUser.email }}/themes"><small class="text-label">My Themes</small></a>
             </li>
 
@@ -91,6 +91,7 @@
         <!-- build:js scripts/modules.js -->
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-cache/dist/angular-cache.js"></script>
         <script src="bower_components/angular-cookies/angular-cookies.js"></script>
         <script src="scripts/lib/angular-sanitize.js"></script>
         <script src="bower_components/angular-animate/angular-animate.js"></script>
@@ -122,6 +123,9 @@
         <script src="scripts/services/ui-helper-service.js"></script>
         <script src="scripts/services/authentication-service.js"></script>
         <script src="scripts/services/events-service.js"></script>
+        <script src="scripts/services/projects-service.js"></script>
+        <script src="scripts/services/products-service.js"></script>
+        <script src="scripts/services/themes-service.js"></script>
         <script src="scripts/services/angular.persona.js"></script>
         <script src="scripts/controllers/project.js"></script>
         <script src="scripts/controllers/nav.js"></script>

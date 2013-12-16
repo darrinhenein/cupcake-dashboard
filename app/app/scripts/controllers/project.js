@@ -1,7 +1,52 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $routeParams, UIHelperService, AuthenticationService) {
+  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $routeParams, UIHelperService, ProjectService, AuthenticationService) {
 
     var projectId = $routeParams.id;
+
+    var Themes = $resource('/api/themes/:id');
+    $scope.themes = Themes.query();
+
+    $scope.newCollaborator = {email: ''};
+    $scope.newBug = {id: ''};
+    $scope.bugs = [];
+    $scope.phases = [];
+    $scope.statuses = [];
+    $scope.projects = [];
+    $scope.events = [];
+    $scope.isFound = false;
+
+    ProjectService.getProjects().then(function(data){
+      $scope.projects = data;
+    });
+
+    ProjectService.getProjectEvents(projectId).then(function(data){
+      $scope.events = data;
+    });
+
+    ProjectService.getProjectById(projectId).then(function(data){
+      $scope.project = data;
+      $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
+      $scope.projectPermissions.showEdit = $scope.projectPermissions.edit;
+      $scope.projectPermissions.edit = false;
+
+      $scope.$watch('loggedInUser', function(){
+        $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
+        $scope.projectPermissions.showEdit = $scope.projectPermissions.edit;
+        $scope.projectPermissions.edit = false;
+      });
+
+      $scope.activePhase = $routeParams.phase || $scope.project.phase;
+
+      $scope.isFound = true;
+
+      if($scope.project.bugs.length > 0) {
+        $scope.findingBugs = true;
+        ProjectService.getProjectBugs($scope.project.bugs).then(function(data){
+          $scope.bugs = data.bugs;
+          $scope.findingBugs = false;
+        })
+      }
+    });
 
     var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
       'update': {
@@ -9,62 +54,11 @@ angular.module('cupcakeDashboard')
       }
     });
 
-    var Themes = $resource('/api/themes/:id');
+    $scope.toggleEdit = function() {
+      $scope.projectPermissions.edit = !$scope.projectPermissions.edit;
+      $scope.projectPermissions.showEdit = !$scope.projectPermissions.showEdit;
+    }
 
-    $scope.themes = Themes.query();
-    $scope.newCollaborator = {email: ''};
-    $scope.newBug = {id: ''};
-    $scope.bugs = [];
-    $scope.events = [];
-    $scope.projects = [];
-    $scope.phases = [];
-    $scope.statuses = [];
-
-    $scope.project = Project.get({id: projectId}, function(){
-        $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
-        $scope.projectPermissions.showEdit = $scope.projectPermissions.edit;
-        $scope.projectPermissions.edit = false;
-
-        if($routeParams.phase){
-          $scope.activePhase = $routeParams.phase;
-        } else {
-          $scope.activePhase = $scope.project.phase;
-        }
-
-        $scope.toggleEdit = function() {
-          $scope.projectPermissions.edit = !$scope.projectPermissions.edit;
-          $scope.projectPermissions.showEdit = !$scope.projectPermissions.showEdit;
-        }
-
-        $scope.isFound = true;
-
-        $http.get('/api/projects').then(function(res){
-          $scope.projects = res.data;
-        });
-
-        if($scope.project.bugs.length > 0)
-        {
-          $scope.findingBugs = true;
-          $http.get('https://api-dev.bugzilla.mozilla.org/latest/bug/?id=' + $scope.project.bugs.join(',')).then(function(res){
-            $scope.bugs = res.data.bugs;
-            $scope.findingBugs = false;
-          });
-        }
-
-      }, function(res) {
-        $scope.isFound = false;
-      }
-    );
-
-    $scope.$watch('project', function(){
-      $http.get('/api/projects/' + projectId + '/events').then(function(res){
-        $scope.events = res.data;
-      });
-    });
-
-    $scope.$watch('loggedInUser', function(){
-      $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
-    });
 
     $scope.addTheme = function(themeId){
       themes = [];

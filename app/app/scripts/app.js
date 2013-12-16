@@ -2,12 +2,18 @@ angular.module('cupcakeDashboard', [
     'ngResource',
     'ngAnimate',
     'ngSanitize',
+    'jmdobry.angular-cache',
     'ngRoute',
     'linkify',
     'angular-tools.persona'])
-  .config(function ($routeProvider, $locationProvider) {
+  .config(function ($routeProvider, $locationProvider, $angularCacheFactoryProvider) {
 
     $locationProvider.html5Mode(true);
+
+    $angularCacheFactoryProvider.setCacheDefaults({
+      maxAge: 1 * 60 * 1000,
+      deleteOnExpire: 'aggressive'
+    });
 
     $routeProvider
       .when('/themes', {

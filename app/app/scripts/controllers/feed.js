@@ -1,20 +1,25 @@
 angular.module('cupcakeDashboard')
-  .controller('FeedCtrl', function ($rootScope, $window, $scope, $http, $timeout, $location) {
+  .controller('FeedCtrl', function ($rootScope, $window, $scope, EventsService, $timeout, $location, $angularCacheFactory) {
 
   var isNewDelaySeconds = 60 * 3;
 
   $scope.events = [];
   $rootScope.newNotifications = 0;
 
-  $http.get('/api/events').then(function(res){
-    $scope.events = angular.copy(res.data, $scope.events);
-  })
+  EventsService.getEvents().then(function(data){
+    $scope.events = angular.copy(data, $scope.events);
+  });
 
   var socket = io.connect($location.host());
 
   socket.on('feed', function(data){
     $scope.$apply(function(){
       data.isNew = true;
+
+      var cache = $angularCacheFactory.get(data.type + 'Cache');
+      cache.put('/api/' + data.type + 's/' + data.model._id, data.model);
+      cache.remove('/api/' + data.type + 's');
+
       $rootScope.changeNotificationNumber(1);
       $scope.events.push(data);
       $timeout(function(){

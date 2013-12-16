@@ -1,5 +1,6 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectsCtrl', function ($scope, $location, archivedFilter, arrayPhaseFilter, arrayThemeFilter, arrayProductFilter, $routeParams, $resource, $http, UIHelperService, EventsService) {
+  .controller('ProjectsCtrl', function ($scope, $location, archivedFilter, arrayPhaseFilter, arrayThemeFilter, arrayProductFilter,
+    $routeParams, $resource, $http, UIHelperService, EventsService, ProjectService, ProductService, ThemeService) {
 
     $scope.filters = {
       phase: parseInt($routeParams.phase) || 'all',
@@ -8,7 +9,17 @@ angular.module('cupcakeDashboard')
       showArchived: false
     }
 
-    $scope.filtered = [];
+    ProjectService.getProjects().then(function(data){
+      $scope.projects = data;
+    });
+
+    EventsService.getEvents().then(function(data){
+      $scope.events = data;
+    });
+
+    UIHelperService.phases().then(function(data){
+      $scope.phases = data;
+    });
 
     var filterProjects = function() {
       var temp = $scope.projects;
@@ -39,9 +50,6 @@ angular.module('cupcakeDashboard')
       $scope.filtered = filterProjects();
     });
 
-    $scope.events = EventsService.getAllEvents().then(function(res){
-        $scope.events = res.data;
-    });
 
     $scope.toggleArchived = function(){
       $scope.filters.showArchived = !$scope.filters.showArchived;
@@ -58,8 +66,8 @@ angular.module('cupcakeDashboard')
       return arr;
     }
 
-    var Themes = $resource('/api/themes/:id', { cache: false, isArray: false});
-    $scope.themes = Themes.query(function(){
+    ThemeService.getThemes().then(function(data){
+      $scope.themes = data;
       $scope.filters.themes = _.object($scope.themes, createStateArray($scope.themes.length));
       if($routeParams.themes) {
         angular.forEach($routeParams.themes.split(','), function(t){
@@ -68,8 +76,8 @@ angular.module('cupcakeDashboard')
       }
     });
 
-    var Products = $resource('/api/products/:id', { cache: false, isArray: false});
-    $scope.products = Products.query(function(){
+    ProductService.getProducts().then(function(data){
+      $scope.products = data;
       $scope.filters.products = _.object($scope.products, createStateArray($scope.products.length));
       if($routeParams.products) {
         angular.forEach($routeParams.products.split(','), function(p){
@@ -77,10 +85,6 @@ angular.module('cupcakeDashboard')
         })
       }
     });
-
-
-    var Project = $resource('/api/projects/:id', { cache: false });
-    $scope.projects = Project.query();
 
     $scope.toggleFilter = function(type, id){
       if(type === 'theme') {
@@ -152,8 +156,4 @@ angular.module('cupcakeDashboard')
         return p.last_updated;
       }
     }
-
-    UIHelperService.phases().then(function(data){
-      $scope.phases = data;
-    });
   });

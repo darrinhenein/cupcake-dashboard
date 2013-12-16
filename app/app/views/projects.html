@@ -43,11 +43,11 @@
       <tr ng-repeat="project in filtered | orderBy:sortProjectsByDate:true" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
         <td>
           <a class="projectTitle" ng-href="/project/{{ project._id }}"><strong>{{ project.title }}</strong></a><br/>
-          <span ng-repeat="theme in project.themes" class="text-label muted">{{ theme.title }}<br/></span>
+          <span ng-repeat="theme in project.themes" class="text-label muted"><a ng-href="/theme/{{ theme._id }}">{{ theme.title }}</a><br/></span>
           <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
         </td>
         <td>
-          <span ng-repeat="product in project.products" class="text-label muted">{{ product.title }}<br/></span>
+          <span ng-repeat="product in project.products" class="text-label muted"><a ng-href="/product/{{ product._id }}">{{ product.title }}</a><br/></span>
         </td>
         <td>{{ UI.displayName(project.owner) }}</td>
         <td><div graph-activity="project._id"></div></td>

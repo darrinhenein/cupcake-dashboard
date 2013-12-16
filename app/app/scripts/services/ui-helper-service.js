@@ -1,61 +1,56 @@
 angular.module('cupcakeDashboard')
-  .service('UIHelperService', function Phases($http) {
+  .service('UIHelperService', function Phases($http, $q, $angularCacheFactory) {
 
-        self = this;
+    var _cache = $angularCacheFactory('uiCache');
 
-        self._phases = [];
-        self._statuses = [];
-        self._total = null;
+    this.phases = function(){
+      var defer = $q.defer();
+      $http.get('/api/phases', {
+            cache: _cache
+        }).success(function(res){
+          defer.resolve(res);
+        });
+      return defer.promise;
+    }
 
-        this.phases = function(){
-          return $http.get('/api/phases', { cache: true }).then(function(res){
-            self._phases = res.data;
-            return res.data;
-          });
-        }
+    this.statuses = function(){
+      var defer = $q.defer();
+      $http.get('/api/statuses', {
+            cache: _cache
+        }).success(function(res){
+          defer.resolve(res);
+        });
+      return defer.promise;
+    }
 
-        this.statuses = function(){
-          return $http.get('/api/statuses', { cache: true }).then(function(res){
-            self._statuses = res.data;
-            return res.data;
-          });
-        }
+    this.displayName = function(user){
+      if(!user)
+      {
+        return;
+      }
 
-        this.total = function(){
-          var promise = $http.get('/api/projects/total', { cache: false }).then(function(res){
-            return res.data.total;
-          })
-          return promise;
-        }
+      if(user.first_name || user.last_name)
+      {
+        return user.first_name + ' ' + user.last_name;
+      }
+      else
+      {
+        return user.email;
+      }
+    }
+    this.displayNameShort = function(user){
+      if(!user)
+      {
+        return;
+      }
 
-        this.displayName = function(user){
-          if(!user)
-          {
-            return;
-          }
-
-          if(user.first_name || user.last_name)
-          {
-            return user.first_name + ' ' + user.last_name;
-          }
-          else
-          {
-            return user.email;
-          }
-        }
-        this.displayNameShort = function(user){
-          if(!user)
-          {
-            return;
-          }
-
-          if(user.first_name)
-          {
-            return user.first_name;
-          }
-          else
-          {
-            return user.email;
-          }
-        }
-    });
+      if(user.first_name)
+      {
+        return user.first_name;
+      }
+      else
+      {
+        return user.email;
+      }
+    }
+});
