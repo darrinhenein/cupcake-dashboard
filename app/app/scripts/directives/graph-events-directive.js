@@ -35,8 +35,6 @@ angular.module('cupcakeDashboard')
             return;
            }
 
-            console.log(scope);
-
             function getDateFromEvent(d){
               return new Date(d);
             }
@@ -100,13 +98,22 @@ angular.module('cupcakeDashboard')
                   return '4px';
                 }
                })
-               .attr("fill", "#FFF")
                .attr("data-phase", function(d){ return d.model.phase; })
                .attr({
                   'cx': function(e){ return Xscale(getDateFromEvent(e.date))},
-                  'cy': height + margin.top + 5
+                  'cy': function(e){return Yscale(e.model.phase)}
                })
-               .each("end", transitionEnd);
+               .attr("fill", function(e){
+                 if(e.verb == 'POST')
+                 {
+                   return '#00F0E0';
+                 }
+                 else
+                 {
+                   return color(e.model.phase);
+                 }
+               });
+
 
               vis.append("g")
                 .attr("class", "axis")

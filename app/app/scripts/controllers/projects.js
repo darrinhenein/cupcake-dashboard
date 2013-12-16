@@ -1,10 +1,11 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectsCtrl', function ($scope, $location, arrayPhaseFilter, arrayThemeFilter, arrayProductFilter, $routeParams, $resource, $http, UIHelperService, EventsService) {
+  .controller('ProjectsCtrl', function ($scope, $location, archivedFilter, arrayPhaseFilter, arrayThemeFilter, arrayProductFilter, $routeParams, $resource, $http, UIHelperService, EventsService) {
 
     $scope.filters = {
       phase: parseInt($routeParams.phase) || 'all',
       themes: {},
-      products: {}
+      products: {},
+      showArchived: false
     }
 
     $scope.filtered = [];
@@ -14,18 +15,11 @@ angular.module('cupcakeDashboard')
       temp = arrayProductFilter(temp, $scope.filters.products);
       temp = arrayThemeFilter(temp, $scope.filters.themes);
       temp = arrayPhaseFilter(temp, $scope.filters.phase);
+      temp = archivedFilter(temp, $scope.filters.showArchived);
       return temp;
     }
 
-    $scope.$watchCollection('projects', function(){
-      $scope.filtered = filterProjects();
-    });
-
     $scope.$watchCollection('filters.themes', function(){
-      $scope.filtered = filterProjects();
-    });
-
-    $scope.$watch('filters.phase', function(){
       $scope.filtered = filterProjects();
     });
 
@@ -33,9 +27,25 @@ angular.module('cupcakeDashboard')
       $scope.filtered = filterProjects();
     });
 
+    $scope.$watchCollection('projects', function(){
+      $scope.filtered = filterProjects();
+    });
+
+    $scope.$watch('filters.phase', function(){
+      $scope.filtered = filterProjects();
+    });
+
+    $scope.$watch('filters.showArchived', function(){
+      $scope.filtered = filterProjects();
+    });
+
     $scope.events = EventsService.getAllEvents().then(function(res){
         $scope.events = res.data;
     });
+
+    $scope.toggleArchived = function(){
+      $scope.filters.showArchived = !$scope.filters.showArchived;
+    }
 
     var createStateArray = function(size){
       size = size > 0 ? size : 0;
@@ -71,22 +81,18 @@ angular.module('cupcakeDashboard')
 
     var Project = $resource('/api/projects/:id', { cache: false });
     $scope.projects = Project.query();
-    $scope.showArchived = false;
-
-    $scope.archivedFilter = function(p){
-      if(p.status.index == 3 && $scope.showArchived == false)
-      {
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-    }
 
     $scope.toggleFilter = function(type, id){
       if(type === 'theme') {
-        $scope.filters.themes[id] = !$scope.filters.themes[id];
+
+        if(id === 'clear') {
+          $scope.filters.themes = _.object($scope.themes, createStateArray($scope.themes.length));
+        }
+        else
+        {
+          $scope.filters.themes[id] = !$scope.filters.themes[id];
+        }
+
         var url = _.map($scope.filters.themes, function (item, key) {return item ? key : null})
              .filter(function (item) {return item});
 
@@ -95,7 +101,14 @@ angular.module('cupcakeDashboard')
         $location.search('themes', url);
       }
       else if(type === 'product') {
-        $scope.filters.products[id] = !$scope.filters.products[id];
+
+        if(id === 'clear') {
+          $scope.filters.products = _.object($scope.products, createStateArray($scope.products.length));
+        }
+        else
+        {
+          $scope.filters.products[id] = !$scope.filters.products[id];
+        }
 
         var url = _.map($scope.filters.products, function (item, key) {return item ? key : null})
              .filter(function (item) {return item});
@@ -119,7 +132,7 @@ angular.module('cupcakeDashboard')
     }
 
     $scope.showText = function(){
-      if($scope.showArchived == true)
+      if($scope.filters.showArchived == true)
       {
         return 'Hide';
       }

@@ -168,7 +168,7 @@ h3 span.badge {
 .text-label{
     font-weight: bold;
     font-size: 10px;
-    color: #121314;
+    color: #999;
     padding: 0 3px;
     text-transform: uppercase;
 }
@@ -419,4 +419,16 @@ li.dropdown {
 .list-group-item.on .circle {
     background-color: #A3ED2B;
     border-color: #A3ED2B;
+}
+
+.panel-heading button.btn-xs {
+    color: #999;
+}
+
+.panel-title {
+    display: inline-block;
+}
+
+a.projectTitle {
+    color: #251E52;
 }
