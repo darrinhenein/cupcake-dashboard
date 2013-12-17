@@ -40,14 +40,14 @@
   <div class="col-md-4" graph-phase-distribution projects="filtered" phases="phases"></div>
   <table ng-show="projects.length" class="table table-hover">
     <tbody>
-      <tr ng-repeat="project in filtered | orderBy:sortProjectsByDate:true" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}">
+      <tr ng-repeat="project in filtered | orderBy:sortProjectsByDate:true" ng-class="{owned: (loggedInUser.email!= null && project.owner.email==loggedInUser.email)}" class="project-item">
         <td>
           <a class="projectTitle" ng-href="/project/{{ project._id }}"><strong>{{ project.title }}</strong></a><br/>
-          <span ng-repeat="theme in project.themes" class="text-label muted"><a ng-href="/theme/{{ theme._id }}">{{ theme.title }}</a><br/></span>
+          <span ng-repeat="theme in project.themes" class="text-label extra-muted"><a ng-href="/theme/{{ theme._id }}">{{ theme.title }}</a><br/></span>
           <span ng-show="loggedInUser != null && loggedInUser.email == project.owner.email"></span>
         </td>
         <td>
-          <span ng-repeat="product in project.products" class="text-label muted"><a ng-href="/product/{{ product._id }}">{{ product.title }}</a><br/></span>
+          <span ng-repeat="product in project.products" class="text-label extra-muted"><a ng-href="/product/{{ product._id }}">{{ product.title }}</a><br/></span>
         </td>
         <td>{{ UI.displayName(project.owner) }}</td>
         <td><div graph-activity="project._id"></div></td>

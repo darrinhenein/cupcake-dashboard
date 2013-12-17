@@ -1,5 +1,5 @@
 angular.module('cupcakeDashboard')
-  .directive("graphActivity", function($http) {
+  .directive("graphActivity", function($http, EventsService) {
     // constants
      var margin = {left: 12, right: 12, top: 0, bottom: 0},
        width = 100,
@@ -14,9 +14,11 @@ angular.module('cupcakeDashboard')
        },
        link: function (scope, element, attrs) {
 
-        $http.get("/api/projects/" + scope.id + "/activity").then(function(res){
-          scope.data = res.data;
-        });
+
+         EventsService.getEventsForProject(scope.id).then(function(data){
+          scope.data = data;
+         });
+
 
          // set up initial svg object
          var vis = d3.select(element[0])
@@ -33,7 +35,7 @@ angular.module('cupcakeDashboard')
              return;
            }
 
-           if (!scope.data){
+           if (scope.data.length === 0){
             return;
            }
 

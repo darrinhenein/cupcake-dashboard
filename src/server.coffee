@@ -85,7 +85,8 @@ app.use (req, res, next) ->
 
 
 
-app.set('views', __dirname + '/app/dist');
+app.set('views', __dirname + '/app/');
+app.set('view engine', 'ejs');
 app.engine('html', ejs.renderFile);
 app.use(express.static(__dirname + '/app/dist'));
 
@@ -147,7 +148,7 @@ authProduct = (req, res, next) ->
 
 authUser = (req, res, next) ->
   isLoggedIn req, res, ->
-    User.findOne({_id: req.params.id}).exec (err, doc) ->
+    User.findOne({_id: req.params.id}).lean().exec (err, doc) ->
       if req.session.email is doc.email
         next()
       else
@@ -291,6 +292,7 @@ Project.route "activity.get",
             date: {"$gt": ago, "$lte": now}
           })
           .sort('-date')
+          .lean()
           .exec (err, docs) ->
             docs = _.countBy docs, (e) ->
               return moment(e.date).format("MM-DD-YYYY")
@@ -314,7 +316,7 @@ app.get "/api/events/:num?", (req, res) ->
 
 app.get "/api/events/:num/counts", (req, res) ->
   num = req.params.num
-  Events.find().sort('-date').limit(num).exec (err, docs) ->
+  Events.find().sort('-date').limit(num).lean().exec (err, docs) ->
     docs = _.countBy docs, (e) ->
       return moment(e.date).format("MM-DD-YYYY")
     res.send docs
@@ -363,7 +365,36 @@ app.get "/api/phases", (req, res) ->
 app.get "/api/statuses", (req, res) ->
   res.send Statuses
 
-index = (req, res) -> res.render 'index.html'
+index = (req, res) ->
+  queries = []
+  bootstrap = {}
+
+  bootstrap.phases = Phases
+
+  queries.push (next) ->
+    Project.find().populate('themes').populate('products').populate('owner').exec (err, docs) ->
+      bootstrap.projects = docs
+      next()
+
+  queries.push (next) ->
+    Product.find().populate('owner').exec (err, docs) ->
+      bootstrap.products = docs
+      next()
+
+  queries.push (next) ->
+    Theme.find().populate('owner').exec (err, docs) ->
+      bootstrap.themes = docs
+      next()
+
+  queries.push (next) ->
+    Events.find().sort('-date').limit(100).populate('owner').exec (err, docs) ->
+      bootstrap.events = docs
+      next()
+
+  async.parallel queries, ->
+    res.render 'dist/index.html',
+      bootstrap: bootstrap
+
 
 # Angular Routes
 app.get "/", index
@@ -402,7 +433,7 @@ app.post "/admin/load", (req, res) ->
 # 3 : Admin  (all access)
 
 # whitelist of admin emails
-adminWhitelist = ['dhenein', 'bwinton', 'lco']
+adminWhitelist = ['dhenein', 'bwinton', 'lco', 'madhava']
 
 getAuthLevel = (email) ->
   if email
@@ -417,7 +448,7 @@ getAuthLevel = (email) ->
 # auth user
 app.get "/getUser", (req, res) ->
   if req.session.email
-    User.findOne({email: req.session.email}).exec (err, doc) ->
+    User.findOne({email: req.session.email}).lean().exec (err, doc) ->
       if doc
         doc.authLevel = getAuthLevel doc.email
         res.send doc

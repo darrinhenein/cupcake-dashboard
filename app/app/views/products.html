@@ -1,14 +1,12 @@
  <table ng-show="products.length" class="table table-hover">
    <tr>
    <th>Product</th>
-   <th>Owner</th>
    <th>Created</th>
    </tr>
    <tr ng-repeat="product in products" ng-class="{owned: (loggedInUser.email!= null && product.owner.email==loggedInUser.email)}">
      <td><a class="projectTitle" ng-href="/product/{{ product._id }}"><strong>{{ product.title }}</strong> <span class="badge">{{ product.count }}</span></a>
      <p>{{ product.description }}</p>
      </td>
-     <td>{{ UI.displayName(product.owner) }}</td>
      <td>{{ product.created_at | date }}</td>
    </tr>
 </table>

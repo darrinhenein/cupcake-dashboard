@@ -9,12 +9,20 @@ angular.module('cupcakeDashboard')
       showArchived: false
     }
 
-    ProjectService.getProjects().then(function(data){
-      $scope.projects = data;
+    $scope.projects = ProjectService.getProjects().then(function(projects){
+      $scope.projects = projects;
     });
 
-    EventsService.getEvents().then(function(data){
-      $scope.events = data;
+    $scope.projects.update(function(projects){
+      $scope.projects = projects;
+    })
+
+    $scope.events = EventsService.getEvents().then(function(events){
+      $scope.events = events;
+    });
+
+    $scope.events.update(function(events){
+      $scope.events = events;
     });
 
     UIHelperService.phases().then(function(data){
@@ -66,7 +74,7 @@ angular.module('cupcakeDashboard')
       return arr;
     }
 
-    ThemeService.getThemes().then(function(data){
+    $scope.themes = ThemeService.getThemes().then(function(data){
       $scope.themes = data;
       $scope.filters.themes = _.object($scope.themes, createStateArray($scope.themes.length));
       if($routeParams.themes) {
@@ -74,6 +82,8 @@ angular.module('cupcakeDashboard')
           $scope.filters.themes[t] = true;
         })
       }
+    }).update(function(themes){
+      $scope.themes = themes;
     });
 
     ProductService.getProducts().then(function(data){

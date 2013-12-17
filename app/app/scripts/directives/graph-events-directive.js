@@ -86,8 +86,9 @@ angular.module('cupcakeDashboard')
                .data(data)
                .enter().append("circle")
                .transition()
+               .delay(function(d, i){ return i; })
+               .attr("opacity", "0")
                .duration(100)
-               .attr("opacity", "0.25")
                .attr("r", function(d){
                 if(d.verb == 'POST')
                 {
@@ -112,7 +113,8 @@ angular.module('cupcakeDashboard')
                  {
                    return color(e.model.phase);
                  }
-               });
+               })
+               .each("end", transitionEnd);
 
 
               vis.append("g")
@@ -128,19 +130,20 @@ angular.module('cupcakeDashboard')
                  d3.select(this)
                   .transition()
                   .duration(500)
-                  .attr({
-                     'cy': function(e){return Yscale(e.model.phase)}
-                  })
-                  .attr("fill", function(e){
-                    if(e.verb == 'POST')
-                    {
-                      return '#00F0E0';
-                    }
-                    else
-                    {
-                      return color(e.model.phase);
-                    }
-                  });
+                  .attr("opacity", "0.25");
+                  // .attr({
+                  //    'cy': function(e){return Yscale(e.model.phase)}
+                  // })
+                  // .attr("fill", function(e){
+                  //   if(e.verb == 'POST')
+                  //   {
+                  //     return '#00F0E0';
+                  //   }
+                  //   else
+                  //   {
+                  //     return color(e.model.phase);
+                  //   }
+                  // });
                }
              }
 

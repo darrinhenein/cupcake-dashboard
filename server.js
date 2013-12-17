@@ -94,7 +94,9 @@
     return next();
   });
 
-  app.set('views', __dirname + '/app/dist');
+  app.set('views', __dirname + '/app/');
+
+  app.set('view engine', 'ejs');
 
   app.engine('html', ejs.renderFile);
 
@@ -181,7 +183,7 @@
     return isLoggedIn(req, res, function() {
       return User.findOne({
         _id: req.params.id
-      }).exec(function(err, doc) {
+      }).lean().exec(function(err, doc) {
         if (req.session.email === doc.email) {
           return next();
         } else {
@@ -366,7 +368,7 @@
           "$gt": ago,
           "$lte": now
         }
-      }).sort('-date').exec(function(err, docs) {
+      }).sort('-date').lean().exec(function(err, docs) {
         var d, _j, _len;
         docs = _.countBy(docs, function(e) {
           return moment(e.date).format("MM-DD-YYYY");
@@ -407,7 +409,7 @@
   app.get("/api/events/:num/counts", function(req, res) {
     var num;
     num = req.params.num;
-    return Events.find().sort('-date').limit(num).exec(function(err, docs) {
+    return Events.find().sort('-date').limit(num).lean().exec(function(err, docs) {
       docs = _.countBy(docs, function(e) {
         return moment(e.date).format("MM-DD-YYYY");
       });
@@ -492,7 +494,39 @@
   });
 
   index = function(req, res) {
-    return res.render('index.html');
+    var bootstrap, queries;
+    queries = [];
+    bootstrap = {};
+    bootstrap.phases = Phases;
+    queries.push(function(next) {
+      return Project.find().populate('themes').populate('products').populate('owner').exec(function(err, docs) {
+        bootstrap.projects = docs;
+        return next();
+      });
+    });
+    queries.push(function(next) {
+      return Product.find().populate('owner').exec(function(err, docs) {
+        bootstrap.products = docs;
+        return next();
+      });
+    });
+    queries.push(function(next) {
+      return Theme.find().populate('owner').exec(function(err, docs) {
+        bootstrap.themes = docs;
+        return next();
+      });
+    });
+    queries.push(function(next) {
+      return Events.find().sort('-date').limit(100).populate('owner').exec(function(err, docs) {
+        bootstrap.events = docs;
+        return next();
+      });
+    });
+    return async.parallel(queries, function() {
+      return res.render('dist/index.html', {
+        bootstrap: bootstrap
+      });
+    });
   };
 
   app.get("/", index);
@@ -543,7 +577,7 @@
     });
   });
 
-  adminWhitelist = ['dhenein', 'bwinton', 'lco'];
+  adminWhitelist = ['dhenein', 'bwinton', 'lco', 'madhava'];
 
   getAuthLevel = function(email) {
     var domain, username, _ref;
@@ -564,7 +598,7 @@
     if (req.session.email) {
       return User.findOne({
         email: req.session.email
-      }).exec(function(err, doc) {
+      }).lean().exec(function(err, doc) {
         if (doc) {
           doc.authLevel = getAuthLevel(doc.email);
           return res.send(doc);

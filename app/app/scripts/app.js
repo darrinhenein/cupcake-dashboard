@@ -3,6 +3,7 @@ angular.module('cupcakeDashboard', [
     'ngAnimate',
     'ngSanitize',
     'jmdobry.angular-cache',
+    'DeferredWithUpdate',
     'ngRoute',
     'linkify',
     'angular-tools.persona'])

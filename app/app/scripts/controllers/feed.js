@@ -20,6 +20,11 @@ angular.module('cupcakeDashboard')
       cache.put('/api/' + data.type + 's/' + data.model._id, data.model);
       cache.remove('/api/' + data.type + 's');
 
+      if(data.type === 'project') {
+        var eventCache = $angularCacheFactory.get('eventCache');
+        eventCache.remove('/api/projects/' + data.model._id + '/activity');
+      }
+
       $rootScope.changeNotificationNumber(1);
       $scope.events.push(data);
       $timeout(function(){

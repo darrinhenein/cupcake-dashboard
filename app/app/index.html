@@ -94,11 +94,13 @@
         <script src="bower_components/angular-cache/dist/angular-cache.js"></script>
         <script src="bower_components/angular-cookies/angular-cookies.js"></script>
         <script src="scripts/lib/angular-sanitize.js"></script>
+        <script src="scripts/lib/angular-update.js"></script>
         <script src="bower_components/angular-animate/angular-animate.js"></script>
         <script src="bower_components/angular-route/angular-route.js"></script>
         <script src="bower_components/angular-linkify/angular-linkify.js"></script>
 
         <!-- endbuild -->
+
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
@@ -138,6 +140,10 @@
         <script src="scripts/controllers/user.themes.js"></script>
         <script src="scripts/controllers/themes.new.js"></script>
         <!-- endbuild -->
+
+        <script>
+            var bootstrap =  <%- JSON.stringify(bootstrap) %>;
+        </script>
 
 </body>
 </html>

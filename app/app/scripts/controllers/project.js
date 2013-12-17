@@ -1,5 +1,6 @@
 angular.module('cupcakeDashboard')
-  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $routeParams, UIHelperService, ProjectService, AuthenticationService) {
+  .controller('ProjectCtrl', function ($scope, $http, $rootScope, $resource, $location, $routeParams, UIHelperService, ProductService,
+   ProjectService, AuthenticationService) {
 
     var projectId = $routeParams.id;
 
@@ -12,8 +13,8 @@ angular.module('cupcakeDashboard')
     $scope.phases = [];
     $scope.statuses = [];
     $scope.projects = [];
+    $scope.products = [];
     $scope.events = [];
-    $scope.isFound = false;
 
     ProjectService.getProjects().then(function(data){
       $scope.projects = data;
@@ -23,7 +24,18 @@ angular.module('cupcakeDashboard')
       $scope.events = data;
     });
 
+    ProductService.getProducts().then(function(data){
+      $scope.products = data;
+      $scope.hasProduct = function(id) {
+        return _.contains(_.pluck($scope.project.products, '_id'), id);
+      }
+    });
+
     ProjectService.getProjectById(projectId).then(function(data){
+      if(data.error) {
+        $scope.isFound = false;
+        return;
+      }
       $scope.project = data;
       $scope.projectPermissions = AuthenticationService.getPermissions($scope.project);
       $scope.projectPermissions.showEdit = $scope.projectPermissions.edit;
@@ -59,9 +71,39 @@ angular.module('cupcakeDashboard')
       $scope.projectPermissions.showEdit = !$scope.projectPermissions.showEdit;
     }
 
+    $scope.addProduct = function(pId){
+      var products = [];
+      for (var i = $scope.project.products.length - 1; i >= 0; i--) {
+        if($scope.project.products[i]._id != pId)
+        {
+          products.push($scope.project.products[i]._id);
+        }
+        else
+        {
+          return;
+        }
+      };
+      products.push(pId);
+      Project.update({id: projectId}, {products: products}, function(data){
+        $scope.project = data;
+      });
+    }
+
+    $scope.removeProduct = function(pId){
+      var products = [];
+      for (var i = $scope.project.products.length - 1; i >= 0; i--) {
+        if($scope.project.products[i]._id != pId)
+        {
+          products.push($scope.project.products[i]._id);
+        }
+      };
+      Project.update({id: projectId}, {products: products}, function(data){
+        $scope.project = data;
+      });
+    }
 
     $scope.addTheme = function(themeId){
-      themes = [];
+      var themes = [];
       for (var i = $scope.project.themes.length - 1; i >= 0; i--) {
         if($scope.project.themes[i]._id != themeId)
         {
@@ -79,7 +121,7 @@ angular.module('cupcakeDashboard')
     }
 
     $scope.removeTheme = function(themeId){
-      themes = [];
+      var themes = [];
       for (var i = $scope.project.themes.length - 1; i >= 0; i--) {
         if($scope.project.themes[i]._id != themeId)
         {

@@ -1,15 +1,16 @@
 angular.module('cupcakeDashboard')
-  .service('UIHelperService', function Phases($http, $q, $angularCacheFactory) {
+  .service('UIHelperService', function Phases($http, $q, DeferredWithUpdate, $window, $angularCacheFactory) {
 
     var _cache = $angularCacheFactory('uiCache');
 
     this.phases = function(){
-      var defer = $q.defer();
+      var defer = DeferredWithUpdate.defer();
       $http.get('/api/phases', {
             cache: _cache
         }).success(function(res){
           defer.resolve(res);
         });
+      defer.resolve($window.bootstrap.phases);
       return defer.promise;
     }
 

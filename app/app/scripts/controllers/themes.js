@@ -1,6 +1,10 @@
 angular.module('cupcakeDashboard')
   .controller('ThemesCtrl', function ($scope, ThemeService) {
-    ThemeService.getThemes().then(function(data){
-      $scope.themes = data;
+    $scope.themes = ThemeService.getThemes().then(function(themes){
+      $scope.themes = themes;
+    });
+
+    $scope.themes.update(function(themes){
+      $scope.themes = themes;
     })
   });
