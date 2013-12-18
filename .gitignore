@@ -1,3 +1,5 @@
+.tmp
+.tmp/
 .DS_Store
 node_modules/coffee-script
 node_modules/.bin/cake
