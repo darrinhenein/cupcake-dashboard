@@ -414,6 +414,10 @@ li.dropdown {
     user-select: none;
 }
 
+.list-group-item.on span.title {
+    font-weight: bold;
+}
+
 .list-group-item .circle {
     position: absolute;
     width: 12px;

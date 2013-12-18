@@ -1,9 +1,11 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, index, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, redirect, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
   express = require("express");
+
+  redirect = require("express-redirect");
 
   ejs = require("ejs");
 
@@ -42,6 +44,8 @@
   logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' + '<%= status %> <%= method %> <%= url %>');
 
   app = express();
+
+  redirect(app);
 
   server = require("http").createServer(app);
 
@@ -263,7 +267,7 @@
         }
       });
     } else {
-      return Project.find().populate('themes').populate('products').populate('owner').exec(function(err, docs) {
+      return Project.find().populate('themes').populate('products').populate('owner').populate('status.related').exec(function(err, docs) {
         return res.send(docs);
       });
     }
@@ -493,13 +497,13 @@
     return res.send(Statuses);
   });
 
-  index = function(req, res) {
+  indexRoute = function(req, res) {
     var bootstrap, queries;
     queries = [];
     bootstrap = {};
     bootstrap.phases = Phases;
     queries.push(function(next) {
-      return Project.find().populate('themes').populate('products').populate('owner').exec(function(err, docs) {
+      return Project.find().populate('themes').populate('products').populate('owner').populate('status.related').exec(function(err, docs) {
         bootstrap.projects = docs;
         return next();
       });
@@ -517,53 +521,85 @@
       });
     });
     queries.push(function(next) {
-      return Events.find().sort('-date').limit(100).populate('owner').exec(function(err, docs) {
+      return Events.find().sort('-date').limit(1000).populate('owner').exec(function(err, docs) {
         bootstrap.events = docs;
         return next();
       });
     });
     return async.parallel(queries, function() {
-      return res.render('dist/index.html', {
+      return res.render('dist/base.html', {
         bootstrap: bootstrap
       });
     });
   };
 
-  app.get("/", index);
+  projectRoute = function(req, res) {
+    var bootstrap, queries;
+    queries = [];
+    bootstrap = {};
+    bootstrap.phases = Phases;
+    queries.push(function(next) {
+      return Product.find().populate('owner').exec(function(err, docs) {
+        bootstrap.products = docs;
+        return next();
+      });
+    });
+    queries.push(function(next) {
+      return Theme.find().populate('owner').exec(function(err, docs) {
+        bootstrap.themes = docs;
+        return next();
+      });
+    });
+    queries.push(function(next) {
+      return Project.findOne({
+        _id: req.route.params.projectId
+      }).populate('themes').populate('products').populate('owner').populate('status.related').exec(function(err, doc) {
+        bootstrap.project = doc;
+        return next();
+      });
+    });
+    return async.parallel(queries, function() {
+      return res.render('dist/base.html', {
+        bootstrap: bootstrap
+      });
+    });
+  };
 
-  app.get("/profile", index);
+  app.get("/", indexRoute);
 
-  app.get("/projects", index);
+  app.get("/profile", indexRoute);
 
-  app.get("/projects/new", index);
+  app.get("/projects", indexRoute);
 
-  app.get("/:email/projects", index);
+  app.get("/projects/new", indexRoute);
 
-  app.get("/:email/themes", index);
+  app.get("/:email/projects", indexRoute);
 
-  app.get("/project/:projectId", index);
+  app.get("/:email/themes", indexRoute);
 
-  app.get("/project/:projectId/edit", index);
+  app.get("/project/:projectId", projectRoute);
 
-  app.get("/project/:projectId/:phaseId", index);
+  app.get("/project/:projectId/edit", projectRoute);
 
-  app.get("/phase/:phaseId", index);
+  app.get("/project/:projectId/:phaseId", projectRoute);
 
-  app.get("/themes", index);
+  app.get("/phase/:phaseId", indexRoute);
 
-  app.get("/themes/new", index);
+  app.get("/themes", indexRoute);
 
-  app.get("/theme/:themeId", index);
+  app.get("/themes/new", indexRoute);
 
-  app.get("/products", index);
+  app.get("/theme/:themeId", indexRoute);
 
-  app.get("/products/new", index);
+  app.get("/products", indexRoute);
 
-  app.get("/product/:productId", index);
+  app.get("/products/new", indexRoute);
 
-  app.get("/about", index);
+  app.get("/product/:productId", indexRoute);
 
-  app.get("/401", index);
+  app.get("/about", indexRoute);
+
+  app.get("/401", indexRoute);
 
   app.get("/admin/dump", AdminRoutes.dump);
 

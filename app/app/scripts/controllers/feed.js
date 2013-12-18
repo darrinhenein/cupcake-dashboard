@@ -20,9 +20,12 @@ angular.module('cupcakeDashboard')
       cache.put('/api/' + data.type + 's/' + data.model._id, data.model);
       cache.remove('/api/' + data.type + 's');
 
+      $rootScope.$broadcast(data.type + ':' + data.model._id + ':change', data.changes);
+
       if(data.type === 'project') {
         var eventCache = $angularCacheFactory.get('eventCache');
         eventCache.remove('/api/projects/' + data.model._id + '/activity');
+        cache.remove('all-projects');
       }
 
       $rootScope.changeNotificationNumber(1);

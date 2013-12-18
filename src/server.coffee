@@ -1,5 +1,6 @@
 _ = require("underscore")
 express = require("express")
+redirect = require("express-redirect")
 ejs = require("ejs")
 restful = require("node-restful")
 async = require("async")
@@ -23,6 +24,7 @@ logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                           '<%= status %> <%= method %> <%= url %>');
 
 app = express()
+redirect app
 server = require("http").createServer app
 io = io.listen server
 
@@ -44,8 +46,6 @@ helmet.csp.policy(policy);
 
 # app.use helmet.csp()
 helmet.defaults app
-
-
 
 app.use express.compress()
 app.use express.bodyParser()
@@ -210,7 +210,7 @@ Project.before 'get', (req, res, next) ->
               else
                 res.send 404
   else
-    Project.find().populate('themes').populate('products').populate('owner').exec (err, docs) ->
+    Project.find().populate('themes').populate('products').populate('owner').populate('status.related').exec (err, docs) ->
       res.send docs
 
 Project.after 'put', (req, res, next) ->
@@ -365,14 +365,14 @@ app.get "/api/phases", (req, res) ->
 app.get "/api/statuses", (req, res) ->
   res.send Statuses
 
-index = (req, res) ->
+indexRoute = (req, res) ->
   queries = []
   bootstrap = {}
 
   bootstrap.phases = Phases
 
   queries.push (next) ->
-    Project.find().populate('themes').populate('products').populate('owner').exec (err, docs) ->
+    Project.find().populate('themes').populate('products').populate('owner').populate('status.related').exec (err, docs) ->
       bootstrap.projects = docs
       next()
 
@@ -387,34 +387,63 @@ index = (req, res) ->
       next()
 
   queries.push (next) ->
-    Events.find().sort('-date').limit(100).populate('owner').exec (err, docs) ->
+    Events.find().sort('-date').limit(1000).populate('owner').exec (err, docs) ->
       bootstrap.events = docs
       next()
 
   async.parallel queries, ->
-    res.render 'dist/index.html',
+    res.render 'dist/base.html',
       bootstrap: bootstrap
 
+projectRoute = (req, res) ->
+  queries = []
+  bootstrap = {}
+
+  bootstrap.phases = Phases
+
+  queries.push (next) ->
+    Product.find().populate('owner').exec (err, docs) ->
+      bootstrap.products = docs
+      next()
+
+  queries.push (next) ->
+    Theme.find().populate('owner').exec (err, docs) ->
+      bootstrap.themes = docs
+      next()
+
+  queries.push (next) ->
+    Project.findOne({_id: req.route.params.projectId})
+           .populate('themes')
+           .populate('products')
+           .populate('owner')
+           .populate('status.related')
+           .exec (err, doc) ->
+              bootstrap.project = doc
+              next()
+
+  async.parallel queries, ->
+    res.render 'dist/base.html',
+      bootstrap: bootstrap
 
 # Angular Routes
-app.get "/", index
-app.get "/profile", index
-app.get "/projects", index
-app.get "/projects/new", index
-app.get "/:email/projects", index
-app.get "/:email/themes", index
-app.get "/project/:projectId", index
-app.get "/project/:projectId/edit", index
-app.get "/project/:projectId/:phaseId", index
-app.get "/phase/:phaseId", index
-app.get "/themes", index
-app.get "/themes/new", index
-app.get "/theme/:themeId", index
-app.get "/products", index
-app.get "/products/new", index
-app.get "/product/:productId", index
-app.get "/about", index
-app.get "/401", index
+app.get "/"                            , indexRoute
+app.get "/profile"                     , indexRoute
+app.get "/projects"                    , indexRoute
+app.get "/projects/new"                , indexRoute
+app.get "/:email/projects"             , indexRoute
+app.get "/:email/themes"               , indexRoute
+app.get "/project/:projectId"          , projectRoute
+app.get "/project/:projectId/edit"     , projectRoute
+app.get "/project/:projectId/:phaseId" , projectRoute
+app.get "/phase/:phaseId"              , indexRoute
+app.get "/themes"                      , indexRoute
+app.get "/themes/new"                  , indexRoute
+app.get "/theme/:themeId"              , indexRoute
+app.get "/products"                    , indexRoute
+app.get "/products/new"                , indexRoute
+app.get "/product/:productId"          , indexRoute
+app.get "/about"                       , indexRoute
+app.get "/401"                         , indexRoute
 
 # admin
 app.get "/admin/dump", AdminRoutes.dump

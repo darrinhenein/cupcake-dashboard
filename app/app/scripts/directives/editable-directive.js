@@ -37,19 +37,21 @@ angular.module('cupcakeDashboard')
                 $scope.value = '';
             }
 
-            var renderedValue = $scope.value;
+            $scope.$watch('value', function(newVal, oldVal){
+                var renderedValue = $scope.value;
 
-            if($scope.markdown)
-            {
-                renderedValue = markdown.toHTML(renderedValue);
-            }
+                if($scope.markdown)
+                {
+                    renderedValue = markdown.toHTML(renderedValue);
+                }
 
-            $scope.view = {
-                editableValue: $scope.value,
-                renderedValue: renderedValue,
-                markdown: $scope.markdown,
-                editorEnabled: false
-            };
+                $scope.view = {
+                    editableValue: $scope.value,
+                    renderedValue: renderedValue,
+                    markdown: $scope.markdown,
+                    editorEnabled: false
+                };
+            })
 
             $scope.enableEditor = function() {
                 $scope.view.editorEnabled = true;

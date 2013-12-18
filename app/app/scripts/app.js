@@ -12,7 +12,7 @@ angular.module('cupcakeDashboard', [
     $locationProvider.html5Mode(true);
 
     $angularCacheFactoryProvider.setCacheDefaults({
-      maxAge: 1 * 60 * 1000,
+      maxAge: 60 * 60 * 1000, // 1 hour
       deleteOnExpire: 'aggressive'
     });
 
@@ -102,6 +102,10 @@ angular.module('cupcakeDashboard', [
     $rootScope.$on('$routeChangeStart', function (e, next, current) {
 
         $rootScope.currentPath = next.url;
+
+        //scroll to top hack
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+
         $window.ga('send', 'pageview', $location.path());
 
         // if route requires auth and user is not logged in

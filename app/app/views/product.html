@@ -2,7 +2,6 @@
   <div ng-switch-when="true">
     <h2><span editable="product.product.title" auth="productPermissions.edit" callback="update(data)"></span></h2>
     <p class="lead"><span editable="product.product.description" auth="productPermissions.edit" callback="update(data)"></span></p>
-    <h4><i>{{ UI.displayName(product.product.owner) }}</i></h4>
     <hr/>
 
       <table ng-show="product.projects.length" class="table table-hover">

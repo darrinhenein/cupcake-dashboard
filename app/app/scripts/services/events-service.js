@@ -6,12 +6,16 @@ angular.module('cupcakeDashboard')
      return {
       getEvents: function () {
         var defer = DeferredWithUpdate.defer();
-        $http.get('/api/events', {
-              cache: _cache
-          }).success(function(res){
-            defer.resolve(res);
-          });
-        defer.resolve($window.bootstrap.events);
+        if($window.bootstrap.events) {
+          defer.resolve($window.bootstrap.events);
+          $window.bootstrap.events = null;
+        } else {
+          $http.get('/api/events', {
+                cache: _cache
+            }).success(function(res){
+              defer.resolve(res);
+            });
+        }
         return defer.promise;
       },
 

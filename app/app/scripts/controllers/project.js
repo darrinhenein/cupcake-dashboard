@@ -4,6 +4,13 @@ angular.module('cupcakeDashboard')
 
     var projectId = $routeParams.id;
 
+
+    $scope.$on('project:' + projectId + ':change', function(e, data){
+      var prop = _.keys(data)[0];
+      if(prop === 'products' || prop === 'themes') return; // figure out how to update by id
+      $scope.project = _.extend($scope.project, data);
+    })
+
     var Themes = $resource('/api/themes/:id');
     $scope.themes = Themes.query();
 

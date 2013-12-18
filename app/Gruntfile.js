@@ -177,13 +177,14 @@ module.exports = function (grunt) {
             '<%= yeoman.dist %>/scripts/{,*/}*.js',
             '<%= yeoman.dist %>/styles/{,*/}*.css',
             '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+            // '<%= yeoman.dist %>/*.ico',
             '<%= yeoman.dist %>/styles/fonts/*'
           ]
         }
       }
     },
     useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
+      html: '<%= yeoman.app %>/base.html',
       options: {
         dest: '<%= yeoman.dist %>'
       }
