@@ -1,11 +1,9 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, redirect, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
   express = require("express");
-
-  redirect = require("express-redirect");
 
   ejs = require("ejs");
 
@@ -44,8 +42,6 @@
   logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' + '<%= status %> <%= method %> <%= url %>');
 
   app = express();
-
-  redirect(app);
 
   server = require("http").createServer(app);
 

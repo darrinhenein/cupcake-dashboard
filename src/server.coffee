@@ -1,6 +1,5 @@
 _ = require("underscore")
 express = require("express")
-redirect = require("express-redirect")
 ejs = require("ejs")
 restful = require("node-restful")
 async = require("async")
@@ -24,7 +23,6 @@ logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                           '<%= status %> <%= method %> <%= url %>');
 
 app = express()
-redirect app
 server = require("http").createServer app
 io = io.listen server
 
