@@ -21,6 +21,7 @@ angular.module('cupcakeDashboard')
       cache.remove('/api/' + data.type + 's');
 
       $rootScope.$broadcast(data.type + ':' + data.model._id + ':change', data.changes);
+      $rootScope.$broadcast(data.type + 's:change', data);
 
       if(data.type === 'project') {
         var eventCache = $angularCacheFactory.get('eventCache');

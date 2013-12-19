@@ -23,8 +23,8 @@ angular.module('cupcakeDashboard')
           _.defer(function(){el.css("width", newWidth)}, 0);
         }
 
-        scope.$watch('project', drawGraph);
-        scope.$watch('range', drawGraph);
+        scope.$watchCollection('project', drawGraph);
+        scope.$watchCollection('range', drawGraph);
       }
     }
   });

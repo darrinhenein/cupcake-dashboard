@@ -9,6 +9,13 @@ angular.module('cupcakeDashboard')
       showArchived: false
     }
 
+    $scope.$on('projects:change', function(e, data){
+      var prop = _.keys(data.changes)[0];
+      if(prop === 'products' || prop === 'themes') return; // figure out how to update by id
+      var project = _.findWhere($scope.projects, {_id: data.model._id});
+      project = _.extend(project, data.changes);
+    })
+
     $scope.projects = ProjectService.getProjects().then(function(projects){
       $scope.projects = projects;
     });
