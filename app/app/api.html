@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    Dashboard API Endpoints
+  </title>
+
+  <style type="text/css">
+    body {
+      font-family: Consolas, Menlo, monospaced;
+      font-size: 11px;
+    }
+
+    td, th {
+      padding: 2px 10px;
+      text-align: left;
+    }
+
+    .method {
+      text-transform: uppercase;
+    }
+
+  </style>
+</head>
+<body>
+
+<table>
+  <tr>
+    <th>Method</th>
+    <th>Route</th>
+  </tr>
+  <% for(var i=0; i<routes.length; i++) {%>
+     <tr>
+        <td class="method <% routes[i].method %>"><%= routes[i].method%></td>
+        <td><%= routes[i].path.replace('\(\[0-9a-fA-F\]\{24\}\)', '').replace('\(\[0-9a-fA-F\]\{24\}\$\)', '').replace('\/:id\?', '') %></td>
+     </tr>
+  <% } %>
+</table>
+
+<script>
+    var routes =  <%- JSON.stringify(routes) %>;
+    console.log("Routes", routes);
+</script>
+
+</body>
+</html>

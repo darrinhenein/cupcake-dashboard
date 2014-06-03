@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, io, isAdmin, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, io, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -193,12 +193,6 @@
     });
   };
 
-  isAdmin = function(req, res, next) {
-    return isLoggedIn(req, res, function() {
-      return next();
-    });
-  };
-
   logEvent = function(req, res, next) {
     if ((res.locals.status_code >= 200 && res.locals.status_code < 300) || req.method === 'DELETE') {
       return Logger.log(req, res, next, io);
@@ -211,12 +205,6 @@
 
   Project.before('put', authProject);
 
-  Project.before('delete', function(req, res, next) {
-    return authProject(req, res, function() {
-      return logEvent(req, res, next);
-    });
-  });
-
   Theme.before('post', isLoggedIn);
 
   Theme.before('put', authTheme);
@@ -224,6 +212,8 @@
   Product.before('post', isLoggedIn);
 
   Product.before('put', authProduct);
+
+  User.before('put', authUser);
 
   Theme.before('delete', function(req, res, next) {
     return authTheme(req, res, function() {
@@ -237,7 +227,11 @@
     });
   });
 
-  User.before('put', authUser);
+  Project.before('delete', function(req, res, next) {
+    return authProject(req, res, function() {
+      return logEvent(req, res, next);
+    });
+  });
 
   Project.after('post', logEvent);
 
@@ -648,8 +642,25 @@
     }
   });
 
+  app.get('/api', function(req, res) {
+    var routes;
+    routes = [];
+    routes.push(app.routes.get);
+    routes.push(app.routes.post);
+    routes.push(app.routes.put);
+    routes.push(app.routes["delete"]);
+    routes = _.sortBy(_.flatten(routes), function(route) {
+      return route.path;
+    });
+    return res.render('dist/api.html', {
+      routes: routes
+    });
+  });
+
   console.log("Listening at " + HOST + ":" + PORT + "...");
 
-  server.listen(PORT, HOST);
+  server.listen(PORT, HOST, function() {
+    return require('./route-table')(app.routes);
+  });
 
 }).call(this);

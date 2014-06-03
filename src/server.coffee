@@ -51,6 +51,8 @@ app.use express.cookieParser()
 app.use express.session
   secret: 'personasecret'
 app.use express.query()
+
+#logging
 app.use (req, res, next) ->
   rEnd = res.end
 
@@ -81,20 +83,21 @@ app.use (req, res, next) ->
 
   next()
 
-
-
+#static view config
 app.set('views', __dirname + '/app/');
 app.set('view engine', 'ejs');
 app.engine('html', ejs.renderFile);
 app.use(express.static(__dirname + '/app/dist'));
 
+#port and ip config based on env
 PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000
 HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1'
 
-# Must match your browser's address bar
+# Must match your browser's address bar for persona to work
 audience = 'http://' + HOST + ':' + PORT
 
 
+# PAAS config for persona
 if process.env.VCAP_APPLICATION
   vcap = JSON.parse process.env.VCAP_APPLICATION
   audience = vcap.uris[0]
@@ -107,6 +110,7 @@ if process.env.MONGODB_URL
   mongourl = process.env.MONGODB_URL
 mongoose.connect mongourl
 
+# is user logged in?
 isLoggedIn = (req, res, next) ->
   if req.session.email
     res.logged_in_email = req.session.email
@@ -114,6 +118,7 @@ isLoggedIn = (req, res, next) ->
   else
     res.send 401
 
+# can user edit project?
 authProject = (req, res, next) ->
   isLoggedIn req, res, ->
     project = Project.findOne({_id:req.params.id})
@@ -124,6 +129,7 @@ authProject = (req, res, next) ->
                        else
                          res.send 403
 
+# can user edit theme?
 authTheme = (req, res, next) ->
   isLoggedIn req, res, ->
     theme = Theme.findOne({_id:req.params.id})
@@ -134,6 +140,7 @@ authTheme = (req, res, next) ->
                    else
                      res.send 403
 
+# can user edit product?
 authProduct = (req, res, next) ->
   isLoggedIn req, res, ->
     product = Product.findOne({_id:req.params.id})
@@ -144,6 +151,7 @@ authProduct = (req, res, next) ->
                    else
                      res.send 403
 
+# can edit user?
 authUser = (req, res, next) ->
   isLoggedIn req, res, ->
     User.findOne({_id: req.params.id}).lean().exec (err, doc) ->
@@ -152,10 +160,7 @@ authUser = (req, res, next) ->
       else
         res.send 403
 
-isAdmin = (req, res, next) ->
-  isLoggedIn req, res, ->
-    next()
-
+# log event to event feed
 logEvent = (req, res, next) ->
   if (res.locals.status_code >= 200 and res.locals.status_code < 300) or req.method is 'DELETE'
     Logger.log req, res, next, io
@@ -164,26 +169,27 @@ logEvent = (req, res, next) ->
 
 
 # server side auth on projects
-Project.before 'post'   , isLoggedIn
-Project.before 'put'    , authProject
+Project.before 'post' , isLoggedIn
+Project.before 'put'  , authProject
+Theme.before   'post' , isLoggedIn
+Theme.before   'put'  , authTheme
+Product.before 'post' , isLoggedIn
+Product.before 'put'  , authProduct
+User.before    'put'  , authUser
+
+# log deletions before record is gone
+Theme.before 'delete'  , (req, res, next) ->
+  authTheme req, res, ->
+    logEvent req, res, next
+
+Product.before 'delete'  , (req, res, next) ->
+  authProduct req, res, ->
+    logEvent req, res, next
 
 Project.before 'delete' , (req, res, next) ->
   authProject req, res, ->
     logEvent req, res, next
 
-Theme.before 'post'   , isLoggedIn
-Theme.before 'put'    , authTheme
-Product.before 'post' , isLoggedIn
-Product.before 'put'  , authProduct
-
-Theme.before 'delete'  , (req, res, next) ->
-  authTheme req, res, ->
-    logEvent req, res, next
-Product.before 'delete'  , (req, res, next) ->
-  authProduct req, res, ->
-    logEvent req, res, next
-
-User.before 'put'       , authUser
 
 
 # logging
@@ -487,6 +493,17 @@ app.get "/getUser", (req, res) ->
           res.send user
   else
     res.send 200
+
+app.get '/api', (req, res) ->
+  routes = []
+  routes.push app.routes.get
+  routes.push app.routes.post
+  routes.push app.routes.put
+  routes.push app.routes.delete
+  routes = _.sortBy _.flatten(routes), (route) ->
+    return route.path
+  res.render 'dist/api.html',
+    routes: routes
 
 console.log "Listening at #{HOST}:#{PORT}..."
 server.listen PORT, HOST
