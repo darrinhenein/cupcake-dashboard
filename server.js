@@ -659,8 +659,6 @@
 
   console.log("Listening at " + HOST + ":" + PORT + "...");
 
-  server.listen(PORT, HOST, function() {
-    return require('./route-table')(app.routes);
-  });
+  server.listen(PORT, HOST);
 
 }).call(this);

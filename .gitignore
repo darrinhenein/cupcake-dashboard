@@ -1,9 +1,9 @@
 .tmp
 .tmp/
 .DS_Store
-node_modules/coffee-script
-node_modules/.bin/cake
-node_modules/.bin/coffee
+node_modules
+app/node_modules
+app/app/bower_components
 private.yml
 mongo_backup.sh
 backups/
