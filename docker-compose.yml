@@ -1,0 +1,23 @@
+version: '3'
+services:
+  db:
+    image: mongo
+    restart: always
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: example
+
+  web:
+    build: .
+    environment:
+      MONGODB_URL: mongodb://db/projects
+      IP_ADDRESS: 0.0.0.0
+    #   DATABASE_URL: postgres://postgres:secretpass@db:5432/queue
+    #   CARGO_TARGET_DIR: /cargo
+    ports:
+      - "3000:3000"
+    volumes:
+      - $PWD:/source
+    links:
+      - db
+    command: bash -c "pwd; ls -al node_modules; node server.js"

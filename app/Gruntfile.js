@@ -280,12 +280,12 @@ module.exports = function (grunt) {
         'htmlmin'
       ]
     },
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
+    // karma: {
+    //   unit: {
+    //     configFile: 'karma.conf.js',
+    //     singleRun: true
+    //   }
+    // },
     cdnify: {
       dist: {
         html: ['<%= yeoman.dist %>/*.html']
@@ -330,7 +330,7 @@ module.exports = function (grunt) {
     // 'clean:server',
     // 'concurrent:test',
     // 'connect:test'
-    'karma'
+    // 'karma'
   ]);
 
   grunt.registerTask('build', [
