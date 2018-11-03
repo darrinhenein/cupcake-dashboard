@@ -5,11 +5,11 @@ angular.module('cupcakeDashboard')
 
     $scope.email = userEmail;
 
-    $http.get('/api/' + userEmail + '/projects', { cache: false }).success(function(data){
+    $http.get('/api/' + userEmail + '/projects', {}).success(function(data){
       $scope.projects = data;
     })
 
-    $http.get('/api/' + userEmail + '/collaborations', { cache: false }).success(function(data){
+    $http.get('/api/' + userEmail + '/collaborations', {}).success(function(data){
       $scope.collaborations = data;
     })
 

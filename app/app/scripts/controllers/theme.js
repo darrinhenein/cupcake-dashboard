@@ -2,7 +2,7 @@ angular.module('cupcakeDashboard')
   .controller('ThemeCtrl', function ($scope, $resource, $location, $routeParams, UIHelperService, AuthenticationService) {
     var themeId = $routeParams.id;
 
-    var Theme = $resource('/api/themes/:id', { cache: false, isArray: false, id: themeId}, {
+    var Theme = $resource('/api/themes/:id', {id: themeId}, {
       'update': {
         method: 'put'
       }

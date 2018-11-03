@@ -5,7 +5,7 @@ angular.module('cupcakeDashboard')
 
     $scope.email = userEmail;
 
-    $http.get('/api/' + userEmail + '/themes', { cache: false }).success(function(data){
+    $http.get('/api/' + userEmail + '/themes', {}).success(function(data){
       $scope.themes = data;
     })
   });

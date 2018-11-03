@@ -1,7 +1,7 @@
 angular.module('cupcakeDashboard')
   .controller('ProfileCtrl', function ($scope, $rootScope, $location, $resource, $http, AuthenticationService) {
 
-    var User = $resource('/api/users/:id', { cache: false, isArray: false, id: $rootScope.loggedInUser._id}, {
+    var User = $resource('/api/users/:id', {id: $rootScope.loggedInUser._id}, {
       'update': {
         method: 'put'
       }

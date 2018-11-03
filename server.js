@@ -1,5 +1,5 @@
 (function() {
-  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, io, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, restful, server, url, vcap, _;
+  var AdminRoutes, Events, HOST, Logger, PORT, Phases, Product, Project, Statuses, Theme, User, adminWhitelist, app, async, audience, authProduct, authProject, authTheme, authUser, ejs, express, getAuthLevel, helmet, indexRoute, isLoggedIn, logEvent, logTmpl, moment, mongoose, mongourl, policy, projectRoute, restful, server, url, vcap, _;
 
   _ = require("underscore");
 
@@ -37,15 +37,11 @@
 
   Logger = require("./logger");
 
-  io = require("socket.io");
-
   logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' + '<%= status %> <%= method %> <%= url %>');
 
   app = express();
 
   server = require("http").createServer(app);
-
-  io = io.listen(server);
 
   policy = {
     defaultPolicy: {
@@ -113,10 +109,6 @@
     audience = vcap.uris[0];
   }
 
-  require('express-persona')(app, {
-    audience: audience
-  });
-
   mongourl = "mongodb://localhost/projects";
 
   if (process.env.MONGODB_URL) {
@@ -126,6 +118,7 @@
   mongoose.connect(mongourl);
 
   isLoggedIn = function(req, res, next) {
+    req.session.email = "bwinton@mozilla.com"
     if (req.session.email) {
       res.logged_in_email = req.session.email;
       return next();
@@ -195,7 +188,7 @@
 
   logEvent = function(req, res, next) {
     if ((res.locals.status_code >= 200 && res.locals.status_code < 300) || req.method === 'DELETE') {
-      return Logger.log(req, res, next, io);
+      return Logger.log(req, res, next);
     } else {
       return next();
     }
@@ -488,6 +481,9 @@
   });
 
   indexRoute = function(req, res) {
+    if (!req.session.email) {
+      req.session.email = "bwinton@mozilla.com"
+    }
     var bootstrap, queries;
     queries = [];
     bootstrap = {};
@@ -524,6 +520,9 @@
   };
 
   projectRoute = function(req, res) {
+    if (!req.session.email) {
+      req.session.email = "bwinton@mozilla.com"
+    }
     var bootstrap, queries;
     queries = [];
     bootstrap = {};
@@ -621,6 +620,7 @@
   };
 
   app.get("/getUser", function(req, res) {
+    console.log("Getting " + req.session.email);
     if (req.session.email) {
       return User.findOne({
         email: req.session.email

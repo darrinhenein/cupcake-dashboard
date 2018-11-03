@@ -67,7 +67,7 @@ angular.module('cupcakeDashboard')
       }
     });
 
-    var Project = $resource('/api/projects/:id', { cache: false, isArray: false, id: projectId}, {
+    var Project = $resource('/api/projects/:id', {id: projectId}, {
       'update': {
         method: 'put'
       }

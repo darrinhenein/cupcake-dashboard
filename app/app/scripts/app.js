@@ -5,8 +5,7 @@ angular.module('cupcakeDashboard', [
     'jmdobry.angular-cache',
     'DeferredWithUpdate',
     'ngRoute',
-    'linkify',
-    'angular-tools.persona'])
+    'linkify'])
   .config(function ($routeProvider, $locationProvider, $angularCacheFactoryProvider) {
 
     $locationProvider.html5Mode(true);
@@ -106,7 +105,7 @@ angular.module('cupcakeDashboard', [
         //scroll to top hack
         document.body.scrollTop = document.documentElement.scrollTop = 0;
 
-        $window.ga('send', 'pageview', $location.path());
+        // $window.ga('send', 'pageview', $location.path());
 
         // if route requires auth and user is not logged in
         if(!next.auth) next.auth = 0;

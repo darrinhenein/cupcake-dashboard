@@ -15,7 +15,7 @@
 
   async = require('async');
 
-  module.exports.log = function(req, res, next, io) {
+  module.exports.log = function(req, res, next) {
     var getModel, method, mid, modelData, sendPacket, type, updateModel;
     if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
       if (req.path.split('/')[1] === 'api') {
@@ -77,7 +77,6 @@
               return Event.findOne({
                 _id: e._id
               }).populate('owner').exec(function(err, doc) {
-                io.sockets.emit('feed', doc);
                 return cb();
               });
             });

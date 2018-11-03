@@ -6,7 +6,7 @@ Product = require('./models/product')
 Project = require('./models/project')
 async = require('async')
 
-module.exports.log = (req, res, next, io) ->
+module.exports.log = (req, res, next) ->
     if req.method is 'POST' or req.method is 'PUT' or req.method is 'DELETE'
       if req.path.split('/')[1] is 'api'
 
@@ -54,7 +54,6 @@ module.exports.log = (req, res, next, io) ->
                 owner: user._id
               }, (err, e) ->
                 Event.findOne({_id: e._id}).populate('owner').exec (err, doc) ->
-                  io.sockets.emit 'feed', doc
                   cb()
 
         async.series [getModel, updateModel, sendPacket], (err, results) ->

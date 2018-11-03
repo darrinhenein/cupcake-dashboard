@@ -16,7 +16,6 @@ Statuses = require("./models/status")
 Events = require("./models/event")
 AdminRoutes = require("./routes/admin")
 Logger = require("./logger")
-io = require("socket.io")
 
 # logging template
 logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
@@ -24,7 +23,6 @@ logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
 
 app = express()
 server = require("http").createServer app
-io = io.listen server
 
 # security middleware
 
@@ -93,18 +91,6 @@ app.use(express.static(__dirname + '/app/dist'));
 PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000
 HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1'
 
-# Must match your browser's address bar for persona to work
-audience = 'http://' + HOST + ':' + PORT
-
-
-# PAAS config for persona
-if process.env.VCAP_APPLICATION
-  vcap = JSON.parse process.env.VCAP_APPLICATION
-  audience = vcap.uris[0]
-
-require('express-persona') app,
-  audience: audience
-
 mongourl = "mongodb://localhost/projects"
 if process.env.MONGODB_URL
   mongourl = process.env.MONGODB_URL
@@ -112,6 +98,7 @@ mongoose.connect mongourl
 
 # is user logged in?
 isLoggedIn = (req, res, next) ->
+  req.session.email = "bwinton@mozilla.com"
   if req.session.email
     res.logged_in_email = req.session.email
     next()
@@ -370,6 +357,9 @@ app.get "/api/statuses", (req, res) ->
   res.send Statuses
 
 indexRoute = (req, res) ->
+  if !req.session.email
+    req.session.email = "bwinton@mozilla.com"
+
   queries = []
   bootstrap = {}
 
@@ -400,6 +390,8 @@ indexRoute = (req, res) ->
       bootstrap: bootstrap
 
 projectRoute = (req, res) ->
+  if !req.session.email
+    req.session.email = "bwinton@mozilla.com"
   queries = []
   bootstrap = {}
 
@@ -480,6 +472,7 @@ getAuthLevel = (email) ->
 
 # auth user
 app.get "/getUser", (req, res) ->
+  console.log "Getting #{req.session.email}"
   if req.session.email
     User.findOne({email: req.session.email}).lean().exec (err, doc) ->
       if doc

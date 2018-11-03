@@ -10,33 +10,6 @@ angular.module('cupcakeDashboard')
     $scope.events = angular.copy(data, $scope.events);
   });
 
-  var socket = io.connect($location.host());
-
-  socket.on('feed', function(data){
-    $scope.$apply(function(){
-      data.isNew = true;
-
-      var cache = $angularCacheFactory.get(data.type + 'Cache');
-      cache.put('/api/' + data.type + 's/' + data.model._id, data.model);
-      cache.remove('/api/' + data.type + 's');
-
-      $rootScope.$broadcast(data.type + ':' + data.model._id + ':change', data.changes);
-      $rootScope.$broadcast(data.type + 's:change', data);
-
-      if(data.type === 'project') {
-        var eventCache = $angularCacheFactory.get('eventCache');
-        eventCache.remove('/api/projects/' + data.model._id + '/activity');
-        cache.remove('all-projects');
-      }
-
-      $rootScope.changeNotificationNumber(1);
-      $scope.events.push(data);
-      $timeout(function(){
-        data.isNew = false;
-      }, isNewDelaySeconds * 1000, true);
-    });
-  })
-
   $rootScope.changeNotificationNumber = function(delta, reset){
     $rootScope.newNotifications += delta;
     $window.document.title = "(" + $rootScope.newNotifications + ") Concepts | Firefox UX Dashboard"

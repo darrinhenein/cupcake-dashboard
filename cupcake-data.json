@@ -1,0 +1,101 @@
+{
+  "version": "0.0.1",
+  "date": "2018-11-02T14:10:48.455Z",
+  "phases": [
+    {
+      "title": "Proposal",
+      "phase": 0,
+      "prompt": "What user needs are we trying to address?",
+      "count": 0
+    },
+    {
+      "title": "Ideation",
+      "phase": 1,
+      "prompt": "Which ideas do we want to prototype? Why?",
+      "count": 0
+    },
+    {
+      "title": "Prototype",
+      "phase": 2,
+      "prompt": "What did we learn from building and testing our prototypes?",
+      "count": 0
+    },
+    {
+      "title": "Evaluation",
+      "phase": 3,
+      "prompt": "What are the reasons behind the decision we reached?",
+      "count": 0
+    },
+    {
+      "title": "Decision",
+      "phase": 4,
+      "prompt": "What is the decicion we reached?",
+      "count": 0
+    }
+  ],
+  "themes": [
+    {
+      "_id":	"5bdc665a3109c30a00000004",
+      "title": "First Theme",
+      "description": "This is the first theme.",
+      "notes": "Some notes go here",
+      "owner": "5bdc57ab0571b90900000002",
+      "created_at": "2018-11-02T13:56:59.741Z",
+      "last_updated": "2018-11-02T13:56:59.741Z",
+      "is_finished": false
+    }
+  ],
+  "projects": [
+    {
+      "_id": "5bdc5fc73109c30a00000002",
+      "title": "Test Project One",
+      "description": "Test Description One",
+      "owner": "5bdc57ab0571b90900000002",
+      "progress": 75,
+      "phase": 2,
+      "bugs": [],
+      "created_at": "2018-11-02T13:56:59.741Z",
+      "last_updated": "2018-11-02T13:56:59.741Z",
+      "collaborators": [],
+      "status": {
+        "index": 0,
+        "related": []
+      },
+      "is_finished": false,
+      "phases": {
+        "0": {"body": "Testing!"},
+        "2": {"body": "More testing."}
+      },
+      "themes": ["5bdc665a3109c30a00000004"],
+      "products": ["5bdc665a3109c30a00000005", "5bdc665a3109c30a00000006"]
+    }
+  ],
+  "products": [
+    {
+      "_id":	"5bdc665a3109c30a00000005",
+      "title": "Firefox",
+      "description": "The desktop browser",
+      "owner": "5bdc57ab0571b90900000002",
+      "created_at": "2018-11-02T13:56:59.741Z",
+      "last_updated": "2018-11-02T13:56:59.741Z"    
+    },
+    {
+      "_id":	"5bdc665a3109c30a00000006",
+      "title": "The Queue",
+      "description": "A place for tracking work.",
+      "owner": "5bdc57ab0571b90900000002",
+      "created_at": "2018-11-02T13:56:59.741Z",
+      "last_updated": "2018-11-02T13:56:59.741Z"    
+    }
+
+  ],
+  "events": [],
+  "users": [
+    {
+      "_id": "5bdc57ab0571b90900000002",
+      "email": "bwinton@mozilla.com",
+      "__v": 0,
+      "created_at": "2018-11-02T13:56:59.741Z"
+    }
+  ]
+}
